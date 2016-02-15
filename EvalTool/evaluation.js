@@ -8,7 +8,7 @@ window.addEventListener("load", function() {
 function insertScore() {
 	var total = getValue("total");
 	var correct = getValue("correct");
-	//TEST
+
 	document.querySelector("#totalCell").innerHTML = total;
 	document.querySelector("#correctCell").innerHTML = correct;
 	document.querySelector("#incorrectCell").innerHTML = total - correct;

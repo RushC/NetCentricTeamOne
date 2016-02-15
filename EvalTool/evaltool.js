@@ -71,14 +71,29 @@ var questions = [
 		['document.activeElement',
 		 'document.activeListener',
 		 'window.activeElement',
-		 'document.getElement']),
-	new Question("Click the answer:", ["the answer"])
+		 'document.getElement'])
 ];
 
 /**
  * The list of all the answers for the question.
  */
  var answers = [3, 1, 2, 1, 1, 2, 1, 1, 2, 1];
+
+ /**
+ * Determines the number of answers the user guessed correctly and
+ * adds it to the cookie.
+ */
+function grade(req, res) {
+	var correct = 0;
+	for (var i = 0; i < answers.length; i++)
+		if (getValue(i + 1, req.headers) == answers[i])
+			correct++;
+		else
+			console.log(i + " " + getValue(i + 1, req.headers) + " " + answers[i]);
+
+	// Add the correct count to the cookie.
+	res.cookie("correct", correct);
+}
 
 /**
  * Retrieves the value for the specified key from the
@@ -121,14 +136,23 @@ function gettool(req, res) {
 			res.cookie("total", questions.length);
 
 			// Add a cookie for every question.
-			for (var i = 1; i <= questions.length; i++)
+			for (var i = 1; i <= questions.length; i++) 
 				res.cookie(i, -1);
 		}
 
 		// If the quiz is already started, check if it has been completed.
-		else if (getValue("correct", req.headers))
+		else if (getValue("completed", req.headers)) {
+			grade(req, res);
 			filename = gettool.root + "/Evaltool/evaluation.html";
+		}
 	}
+
+	console.log(req.path)
+	console.log("/EvalTool/evaluation.html")
+	console.log(req.path == "/EvalTool/evaluation.html")
+	// Grade the quiz if the user is accessing the evaluation page.
+	if (req.path == "/EvalTool/evaluation.html")
+		grade(req, res);
 
 	res.sendFile(filename, function(err) {
 		// Log any error.
@@ -172,17 +196,8 @@ function posttool(req, res) {
 			res.redirect('back');
 			break;
 		case "submit":
-			// Determine how many questions were answered correctly.
-			var correct = 0;
-			for (var i = 0; i < answers.length; i++)
-				if (getValue(i + 1, req.headers) == answers[i])
-					correct++;
-				else
-					console.log(i + " " + getValue(i + 1, req.headers) + " " + answers[i]);
-
-			// Add the correct count to the cookie.
-			res.cookie("correct", correct);
-
+			// Add an indicator that the quiz is completed.
+			res.cookie("completed", true);
 			// Redirect the client to the evaluation page.
 			res.redirect('evaluation.html');
 			break;
