@@ -12,6 +12,7 @@ function Question(text, choices, img) {
 		this.img = img;
 }
 
+//TEST COMMENT
 /**
  * The list of all of the questions.
  */
