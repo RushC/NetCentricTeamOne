@@ -3,24 +3,41 @@ div#navDiv {
 	text-align: center;
 }
 
+fieldset#questionField {
+	font-size: 18px;
+	font-weight: bolder;
+	border-style: solid;
+	border-left: 0;
+	border-right: 0;
+	border-bottom: 0;
+	border-width: 6.65468465468765468764px;
+	border-color: #009688;
+}
 
 label#questionContent{
 	margin-bottom: 50px;
 	display: block;
+	font-size: 20px;
 }
 
 div.choice {
 	font-weight: strong;
 	border-radius: 2px;
-	border: solid gray 1px;
+	border: solid #009688 1px;
 	margin-bottom: 5px;
 	opacity: 0.9;
 	padding: 5px;
 	overflow: hidden;
+	font-size: 15px;
+}
+
+div.choice.hover {
+	background-color: #009688;
+	color: white;
 }
 
 div#choices {
-	overflow: hidden;
+	font-size: 13px;
 }
 
 img#questionImage {
@@ -34,7 +51,7 @@ img#questionImage {
 
 button {
 	border-radius: 50%;
-	border: solid 1px #f44336;
+	border: solid 1px #FF5722;
 	width: 50px;
 	height: 50px;
 	background-size: contain;
@@ -62,10 +79,10 @@ button#next.hover {
 
 button#submit {
 	background: url(submit.png);
-	border-color: #4CAF50;
+	border-color: #009688;
 }
 
 button#submit.hover {
 	background: url(submit-hover.png);
-	border-color: #4CAF50;
+	border-color: #009688;
 }

@@ -47,6 +47,19 @@ function loadQuestion() {
 		var div = document.createElement('DIV');
 		div.className = "choice";
 
+		// Add a listener to change the style when the fiv is hovered over.
+		div.addEventListener("mouseenter", function() {
+			this.classList.toggle("hover");
+		});
+		div.addEventListener("mouseleave", function() {
+			this.classList.toggle("hover");
+		});
+		
+		// Add a click listener to set the radio button for the div.
+		div.addEventListener("click", function() {
+			this.firstChild.checked = !this.firstChild.checked;
+		});
+
 		// Create a radio button input for the answer.
 		var radio = document.createElement('INPUT');
 		radio.type = "radio";
