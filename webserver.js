@@ -81,7 +81,8 @@ app.get('/Syllabus/*', syllabus.gettool);
 app.get("/EvalTool/*", evaltool.gettool);
 
 // Handle form submitions in evaltool.js.
-app.post("/EvalTool/*", evaltool.posttool);
+app.post("/EvalTool/eval*", evaltool.posttool);
+app.post("/EvalTool/sendMail", evaltool.mailtool)
 
 
 app.listen(8080, function() {
