@@ -6,11 +6,15 @@ window.addEventListener("load", function() {
 	var messageStatusLabel = document.querySelector("label[for='messageStatus']");
 	if (getValue("messageStatus") == "fail") {
 		messageStatusLabel.innerHTML = "There was an error sending your message.";
-		messageStatusLabel.color="red"
+		messageStatusLabel.style.color = "red";
+		// Reset the value.
+		setValue("messageStatus", "");
 	}
 	else if (getValue("messageStatus") == "success") {
 		messageStatusLabel.innerHTML = "Your message was sent successfuly";
-		messageStatusLabel.color="blue";
+		messageStatusLabel.style.color="blue";
+		// Reset the value.
+		setValue("messageStatus", "");
 	}
 
 	// Add hover behavior for all buttons.

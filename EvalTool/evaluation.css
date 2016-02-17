@@ -1,3 +1,52 @@
+div#evaluation {
+	margin-bottom: 50px;
+}
+
+div#evaluation table {
+	text-align: right;
+	border: solid 2px #FF5722;
+	padding: 10px;
+	font-weight: normal;
+	border-collapse: collapse;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+div#evaluation table tr, td {
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+td#correctCell {
+	color: green;
+	font-weight: bold;
+}
+
+td#incorrectCell {
+	color: red;
+	font-weight: bold;
+}
+
+tr#scoreRow {
+	background-color: #FF5722;
+	text-align: left;
+	color: white;
+	font-weight: bold;
+}
+
+fieldset{
+	font-size: 18px;
+	font-weight: bolder;
+	border-style: solid;
+	border-left: 0;
+	border-right: 0;
+	border-bottom: 0;
+	border-width: 6.6px;
+	border-color: #009688;
+}
+
 button {
 	border-radius: 50%;
 	border: solid 1px #f44336;
@@ -12,14 +61,39 @@ button {
 
 button#submit {
 	background: url(submit.png);
-	border-color: #4CAF50;
+	display: block;
+	border-color: #009688;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 button#submit.hover {
 	background: url(submit-hover.png);
-	border-color: #4CAF50;
 }
 
 label[for="messageStatus"] {
+	text-align: center;
+	display: none;
 	font-size: 15px;
+	color: #009688;
+	font-weight: bold;
+}
+
+div#emailInput {
+	width: auto;
+	display: inline-block;
+	text-align: right;
+	font-weight: normal;
+	font-size: 12pt;
+	border: ridge 1px gray;
+	padding: 20px;
+}
+
+form input {
+	margin-bottom: 10px;
+	margin-left: auto;
+}
+
+form label {
+	margin-bottom: 10px;
 }

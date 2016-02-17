@@ -1,11 +1,10 @@
-a:link{color: white; font-family: Sans-Serif; font-weight: bold; }
+a:link{color: white; font-family: Sans-Serif; font-weight: bold; text-decoration: none}
 a:visited{color: white; font-weight: normal}
-a:hover{color: orange}
-a:active{font-style: italic}
+a:hover{color: #FF5722;}
+a:active{}
 
-/*#navigationbar {color: white; background-color: Gray}*/
-#navigationbar {color: white; font-size: 1.4em; background-image: url('linen.jpg');}
-#sidenavigation {float: left; height: 600px; width: 150px; background-image: url('linen.jpg');}
+#navigationbar {color: white; font-size: 1.4em; background-color: #009688;}
+#sidenavigation {float: left; height: 600px; width: 150px; background-color: #009688;}
  
 
 #content {margin-left: 10em; height:600px;}

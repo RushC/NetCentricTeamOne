@@ -10,7 +10,7 @@ fieldset#questionField {
 	border-left: 0;
 	border-right: 0;
 	border-bottom: 0;
-	border-width: 6.65468465468765468764px;
+	border-width: 6.6px;
 	border-color: #009688;
 }
 
@@ -29,10 +29,21 @@ div.choice {
 	padding: 5px;
 	overflow: hidden;
 	font-size: 15px;
+	cursor: pointer;
+}
+
+div.choice label {
+	cursor: pointer;
 }
 
 div.choice.hover {
 	background-color: #009688;
+	color: white;
+}
+
+div.choice.selected {
+	background-color: #FF5722;
+	border-color: #FF5722;
 	color: white;
 }
 

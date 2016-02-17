@@ -7,11 +7,13 @@ addEventListener("load", function() {
 	for (var i = 0; i < buttons.length; i++) {
 		// Add class hover whenever a button is hovered over.
 		buttons[i].onmouseenter = function() {
-			this.className = "hover";
+			//this.className = "hover";
+			$(this).switchClass("", "hover");
 		};
 		// Remove the hover class whenever the button is left.
 		buttons[i].onmouseleave = function() {
-			this.className = "";
+			//this.className = "";
+			$(this).switchClass("hover", "");
 		};
 	}
 });
@@ -47,28 +49,19 @@ function loadQuestion() {
 		var div = document.createElement('DIV');
 		div.className = "choice";
 
-		// Add a listener to change the style when the fiv is hovered over.
-		div.addEventListener("mouseenter", function() {
-			this.classList.toggle("hover");
-		});
-		div.addEventListener("mouseleave", function() {
-			this.classList.toggle("hover");
-		});
-		
-		// Add a click listener to set the radio button for the div.
-		div.addEventListener("click", function() {
-			this.firstChild.checked = !this.firstChild.checked;
-		});
-
 		// Create a radio button input for the answer.
 		var radio = document.createElement('INPUT');
 		radio.type = "radio";
 		radio.name = "answer";
 		radio.value = i;
+		radio.hidden = true;
 
 		// Check the user's selected answer to see if the radio
 		// button should be checked.
-		radio.checked = getValue(getValue("current")) == i;
+		if (getValue(getValue("current")) == i) {
+			radio.checked = true;
+			div.classList.toggle("selected");
+		}
 
 		// Create a label for the radius button.
 		var label = document.createElement('LABEL');
@@ -78,5 +71,28 @@ function loadQuestion() {
 		document.querySelector("#choices").appendChild(div);
 		div.appendChild(radio);
 		div.appendChild(label);
+
+		// Add listeners to change the style when the div is hovered over.
+		div.addEventListener("mouseenter", function() {
+			$(this).switchClass("", "hover", 100);
+		});
+		div.addEventListener("mouseleave", function() {
+			$(this).switchClass("hover", "", 100);
+		});
+
+		// Add a click listener to the div.
+		div.addEventListener("click", function() {
+			// Set the radio button's checked 
+			this.firstChild.checked = true;
+			// Add the selected class to the div.
+			$(this).switchClass("", "selected", "fast");
+			// Remove the other divs' selected class.
+			for (var di = 0; di < this.parentElement.children.length; di++) {
+				// Ensure the div is not the current div.
+				var d = this.parentElement.children[di];
+				if (d != this)
+					$(d).switchClass("selected", "");
+			}	
+		});
 	}
 }
