@@ -1,3 +1,5 @@
+var nodemailer = require('nodemailer'); //for sending the quiz score via email
+var smtpTransport = nodemailer.createTransport(); //
 /**
  * Constructor for a Question object.
  *
@@ -206,6 +208,31 @@ function posttool(req, res) {
 	}
 }
 
+function mailtool(req, res)  {
+	var mymail = {};
+	// Set the sender's and recipients' address.
+	mymail['from'] = req.body.sender_name+"<"+req.body.sender_email+">";
+	mymail['to'] = req.body.recipient_name+"<"+req.body.recipient_email+">";
+	mymail['subject'] = req.body.subject;
+
+	// Set the content of the message to "[sender's name] scored [correct]/[total] on the Netcentric javascript quiz."
+	mymail['text'] = req.body.sender_name + " scored " + getValue("correct", req.headers); + "/" + getValue("total", req.headers) + " on the Netcentric javascript quiz.";
+
+	// Send the email:
+	smtpTransport.sendMail(mymail, function(error, info){
+	   if(error){
+		   console.log(error);
+		   res.cookie("messageStatus", "fail");
+		   res.redirect('evaluation.html');
+	   }else{
+		   console.log("Message sent: " + info.response);
+		   res.cookie("messageStatus", "success");
+		   res.redirect('evaluation.html');
+	   }
+	});
+}
+
 // Add the functions to the module.
 exports.gettool = gettool;
 exports.posttool = posttool;
+exports.mailtool = mailtool;

@@ -26,5 +26,32 @@
 				<td id="scoreCell"></td>
 			</tr>
 		</table>
+		<div id="contact">
+		    <h1>Email Your Score</h1>
+		    <form action="sendMail" method="post">
+		        <fieldset>
+		        	<label for="messageStatus"></label><br>
+		            <label for="sender_name">Your Name:</label>
+		            <input type="text" id="sender_name" name="sender_name" placeholder="Enter your full name" />
+					<br>
+		            <label for="email">Your Email:</label>
+		            <input type="email" id="sender_email" name = "sender_email" placeholder="Enter your email address" />
+					<br><hr>
+		            <label for="name">Recipient's Name:</label>
+		            <input type="text" id="recipient_name" name="recipient_name" placeholder="Enter recipients full name" />
+					<br>
+		            <label for="email">Recipient's Email:</label>
+		            <input type="email" id="recipient_email" name = "recipient_email" placeholder="Enter recipients email address" />
+					<br>
+		            <label for="subject">Subject:</label>
+		            <input type="text" id="subject" name = "subject" value="NetCentric Quiz Evaluation" size="30"/>
+					<br><hr>
+		            <label for="message">Message:</label><br>
+		            <label id="message" name="message" rows="5" cols="80"></label>
+					<br>
+		            <button type="submit" id="submit" value="Send message" />
+		        </fieldset>
+		    </form>
+		</div>
 	</body>
 </html>
