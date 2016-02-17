@@ -90,8 +90,8 @@ function grade(req, res) {
 	for (var i = 0; i < answers.length; i++)
 		if (getValue(i + 1, req.headers) == answers[i])
 			correct++;
-		else
-			console.log(i + " " + getValue(i + 1, req.headers) + " " + answers[i]);
+		//else
+			//console.log(i + " " + getValue(i + 1, req.headers) + " " + answers[i]);
 
 	// Add the correct count to the cookie.
 	res.cookie("correct", correct);
@@ -149,9 +149,9 @@ function gettool(req, res) {
 		}
 	}
 
-	console.log(req.path)
-	console.log("/EvalTool/evaluation.html")
-	console.log(req.path == "/EvalTool/evaluation.html")
+	// console.log(req.path)
+	// console.log("/EvalTool/evaluation.html")
+	// console.log(req.path == "/EvalTool/evaluation.html")
 	// Grade the quiz if the user is accessing the evaluation page.
 	if (req.path == "/EvalTool/evaluation.html")
 		grade(req, res);

@@ -6,13 +6,15 @@ window.addEventListener("load", function() {
 	var messageStatusLabel = document.querySelector("label[for='messageStatus']");
 	if (getValue("messageStatus") == "fail") {
 		messageStatusLabel.innerHTML = "There was an error sending your message.";
-		//messageStatusLabel.style.color = "red";
+		messageStatusLabel.style.color = "red";
+		messageStatusLabel.style.display = "block";
 		// Reset the value.
 		//setValue("messageStatus", "");
 	}
 	else if (getValue("messageStatus") == "success") {
 		messageStatusLabel.innerHTML = "Your message was sent successfuly";
-		//messageStatusLabel.style.color="blue";
+		messageStatusLabel.style.color="blue";
+		messageStatusLabel.style.display="block";
 		// Reset the value.
 		//setValue("messageStatus", "");
 	}
