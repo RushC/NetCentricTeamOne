@@ -41,7 +41,10 @@ function loadQuestion() {
 	// Display the question text.
 	document.querySelector("#questionContent").innerHTML = question.text;
 	// Display the image if there is one.
-	document.querySelector("#questionImage").src = question.img || "";
+	if (question.img)
+		document.querySelector("#questionImage").src = question.img;
+	else
+		document.querySelector("#questionImage").style.display = "none";
 
 	// Iterate through each of the answers.
 	for (var i = 0; i < question.choices.length; i++) {
