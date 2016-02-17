@@ -216,7 +216,7 @@ function mailtool(req, res)  {
 	mymail['subject'] = req.body.subject;
 
 	// Set the content of the message to "[sender's name] scored [correct]/[total] on the Netcentric javascript quiz."
-	mymail['text'] = req.body.sender_name + " scored " + getValue("correct", req.headers); + "/" + getValue("total", req.headers) + " on the Netcentric javascript quiz.";
+	mymail['text'] = req.body.sender_name + " scored " + getValue("correct", req.headers) + "/" + getValue("total", req.headers) + " on the Netcentric javascript quiz.";
 
 	// Send the email:
 	smtpTransport.sendMail(mymail, function(error, info){
