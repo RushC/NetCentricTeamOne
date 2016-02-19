@@ -13,8 +13,15 @@
  			res.status(err.status).end();
  		}
  		else
- 			console.log("Sent " + filename;)
+ 			console.log("Sent " + filename);
  	});
  }
 
+ function posttool(req, res) {
+ 	console.log(req.body);
+ 	res.status(200);
+ 	res.send("World: 'Sup");
+ };
+
  exports.gettool = gettool;
+ exports.posttool = posttool;

@@ -85,7 +85,8 @@ app.get("/EvalJSONP/*", evalJSONtool.gettool);
 
 // Handle form submitions in evaltool.js.
 app.post("/EvalTool/eval*", evaltool.posttool);
-app.post("/EvalTool/sendMail", evaltool.mailtool)
+app.post("/EvalTool/sendMail", evaltool.mailtool);
+app.post("/EvalJSONP/test", evalJSONtool.posttool); 
 
 
 app.listen(8080, function() {
