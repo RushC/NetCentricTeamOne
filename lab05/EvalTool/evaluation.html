@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" href="evaluation.css"></link>
+		<!-- Include cookie parsing functions. -->
+		<script src="cookies.js"></script>
+		<script src="evaluation.js"></script>
+	</head>
+	<body>
+		<div id="evaluation">
+			<fieldset>
+				<legend>Quiz Evaluation</legend>
+				<table>
+					<tr>
+						<td>Total Questions:</td>
+						<td id="totalCell"></td>
+					</tr>
+					<tr>
+						<td>Correct:</td>
+						<td id="correctCell"></td>
+					</tr>
+					<tr>
+						<td>Incorrect:</td>
+						<td id="incorrectCell"></td>
+					</tr>
+					<tr  id="scoreRow">
+						<td>Score: </td>
+						<td id="scoreCell"></td>
+					</tr>
+				</table>
+			</fieldset>
+		</div>
+		<div id="contact">
+		    <form action="sendMail" method="post">
+		        <fieldset>
+		        	<legend>Email Your Score</legend>
+		        	<div id="emailInput">
+			        	<label for="messageStatus"></label><br>
+			            <label for="sender_name">Your Name:</label>
+			            <input type="text" id="sender_name" name="sender_name" placeholder="Enter your full name" />
+						<br>
+			            <label for="email">Your Email:</label>
+			            <input type="email" id="sender_email" name = "sender_email" placeholder="Enter your email address" />
+						<br><hr>
+			            <label for="name">Recipient's Name:</label>
+			            <input type="text" id="recipient_name" name="recipient_name" placeholder="Enter recipients full name" />
+						<br>
+			            <label for="email">Recipient's Email:</label>
+			            <input type="email" id="recipient_email" name = "recipient_email" placeholder="Enter recipients email address" />
+						<br>
+			            <label for="subject">Subject:</label>
+			            <input type="text" id="subject" name = "subject" value="NetCentric Quiz Evaluation" size="30"/>
+						<br><hr>
+						<label for="messge">Message:</label><br>
+						<label id="message" name="message"></label>
+						<br><hr>
+			            <button type="submit" id="submit" value="Send message" />
+		        	</div>
+		        </fieldset>
+		    </form>
+		</div>
+	</body>
+</html>
