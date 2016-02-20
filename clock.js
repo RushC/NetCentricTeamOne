@@ -39,7 +39,7 @@ window.addEventListener("load", function() {
 	    var s = now.getSeconds();
 
 	    // Create a formatted string for the time.
-	    var timeString = (h < 10 ? "0" : "") + now.toLocaleTimeString();
+	    var timeString = (h < 10 ? "" : "") + now.toLocaleTimeString();
 
 	    // Set the time label's value to the time string.
 	    document.getElementById("current-time").innerHTML = timeString;

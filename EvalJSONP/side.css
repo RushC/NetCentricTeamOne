@@ -3,6 +3,7 @@ div#navDiv {
 }
 
 div#navDiv button {
+	position: relative;
 	display: block;
 	margin-bottom: 10px;
 	width: 100%;
