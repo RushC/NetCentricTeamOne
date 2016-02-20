@@ -46,6 +46,14 @@ function last(){
 		+ answer;
 }
 
+function submit(){
+	
+}
+
+function email(){
+	
+}
+
 /**
  * Loads the question currently stored in the cookie
  * into the form.
