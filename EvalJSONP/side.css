@@ -26,17 +26,22 @@ div#navDiv button {
 	cursor: pointer;
 	background-color: white;
 	background-size: auto auto;
+	opacity: 0.3;
+}
+
+div#navDiv button:disabled {
+	cursor: default;
 }
 
 div#navDiv button.hover {
 	border-radius: 5px;
 }
 
-#nextButton.hover, #previousButton.hover, #firstButton.hover, #lastButton.hover {
+#nextButton.hover:enabled, #previousButton.hover:enabled, #firstButton.hover:enabled, #lastButton.hover:enabled {
 	background-color: #FF5722;
 }
 
-#startButton.hover, #submitButton.hover, #emailButton.hover {
+#startButton.hover:enabled, #submitButton.hover:enabled, #emailButton.hover:enabled {
 	background-color: #009688;
 }
 
@@ -46,9 +51,10 @@ div#navDiv button:active {
 
 div#navDiv button#startButton {
 	background-image: url(start.png);
+	opacity: 1;
 }
 
-div#navDiv button#startButton:hover {
+div#navDiv button#startButton:hover:enabled {
 	background-image: url(start-hover.png);
 }
 
@@ -57,7 +63,7 @@ div#navDiv button#firstButton {
 	background-image: url(first.png);
 }
 
-div#navDiv button#firstButton:hover {
+div#navDiv button#firstButton:hover:enabled {
 	background-image: url(first-hover.png);
 }
 
@@ -66,7 +72,7 @@ div#navDiv button#previousButton {
 	background-image: url(left.png);
 }
 
-div#navDiv button#previousButton:hover {
+div#navDiv button#previousButton:hover:enabled {
 	background-image: url(left-hover.png);
 }
 
@@ -75,7 +81,7 @@ div#navDiv button#nextButton {
 	background-image: url(right.png);
 }
 
-div#navDiv button#nextButton:hover {
+div#navDiv button#nextButton:hover:enabled {
 	background-image: url(right-hover.png);
 }
 
@@ -84,7 +90,7 @@ div#navDiv button#lastButton {
 	background-image: url(last.png);
 }
 
-div#navDiv button#lastButton:hover {
+div#navDiv button#lastButton:hover:enabled {
 	background-image: url(last-hover.png);
 }
 
@@ -92,7 +98,7 @@ div#navDiv button#submitButton {
 	background-image: url(submit.png);
 }
 
-div#navDiv button#submitButton:hover {
+div#navDiv button#submitButton:hover:enabled {
 	background-image: url(submit-hover.png);
 }
 
@@ -100,6 +106,6 @@ div#navDiv button#emailButton {
 	background-image: url(email.png);
 }
 
-div#navDiv button#emailButton:hover {
+div#navDiv button#emailButton:hover:enabled {
 	background-image: url(email-hover.png);
 }

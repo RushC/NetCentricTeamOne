@@ -162,11 +162,14 @@ function updateUser(userID, answer, direction) {
 			users[userID].currentQuestion = 1;
 			break;
 		case "next":
-			users[userID].currentQuestion += 1;
-			//++users[userID].currentQuestion;
+			users[userID].currentQuestion++;
+			if (users[userID].currentQuestion > questions.length)
+				users[userID] = questions.length;
 			break;
 		case "previous":
-			--users[userID].currentQuestion;
+			users[userID].currentQuestion--;
+			if (users[userID].currentQuestion < 1)
+				users[userID].currentQuestion = 1;
 			break;
 		case "last":
 			users[userID].currentQuestion = questions.length;

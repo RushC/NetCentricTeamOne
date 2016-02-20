@@ -22,16 +22,16 @@ function start() {
 	// Give the document some time to load the new page and load the first question.
 	setTimeout(first, 100);
 
-	//document.getElementById("startButton").style.visibility = "hidden";
-	//$("#startButton").fadeOut();
-	$("#startButton").animate({left: '-250px'});
-	
-	document.getElementById("firstButton").disabled=false
-	document.getElementById("previousButton").disabled=false
-	document.getElementById("nextButton").disabled=false
-	document.getElementById("lastButton").disabled=false
-	document.getElementById("submitButton").disabled=false
-	document.getElementById("emailButton").disabled=false
+	// Animate the start button out.
+	//$("#startButton").animate({left: '-250px'});
+	$("#startButton").slideUp("fast");
+
+	// Animate the navigation buttons in.
+	$("#nextButton").animate({"opacity":1,"disabled":false},"fast");
+	$("#lastButton").animate({"opacity":1,"disabled":false},"fast");
+	$("#previousButton").animate({"opacity":1,"disabled":false},"fast");
+	$("#firstButton").animate({"opacity":1,"disabled":false},"fast");
+	$("#submitButton").animate({"opacity":1,"disabled":false},"fast");
 }
 
 function first() {
@@ -122,26 +122,24 @@ function loadQuestion(res) {
 	var current = res.questionNumber;
 	var total = res.questionTotal;
 	quizDocument.querySelector("#quizLegend").innerHTML = "Question " + current + " of " + total;
-
-	// Check if the previous button should be hidden.
-	quizDocument.querySelector("#prev").hidden = current == 1;
-	// Check whether the next button or the submit button should be displayed.
-	quizDocument.querySelector("#next").hidden = current == total;
-	quizDocument.querySelector("#submit").hidden = current != total;
-
 	
-	//Check whether the side buttons should be hidden
-	if(current == 1){
-		$("#previousButton").stop().animate({"opacity":0.3,"disabled":true},"fast");
-	}else{
-		$("#previousButton").stop().animate({"opacity":1,"disabled":false},"fast");
+	// Check whether the side buttons should be hidden
+	if(current == 1) {
+		$("#previousButton").animate({"opacity":0.3,"disabled":true},"fast").mouseleave();
+		$("#firstButton").animate({"opacity":0.3,"disabled":true},"fast").mouseleave();
+	}
+	else {
+		$("#previousButton").animate({"opacity":1,"disabled":false},"fast");
+		$("#firstButton").animate({"opacity":1,"disabled":false},"fast");
 	}
 	
-	if(current == total){
-		console.log("wat");
-		$("#nextButton").stop().animate({"opacity":0.3,"disabled":true},"fast");
-	}else{
-		$("#nextButton").stop().animate({"opacity":1,"disabled":false},"fast");
+	if(current == total) {
+		$("#nextButton").animate({"opacity":0.3,"disabled":true},"fast").mouseleave();
+		$("#lastButton").animate({"opacity":0.3,"disabled":true},"fast").mouseleave();
+	}
+	else {
+		$("#nextButton").animate({"opacity":1,"disabled":false},"fast");
+		$("#lastButton").animate({"opacity":1,"disabled":false},"fast");
 	}
 	
 	// Load the question object from the cookie.

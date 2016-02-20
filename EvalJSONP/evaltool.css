@@ -10,13 +10,11 @@ fieldset#questionField {
 	border-style: solid;
 	border-left: 0;
 	border-right: 0;
-	border-bottom: 0;
 	border-width: 6.6px;
 	border-color: #009688;
 }
 
 label#questionContent{
-	margin-bottom: 50px;
 	display: block;
 	font-size: 20px;
 }
@@ -61,6 +59,7 @@ img#questionImage {
 	margin-left: auto;
 	margin-right: auto;
 	margin-bottom: 50px;
+	margin-top: 50px;
 }
 
 button {
