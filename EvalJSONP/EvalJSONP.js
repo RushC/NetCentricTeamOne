@@ -19,10 +19,13 @@ function gettool(req, res) {
 }
 
 function posttool(req, res) {
-	console.log(req.body);
-	res.status(200);
-	res.send("World: 'Sup");
+	switch (req.path) {
+		case "/EvalJSONP/getID":
+			res.jsonp(JSON.stringify(addUser()); //add the user and send them their ID
+		}
 };
+
+function sendQuestion(res, id, old)
 
 
 
