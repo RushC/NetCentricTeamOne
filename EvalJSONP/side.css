@@ -1,9 +1,104 @@
 div#navDiv {
 	text-align: center;
+	border-radius: 10px;
+	background-color: white;
+	margin-left: auto;
+	margin-right: auto;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	position: relative;
+	border: solid 2px #FF5722;
+}
+
+button:focus {
+	outline: none;
 }
 
 div#navDiv button {
 	display: block;
-	margin-bottom: 10px;
-	width: 100%;
+	border-width: 0;
+	border-radius: 50%;
+	width: 50px;
+	height: 50px;
+	margin-left: auto;
+	margin-right: auto;
+	cursor: pointer;
+	background-color: white;
+	background-size: auto auto;
+}
+
+div#navDiv button.hover {
+	border-radius: 5px;
+}
+
+#nextButton.hover, #previousButton.hover, #firstButton.hover, #lastButton.hover {
+	background-color: #FF5722;
+}
+
+#startButton.hover, #submitButton.hover, #emailButton.hover {
+	background-color: #009688;
+}
+
+div#navDiv button:active {
+	border: solid 2px white;
+}
+
+div#navDiv button#startButton {
+	background-image: url(start.png);
+}
+
+div#navDiv button#startButton:hover {
+	background-image: url(start-hover.png);
+}
+
+div#navDiv button#firstButton {
+	display: inline;
+	background-image: url(first.png);
+}
+
+div#navDiv button#firstButton:hover {
+	background-image: url(first-hover.png);
+}
+
+div#navDiv button#previousButton {
+	display: inline;
+	background-image: url(left.png);
+}
+
+div#navDiv button#previousButton:hover {
+	background-image: url(left-hover.png);
+}
+
+div#navDiv button#nextButton {
+	display: inline;
+	background-image: url(right.png);
+}
+
+div#navDiv button#nextButton:hover {
+	background-image: url(right-hover.png);
+}
+
+div#navDiv button#lastButton {
+	display: inline;
+	background-image: url(last.png);
+}
+
+div#navDiv button#lastButton:hover {
+	background-image: url(last-hover.png);
+}
+
+div#navDiv button#submitButton {
+	background-image: url(submit.png);
+}
+
+div#navDiv button#submitButton:hover {
+	background-image: url(submit-hover.png);
+}
+
+div#navDiv button#emailButton {
+	background-image: url(email.png);
+}
+
+div#navDiv button#emailButton:hover {
+	background-image: url(email-hover.png);
 }

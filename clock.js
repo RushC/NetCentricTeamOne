@@ -6,10 +6,10 @@ window.addEventListener("load", function() {
 
 	// Have the analog clock appear when the digital clock is hovered over.
 	document.querySelector("#currentTimeDiv").onmouseenter = function() {
-		$("#clockDiv").toggle(500);
+		$("#clockDiv").stop().slideToggle("fast");
 	};
 	document.querySelector("#currentTimeDiv").onmouseleave = function() {
-		$("#clockDiv").toggle(500);
+		$("#clockDiv").stop().slideToggle("fast");
 	}
 
 	// Hide the analog clock initially.

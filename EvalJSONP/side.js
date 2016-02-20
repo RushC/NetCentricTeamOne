@@ -1,5 +1,25 @@
+$(document).ready(function() {
+	// Add hover functionality to each button.
+	var buttons = $("button");
+	for (var i = 0; i < buttons.length; i++) {
+		// Add the hover class when the mouse enters the button.
+		$(buttons[i]).mouseenter(function() {
+			$(this).switchClass("", "hover", 150);
+		});
+		// Remove the hover class when the mouse leaves the button.
+		$(buttons[i]).mouseleave(function() {
+			$(this).switchClass("hover", "", 150);
+		});
+	}
+
+	// Animate the navigation bar in.
+	$("#navDiv").hide().fadeIn();
+});
+
 function start() {
 	parent.document.getElementById("cframe").contentWindow.location = "/EvalJSONP/evaltool.html";
+	// Give the document some time to load the new page and load the first question.
+	setTimeout(first, 100);
 }
 
 function first() {
@@ -75,11 +95,14 @@ function email(){
  * into the form.
  */
 function loadQuestion(res) {
+	var quizDocument = parent.document.getElementById("cframe").contentDocument;
+
 	// Remove any old choices.
 	var oldChoice;
-	while (oldChoice = parent.document.getElementById("cframe").contentDocument.querySelector(".choice"))
+	while (oldChoice = quizDocument.querySelector(".choice"))
 		$(oldChoice).remove();
 
+	// Parse the response object.
 	var res = JSON.parse(res);
 	var quizDocument = parent.document.getElementById("cframe").contentDocument;
 
@@ -100,8 +123,10 @@ function loadQuestion(res) {
 	// Display the question text.
 	quizDocument.querySelector("#questionContent").innerHTML = question.text;
 	// Display the image if there is one.
-	if (question.img)
+	if (question.img) {
 		quizDocument.querySelector("#questionImage").src = question.img;
+		quizDocument.querySelector("#questionImage").style.display = "block";
+	}
 	else
 		quizDocument.querySelector("#questionImage").style.display = "none";
 

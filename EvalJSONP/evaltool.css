@@ -4,6 +4,7 @@ div#navDiv {
 }
 
 fieldset#questionField {
+	font-family: Roboto;
 	font-size: 18px;
 	font-weight: bolder;
 	border-style: solid;
@@ -47,8 +48,10 @@ div.choice.selected {
 	color: white;
 }
 
-div#choices {
+table#choices {
 	font-size: 13px;
+	position: absolute;
+	bottom: 20px;
 }
 
 img#questionImage {

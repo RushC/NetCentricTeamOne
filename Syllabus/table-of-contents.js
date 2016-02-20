@@ -143,15 +143,15 @@ window.onload = function() {
 		// Have the contentsToggle open the table of contents
 		// when hovered over.
 		contentsToggle.onmouseenter = function() {
-			$(contents).toggle(500);
-			$(contentsToggle).toggle(500);
+			$(contents).stop().toggle(500);
+			$(contentsToggle).stop().toggle(500);
 		}
 
 		// Have the toggle reappear and table disappear when
 		// the mouse leaves the table.
 		contents.onmouseleave = function() {
-			$(contents).toggle(500);
-			$(contentsToggle).toggle(500);
+			$(contents).stop().toggle(500);
+			$(contentsToggle).stop().toggle(500);
 		}
 
 		// Hide the table initially.
