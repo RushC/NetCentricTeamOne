@@ -18,8 +18,20 @@ $(document).ready(function() {
 
 function start() {
 	parent.document.getElementById("cframe").contentWindow.location = "/EvalJSONP/evaltool.html";
+
 	// Give the document some time to load the new page and load the first question.
 	setTimeout(first, 100);
+
+	//document.getElementById("startButton").style.visibility = "hidden";
+	//$("#startButton").fadeOut();
+	$("#startButton").animate({left: '-250px'});
+	
+	document.getElementById("firstButton").disabled=false
+	document.getElementById("previousButton").disabled=false
+	document.getElementById("nextButton").disabled=false
+	document.getElementById("lastButton").disabled=false
+	document.getElementById("submitButton").disabled=false
+	document.getElementById("emailButton").disabled=false
 }
 
 function first() {
@@ -117,6 +129,21 @@ function loadQuestion(res) {
 	quizDocument.querySelector("#next").hidden = current == total;
 	quizDocument.querySelector("#submit").hidden = current != total;
 
+	
+	//Check whether the side buttons should be hidden
+	if(current == 1){
+		$("#previousButton").stop().animate({"opacity":0.3,"disabled":true},"fast");
+	}else{
+		$("#previousButton").stop().animate({"opacity":1,"disabled":false},"fast");
+	}
+	
+	if(current == total){
+		console.log("wat");
+		$("#nextButton").stop().animate({"opacity":0.3,"disabled":true},"fast");
+	}else{
+		$("#nextButton").stop().animate({"opacity":1,"disabled":false},"fast");
+	}
+	
 	// Load the question object from the cookie.
 	var question = res.question;
 
