@@ -1,5 +1,5 @@
 function start(){
-	document.getElementById("cframe").contentDocument.location = "/EvalJSONP/evaltool.html";
+	document.getElementById("cframe").contentWindow.location = "/EvalJSONP/evaltool.html";
 }
 
 function first(){
@@ -11,6 +11,7 @@ function first(){
 		+ sessionStorage.getItem("userID")
 		+ "&answer="
 		+ answer;
+	document.body.appendChild(script);
 }
 
 function previous() {
@@ -22,6 +23,7 @@ function previous() {
 		+ sessionStorage.getItem("userID")
 		+ "&answer="
 		+ answer;
+	document.body.appendChild(script);
 }
 
 function next(){
@@ -33,6 +35,7 @@ function next(){
 		+ sessionStorage.getItem("userID")
 		+ "&answer="
 		+ answer;
+	document.body.appendChild(script);
 }
 
 function last(){
@@ -44,6 +47,7 @@ function last(){
 		+ sessionStorage.getItem("userID")
 		+ "&answer="
 		+ answer;
+	document.body.appendChild(script);
 }
 
 function done(){
