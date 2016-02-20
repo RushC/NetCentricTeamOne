@@ -3,29 +3,35 @@
  */
 
 function gettool(req, res) {
-	// Retrieve the file path.
-	var filename = gettool.root + req.path;
+	switch (req.path) {
+		case "/EvalJSONP/getID":
+			res.jsonp(JSON.stringify(addUser())); //add the user and send them their ID
+			break;
+		default:
+			// Retrieve the file path.
+			var filename = gettool.root + req.path;
 
-	// Send the file as a response.
-	res.sendfile(filename, function(err) {
-		// Log any error.
-		if (err) {
-			console.log(err);
-			res.status(err.status).end();
-		}
-		else
-			console.log("Sent " + filename);
-	});
+			// Send the file as a response.
+			res.sendfile(filename, function(err) {
+				// Log any error.
+				if (err) {
+					console.log(err);
+					res.status(err.status).end();
+				}
+				else
+					console.log("Sent " + filename);
+			});
+	}
 }
 
 function posttool(req, res) {
 	switch (req.path) {
 		case "/EvalJSONP/getID":
-			res.jsonp(JSON.stringify(addUser()); //add the user and send them their ID
-		}
+			res.jsonp(JSON.stringify(addUser())); //add the user and send them their ID
+	}
 };
 
-function sendQuestion(res, id, old)
+function sendQuestion(res, id, old) {}
 
 
 

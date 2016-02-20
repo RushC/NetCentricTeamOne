@@ -1,0 +1,9 @@
+div#navDiv {
+	text-align: center;
+}
+
+div#navDiv button {
+	display: block;
+	margin-bottom: 10px;
+	width: 100%;
+}
