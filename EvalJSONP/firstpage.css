@@ -2,6 +2,11 @@ div#introduction {
 	text-align: center;
 }
 
+div#startDiv {
+	margin-top: 20px;
+	text-align: center;
+}
+
 fieldset {
 	font-size: 18px;
 	font-weight: bolder;
@@ -11,4 +16,24 @@ fieldset {
 	border-bottom: 0;
 	border-width: 6.6px;
 	border-color: #009688;
+}
+
+button {
+	border-radius: 50%;
+	border: solid 1px #FF5722;
+	width: 50px;
+	height: 50px;
+	background-size: contain;
+	cursor: pointer;
+	margin-right: 20px;
+	margin-left: 20px;
+	padding: 2px;
+}
+
+button#start {
+	background: url(right.png);
+}
+
+button#start.hover {
+	background: url(right-hover.png);
 }

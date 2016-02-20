@@ -28,3 +28,20 @@ function createID() {
 		sessionStorage.setItem("userID", userID);
 	};
 }
+
+addEventListener("load", function() {
+	// Add hover behavior for all buttons.
+	var buttons = document.getElementsByTagName("button");
+	for (var i = 0; i < buttons.length; i++) {
+		// Add class hover whenever a button is hovered over.
+		buttons[i].onmouseenter = function() {
+			//this.className = "hover";
+			$(this).switchClass("", "hover");
+		};
+		// Remove the hover class whenever the button is left.
+		buttons[i].onmouseleave = function() {
+			//this.className = "";
+			$(this).switchClass("hover", "");
+		};
+	}
+});
