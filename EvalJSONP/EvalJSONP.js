@@ -7,6 +7,22 @@ function gettool(req, res) {
 		case "/EvalJSONP/getID":
 			res.jsonp(JSON.stringify(addUser())); //add the user and send them their ID
 			break;
+		case "/EvalJSONP/first":
+			updateUser(req.query.userID, req.query.answer, "first");
+			sendQuestion(userID, res);
+			break;
+		case "/EvalJSONP/next":
+			updateUser(req.query.userID, req.query.answer, "next");
+			sendQuestion(userID, res);
+			break;
+		case "/EvalJSONP/previous":
+			updateUser(req.query.userID, req.query.answer, "previous");
+			sendQuestion(userID, res);
+			break;
+		case "/EvalJSONP/last":
+			updateUser(req.query.userID, req.query.answer, "last");
+			sendQuestion(userID, res);
+			break;
 		default:
 			// Retrieve the file path.
 			var filename = gettool.root + req.path;
