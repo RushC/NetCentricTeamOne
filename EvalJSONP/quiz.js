@@ -24,21 +24,6 @@ addEventListener("load", function() {
  * into the form.
  */
 function loadQuestion() {
-
-	var request = new XMLHttpRequest();
-	request.open("POST", "/EvalJSONP/test");
-	request.setRequestHeader("Content-Type", "text/plain");
-	request.onreadystatechange = function() {
-		// Check if the response is ready.
-		if (request.readyState == 4 && request.status == 200)
-			alert("WE DID IT! THE WORLD SAID HELLO BACK!");
-
-		else
-			console.log("Don't stop...believing...");
-	};
-	request.send("Hello World");
-
-	/*
 	// Set the title of the form.
 	var current = getValue("current");
 	var total = getValue("total");
@@ -52,7 +37,7 @@ function loadQuestion() {
 
 	// Load the question object from the cookie.
 	var question = JSON.parse(getValue("question"));
-	
+
 	// Display the question text.
 	document.querySelector("#questionContent").innerHTML = question.text;
 	// Display the image if there is one.
@@ -100,7 +85,7 @@ function loadQuestion() {
 
 		// Add a click listener to the div.
 		div.addEventListener("click", function() {
-			// Set the radio button's checked 
+			// Set the radio button's checked
 			this.firstChild.checked = true;
 			// Add the selected class to the div.
 			$(this).switchClass("", "selected", "fast");
@@ -110,8 +95,7 @@ function loadQuestion() {
 				var d = this.parentElement.children[di];
 				if (d != this)
 					$(d).switchClass("selected", "");
-			}	
+			}
 		});
 	}
-	*/
 }
