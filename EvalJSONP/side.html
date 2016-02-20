@@ -2,15 +2,18 @@
 <html>
 	<head>
 		<link rel="stylesheet" href="side.css"></link>
+		<!-- jQuery and jQueryUI used for hover animations. -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 		<script src="side.js"></script>
 	</head>
 	<body>
 		<div id="navDiv">
-			<button id="startButton" onclick="start">Start</button>
-			<button id="firstButton" onclick="first">First</button>
-			<button id="previousButton" onclick="previous">Previous</button>
-			<button id="nextButton" onclick="next">Next</button>
-			<button id="lastButton" onclick="last">Last</button>
+			<button id="startButton" onclick="start()">Start</button>
+			<button id="firstButton" onclick="first()">First</button>
+			<button id="previousButton" onclick="previous()">Previous</button>
+			<button id="nextButton" onclick="next()">Next</button>
+			<button id="lastButton" onclick="last()">Last</button>
 			<button id="submitButton" onclick="done">Submit</button>
 			<button id="emailButton" onclick="email">Email</button>
 		</div>

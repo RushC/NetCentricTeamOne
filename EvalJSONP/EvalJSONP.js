@@ -1,27 +1,113 @@
+var nodemailer = require('nodemailer'); //for sending the quiz score via email
+var smtpTransport = nodemailer.createTransport(); //
+/**
+ * Constructor for a Question object.
+ *
+ * @param text - the text for the actual question.
+ * @param choices - an array of all of the answers to choose from
+ * @param img (optional) - the link to the image for the question
+ */
+function Question(text, choices, img) {
+	this.text = text;
+	this.choices = choices;
+	if (img)
+		this.img = img;
+}
+
+/**
+ * The list of all of the questions.
+ */
+var questions = [
+	new Question("What is the correct syntax to change the content of this element below:",
+		['document.getElementByName("p").innerHTML = "Hello World!";',
+		 '#demo.innerHTML = "Hello World!";',
+		 'document.getElement("p").innerHTML = "Hello World!";',
+		 'document.getElementById("demo").innerHTML = "Hello World!";'],
+		 'Q1.png'),
+	new Question("How do you round the number 17.6 to the nearest integer?",
+		['round(17.6)',
+		 'Math.round(17.6)',
+		 'rnd(17.6)',
+		 'Math.rnd(17.6)']),
+	new Question("How can you detect the user's browser name?",
+		['browser.name',
+		 'user.navName',
+		 'navigator.appName']),
+	new Question("What is the output of the following:",
+		['false',
+		 'true',
+		 'error',
+		 'undefined',
+		 'no output'
+		],
+		'Q4.png'),
+	new Question('What is the output of the following:',
+		['1',
+		 '3',
+		 '21',
+		 '"21"'],
+		 'Q5.png'),
+	new Question("How do you properly set a port for a node webserver to run?",
+		["server.port(8080, '127.0.0.1');",
+		 "server.host(8080, '127.0.0.1');",
+		 "server.listen(8080, '127.0.0.1');",
+		 "server.host('127.0.0.1', 8080);"]),
+	new Question("What is the output of the following:",
+		['true',
+		 'false',
+		 'error',
+		 'undefined'],
+		 'Q7.png'),
+	new Question("What is the output of the following:",
+		['true',
+		 'false',
+		 'undefined',
+		 'NaN'],
+		 'Q8.png'),
+	new Question("How do you open a second Web browser window?",
+		['document.openWin("http://www.google.com/")',
+		 'window.open("http://www.google.com/")',
+		 'document.open("http://www.google.com/")',
+		 'document.location("http://www.google.com/"']),
+	new Question("Which of the following will detect which DOM element has focus?",
+		['document.activeElement',
+		 'document.activeListener',
+		 'window.activeElement',
+		 'document.getElement'])
+];
+
+/**
+ * The list of all the answers for the question.
+ */
+ var answers = [3, 1, 2, 1, 1, 2, 1, 1, 2, 1];
+
 /**
  * Used for retrieving the webpage.
  */
 
 function gettool(req, res) {
+	// Retrieve the userID from the query.
+	var userID = req.query.userID;
+
 	switch (req.path) {
 		case "/EvalJSONP/getID":
 			res.jsonp(JSON.stringify(addUser())); //add the user and send them their ID
 			break;
 		case "/EvalJSONP/first":
 			updateUser(req.query.userID, req.query.answer, "first");
-			sendQuestion(userID, res);
+			sendQuestion(userID, res, "first");
 			break;
 		case "/EvalJSONP/next":
 			updateUser(req.query.userID, req.query.answer, "next");
-			sendQuestion(userID, res);
+			sendQuestion(userID, res, "next");
 			break;
 		case "/EvalJSONP/previous":
 			updateUser(req.query.userID, req.query.answer, "previous");
-			sendQuestion(userID, res);
+			sendQuestion(userID, res, "previous");
 			break;
 		case "/EvalJSONP/last":
 			updateUser(req.query.userID, req.query.answer, "last");
-			sendQuestion(userID, res);
+			sendQuestion(userID, res, "last");
 			break;
 		default:
 			// Retrieve the file path.
@@ -42,7 +128,6 @@ function gettool(req, res) {
 }
 
 function posttool(req, res) {
-
 	switch (req.path) {
 		case "/EvalJSONP/first":
 			updateUser(req.query.userID, req.query.answer, "first");
@@ -66,7 +151,7 @@ function posttool(req, res) {
 	}
 };
 
-function updateUser(userID, answer) {
+function updateUser(userID, answer, direction) {
 	//first save the answer for the current question:
 	if (answer) {
 		users[userID].answers[users[userID].currentQuestion - 1] = answer;
@@ -77,7 +162,8 @@ function updateUser(userID, answer) {
 			users[userID].currentQuestion = 1;
 			break;
 		case "next":
-			++users[userID].currentQuestion;
+			users[userID].currentQuestion += 1;
+			//++users[userID].currentQuestion;
 			break;
 		case "previous":
 			--users[userID].currentQuestion;
@@ -101,7 +187,6 @@ function sendQuestion(userID, res) {
 	//send the JSON notation for the sendObj as a response:
 	res.jsonp(JSON.stringify(sendObj));	
 }
-
 
 //constructor for user object:
 function User() {

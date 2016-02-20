@@ -1,52 +1,64 @@
-function start(){
-	document.getElementById("cframe").contentWindow.location = "/EvalJSONP/evaltool.html";
+function start() {
+	parent.document.getElementById("cframe").contentWindow.location = "/EvalJSONP/evaltool.html";
 }
 
-function first(){
-	var answer = document.getElementById("cframe").contentDocument.querySelector("input:checked").value
+function first() {
+	var answer = parent.document.getElementById("cframe").contentDocument.querySelector("input:checked");
 
 	var script = document.createElement("SCRIPT");
 	script.src = "/EvalJSONP/first"
 		+ "?callback=loadQuestion&userID="
-		+ sessionStorage.getItem("userID")
-		+ "&answer="
-		+ answer;
+		+ sessionStorage.getItem("userID");
+
+	// Check if the user selected an answer.
+	if (answer)
+		script.src += "&answer=" + answer.value;
+
 	document.body.appendChild(script);
 }
 
 function previous() {
-	var answer = document.getElementById("cframe").contentDocument.querySelector("input:checked").value
+	var answer = parent.document.getElementById("cframe").contentDocument.querySelector("input:checked");
 
 	var script = document.createElement("SCRIPT");
 	script.src = "/EvalJSONP/previous"
 		+ "?callback=loadQuestion&userID="
-		+ sessionStorage.getItem("userID")
-		+ "&answer="
-		+ answer;
+		+ sessionStorage.getItem("userID");
+
+	// Check if the user selected an answer.
+	if (answer)
+		script.src += "&answer=" + answer.value;
+
 	document.body.appendChild(script);
 }
 
 function next(){
-	var answer = document.getElementById("cframe").contentDocument.querySelector("input:checked").value
+	var answer = parent.document.getElementById("cframe").contentDocument.querySelector("input:checked");
 
 	var script = document.createElement("SCRIPT");
 	script.src = "/EvalJSONP/next"
 		+ "?callback=loadQuestion&userID="
-		+ sessionStorage.getItem("userID")
-		+ "&answer="
-		+ answer;
+		+ sessionStorage.getItem("userID");
+
+	// Check if the user selected an answer.
+	if (answer)
+		script.src += "&answer=" + answer.value;
+
 	document.body.appendChild(script);
 }
 
 function last(){
-	var answer = document.getElementById("cframe").contentDocument.querySelector("input:checked").value
+	var answer = parent.document.getElementById("cframe").contentDocument.querySelector("input:checked");
 
 	var script = document.createElement("SCRIPT");
 	script.src = "/EvalJSONP/last"
 		+ "?callback=loadQuestion&userID="
-		+ sessionStorage.getItem("userID")
-		+ "&answer="
-		+ answer;
+		+ sessionStorage.getItem("userID");
+
+	// Check if the user selected an answer.
+	if (answer)
+		script.src += "&answer=" + answer.value;
+
 	document.body.appendChild(script);
 }
 
@@ -63,7 +75,13 @@ function email(){
  * into the form.
  */
 function loadQuestion(res) {
-	var quizDocument = document.getElementById("cframe").contentDocument;
+	// Remove any old choices.
+	var oldChoice;
+	while (oldChoice = parent.document.getElementById("cframe").contentDocument.querySelector(".choice"))
+		$(oldChoice).remove();
+
+	var res = JSON.parse(res);
+	var quizDocument = parent.document.getElementById("cframe").contentDocument;
 
 	// Set the title of the form.
 	var current = res.questionNumber;
