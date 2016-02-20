@@ -46,7 +46,7 @@ function last(){
 		+ answer;
 }
 
-function submit(){
+function done(){
 	
 }
 
