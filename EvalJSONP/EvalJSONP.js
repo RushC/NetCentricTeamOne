@@ -82,9 +82,8 @@ var questions = [
  var answers = [3, 1, 2, 1, 1, 2, 1, 1, 2, 1];
 
 /**
- * Used for retrieving the webpage.
+ * Used for handling GET requests.
  */
-
 function gettool(req, res) {
 	// Retrieve the userID from the query.
 	var userID = req.query.userID;
@@ -127,24 +126,51 @@ function gettool(req, res) {
 	}
 }
 
+/**
+ * Used for handling POST requests.
+ */
 function posttool(req, res) {
+    // Determine what is being posted.
 	switch (req.path) {
-		case "/EvalJSONP/first":
-			updateUser(req.query.userID, req.query.answer, "first");
-			sendQuestion(userID, res);
-			break;
-		case "/EvalJSONP/next":
-			updateUser(req.query.userID, req.query.answer, "next");
-			sendQuestion(userID, res);
-			break;
-		case "/EvalJSONP/previous":
-			updateUser(req.query.userID, req.query.answer, "previous");
-			sendQuestion(userID, res);
-			break;
-		case "/EvalJSONP/last":
-			updateUser(req.query.userID, req.query.answer, "last");
-			sendQuestion(userID, res);
-			break;
+        // Posted when the quiz is complete and should be graded.
+        case "/EvalJSONP/submitQuiz":
+            // Check if one last answer was submitted.
+            if (req.body.answer)
+                updateUser(req.body.userID, req.body.answer, "first");
+            
+            // Grade the specified user's quiz.
+            var grade = users[req.body.userID].grade();
+            
+            // Send back the user's grade.
+            res.send(grade.toString()).status(200).end();
+            break;
+            
+        // Posted when an email should be sent.
+        case "/EvalJSONP/sendMail":
+            var mymail = {};
+            // Set the sender's and recipients' address.
+            mymail['from'] = req.body.sender_name+"<"+req.body.sender_email+">";
+            mymail['to'] = req.body.recipient_name+"<"+req.body.recipient_email+">";
+            mymail['subject'] = req.body.subject;
+
+            // Set the content of the message to "[sender's name] scored [correct]/[total] on the Netcentric javascript quiz."
+            mymail['text'] = req.body.sender_name + " scored " + users[req.body.userID].correct + "/" + questions.length + " on the Netcentric javascript quiz.";
+
+            // Send the email:
+            smtpTransport.sendMail(mymail, function(error, info){
+               if(error){
+                   console.log(error);
+                   res.cookie("messageStatus", "fail");
+                   res.redirect('evaluation.html');
+               }else{
+                   console.log("Message sent: " + info.response);
+                   res.cookie("messageStatus", "success");
+                   res.redirect('evaluation.html');
+               }
+            });
+            break;
+        
+        // Invalid post handler.
 		default:
 			console.log("Some noob can't use the internets lol");
 			res.status(400).end();
@@ -195,8 +221,27 @@ function sendQuestion(userID, res) {
 function User() {
 	this.currentQuestion = 1; //question of the quiz the user is viewing
 	this.answers = []; //answers to the questions submitted by the user
+    
+    /**
+     * Determines how many answers the user had correct and adds the
+     * numberCorrect property to the user.
+     *
+     * @param correctAnswers (required) - the array of correct answers
+     * @returns - the number of answers the user had correct.
+     */
+    this.grade = function() {
+        // Add the correct property to the object.
+        this.correct = 0;
+        
+        // Iterate through all of the correct answers.
+        for (var i = 0; i < answers.length; i++)
+            // Compare the user's answer to the correct answer.
+            if (this.answers[i] == answers[i])
+                this.correct++;
+            
+        return this.correct;
+    }
 }
-
 
 //object holding all the users:
 var users = {};

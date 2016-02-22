@@ -1,6 +1,7 @@
 window.addEventListener("load", function() {
 	insertScore();
 	document.querySelector("#sender_name").onchange = updateMessage
+    document.querySelector("#userID").value = sessionStorage.getItem("userID");
 
 	// Display an appropriate label for the message status:
 	var messageStatusLabel = document.querySelector("label[for='messageStatus']");
@@ -37,8 +38,9 @@ window.addEventListener("load", function() {
  * Inserts the score data into the table.
  */
 function insertScore() {
-	var total = getValue("total");
-	var correct = getValue("correct");
+    // Load the total and grade from the session storage.
+	var total = sessionStorage.getItem("total");
+	var correct = sessionStorage.getItem("grade");
 
 	document.querySelector("#totalCell").innerHTML = total;
 	document.querySelector("#correctCell").innerHTML = correct;
@@ -50,8 +52,9 @@ function insertScore() {
  * Update the message content to match the name.
  */
 function updateMessage() {
-	var total = getValue("total");
-	var correct = getValue("correct");
+	// Load the total and grade from the session storage.
+	var total = sessionStorage.getItem("total");
+	var correct = sessionStorage.getItem("grade");
 	var name = document.querySelector("#sender_name").value;
 
 	document.querySelector("#message").innerHTML = name + " scored " + correct + "/" + total + " on the Netcentric Javascript Quiz.";

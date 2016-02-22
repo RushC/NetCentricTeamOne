@@ -31,7 +31,7 @@
 			</fieldset>
 		</div>
 		<div id="contact">
-		    <form action="sendMail" method="post">
+		    <form id="emailForm" action="sendMail" method="post">
 		        <fieldset>
 		        	<legend>Email Your Score</legend>
 		        	<div id="emailInput">
@@ -53,8 +53,7 @@
 						<br><hr>
 						<label for="messge">Message:</label><br>
 						<label id="message" name="message"></label>
-						<br><hr>
-			            <button type="submit" id="submit" value="Send message" />
+                        <input type="hidden" id="userID" name="userID"></input>
 		        	</div>
 		        </fieldset>
 		    </form>

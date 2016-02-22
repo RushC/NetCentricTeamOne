@@ -10,12 +10,17 @@
 	<body>
 		<div id="navDiv">
 			<button id="startButton" onclick="start()"></button>
-			<button id="firstButton" onclick="first()" disabled="true"></button>
-			<button id="lastButton" onclick="last()" disabled="true"></button>
-			<button id="previousButton" onclick="previous()" disabled="true"></button>
-			<button id="nextButton" onclick="next()" disabled="true"></button>
-			<button id="submitButton" onclick="done" disabled="true"></button>
-			<button id="emailButton" onclick="email" disabled="true"></button>
+            <span id="quizNav">
+                <button id="firstButton" onclick="first()" disabled="true"></button>
+                <button id="lastButton" onclick="last()" disabled="true"></button>
+                <button id="previousButton" onclick="previous()" disabled="true"></button>
+                <button id="nextButton" onclick="next()" disabled="true"></button>
+                <button id="submitButton" onclick="done()" disabled="true"></button>
+            </span>
+			<button id="emailButton" onclick="email()" disabled="true"></button>
 		</div>
+        <form id="quiz" method="post">
+            <input type="hidden"></input>
+        </form>
 	</body>
 </html>

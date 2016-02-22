@@ -95,11 +95,58 @@ function last(){
 }
 
 function done(){
-	
+	// Ensure the user would like to submit the quiz.
+    if (!confirm("Are you sure you would like to submit your quiz?", "Yes", "No"))
+        return;
+    
+    // Create a new XMLHttpRequest.
+    var req = new XMLHttpRequest();
+    
+    // Open the request.
+    req.open('POST', '/EvalJSONP/submitQuiz');
+    
+    req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    
+    // Add the userID to the request params.
+    var params = "userID=" + sessionStorage.getItem("userID");
+    
+    // Add the current answer to the request header.
+    var answer = parent.document.getElementById("cframe").contentDocument.querySelector("input:checked");
+    if (answer)
+        params += "&answer=" + answer.value;
+    
+    // Define response handler.
+    req.onreadystatechange = function() {        
+        // Check if the response is ready.
+        if (req.readyState != 4)
+            return;
+        
+        // Check if the request was successful.
+        if (req.status != 200) {
+            alert("Something went wrong!");
+            return;
+        }
+        
+        // Save the grade received from the server's response in the session storage.
+        sessionStorage.setItem("grade", req.responseText);
+        
+        // Redirect the content frame to the evaluation page.
+        parent.document.getElementById("cframe").contentWindow.location = "/EvalJSONP/evaluation.html";
+        
+        // Remove the navigation buttons.
+        $("#quizNav").slideUp();
+        
+        // Make the email button visible.
+        $("#emailButton").animate({"opacity":1,"disabled":false},"fast");
+    };
+    
+    // Send the request.
+    req.send(params);
 }
 
 function email(){
-	
+	// Submit the evaluation's email form.
+    parent.document.getElementById("cframe").contentDocument.getElementById("emailForm").submit();
 }
 
 /**
@@ -122,6 +169,9 @@ function loadQuestion(res) {
 	var current = res.questionNumber;
 	var total = res.questionTotal;
 	quizDocument.querySelector("#quizLegend").innerHTML = "Question " + current + " of " + total;
+    
+    // Save the question total to the session storage for the evaluation page.
+    sessionStorage.setItem("total", total);
 	
 	// Check whether the side buttons should be hidden
 	if(current == 1) {
