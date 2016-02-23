@@ -129,7 +129,7 @@ function gettool(req, res) {
 /**
  * Used for handling POST requests.
  */
-function posttool(req, res) {
+function posttool(req, res) {    
     // Determine what is being posted.
 	switch (req.path) {
         // Posted when the quiz is complete and should be graded.

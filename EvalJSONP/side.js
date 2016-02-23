@@ -23,7 +23,6 @@ function start() {
 	setTimeout(first, 100);
 
 	// Animate the start button out.
-	//$("#startButton").animate({left: '-250px'});
 	$("#startButton").slideUp("fast");
 
 	// Animate the navigation buttons in.
@@ -173,23 +172,23 @@ function loadQuestion(res) {
     // Save the question total to the session storage for the evaluation page.
     sessionStorage.setItem("total", total);
 	
-	// Check whether the side buttons should be hidden
+	// Check whether the side buttons should be disabled.
 	if(current == 1) {
-		$("#previousButton").animate({"opacity":0.3,"disabled":true},"fast").mouseleave();
-		$("#firstButton").animate({"opacity":0.3,"disabled":true},"fast").mouseleave();
+        $("#previousButton").animate({"opacity":0.3},"fast").mouseleave()[0].disabled = true;
+		$("#firstButton").animate({"opacity":0.3},"fast").mouseleave()[0].disabled = true;
 	}
 	else {
-		$("#previousButton").animate({"opacity":1,"disabled":false},"fast");
-		$("#firstButton").animate({"opacity":1,"disabled":false},"fast");
+		$("#previousButton").animate({"opacity":1},"fast")[0].disabled = false;
+		$("#firstButton").animate({"opacity":1},"fast")[0].disabled = false;
 	}
 	
 	if(current == total) {
-		$("#nextButton").animate({"opacity":0.3,"disabled":true},"fast").mouseleave();
-		$("#lastButton").animate({"opacity":0.3,"disabled":true},"fast").mouseleave();
+        $("#nextButton").animate({"opacity":0.3},"fast").mouseleave()[0].disabled = true;
+		$("#lastButton").animate({"opacity":0.3},"fast").mouseleave()[0].disabled = true;
 	}
 	else {
-		$("#nextButton").animate({"opacity":1,"disabled":false},"fast");
-		$("#lastButton").animate({"opacity":1,"disabled":false},"fast");
+		$("#nextButton").animate({"opacity":1},"fast")[0].disabled = false;
+		$("#lastButton").animate({"opacity":1},"fast")[0].disabled = false;
 	}
 	
 	// Load the question object from the cookie.
