@@ -6,6 +6,7 @@ var ChatServer  = require('./CloudChat/ChatServer');
 var syllabus  = require('./Syllabus/syllabus');
 var evaltool  = require('./EvalTool/evaltool');
 var evalJSONtool = require('./EvalJSONP/EvalJSONP.js');
+var schedule = require('./Schedule/schedule.js');
 
 //setup the root path
 var root = __dirname;
