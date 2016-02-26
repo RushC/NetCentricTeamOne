@@ -82,6 +82,7 @@ app.get('/CloudChat/*', ChatServer.gettool);
 app.get('/Syllabus/*', syllabus.gettool);
 app.get("/EvalTool/*", evaltool.gettool);
 app.get("/EvalJSONP/*", evalJSONtool.gettool);
+app.get("/Schedule/*", evalJSONtool.gettool);
 
 // Handle form submitions in evaltool.js.
 app.post("/EvalTool/eval*", evaltool.posttool);
