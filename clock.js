@@ -6,10 +6,10 @@ window.addEventListener("load", function() {
 
 	// Have the analog clock appear when the digital clock is hovered over.
 	document.querySelector("#currentTimeDiv").onmouseenter = function() {
-		$("#clockDiv").toggle(500);
+		$("#clockDiv").stop().slideToggle("fast");
 	};
 	document.querySelector("#currentTimeDiv").onmouseleave = function() {
-		$("#clockDiv").toggle(500);
+		$("#clockDiv").stop().slideToggle("fast");
 	}
 
 	// Hide the analog clock initially.
@@ -39,7 +39,7 @@ window.addEventListener("load", function() {
 	    var s = now.getSeconds();
 
 	    // Create a formatted string for the time.
-	    var timeString = (h < 10 ? "0" : "") + now.toLocaleTimeString();
+	    var timeString = (h < 10 ? "" : "") + now.toLocaleTimeString();
 
 	    // Set the time label's value to the time string.
 	    document.getElementById("current-time").innerHTML = timeString;

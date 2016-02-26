@@ -5,12 +5,14 @@ var bodyParser  = require('body-parser');
 var ChatServer  = require('./CloudChat/ChatServer');
 var syllabus  = require('./Syllabus/syllabus');
 var evaltool  = require('./EvalTool/evaltool');
+var evalJSONtool = require('./EvalJSONP/EvalJSONP.js');
 
 //setup the root path
 var root = __dirname;
 ChatServer.gettool.root = root;
 syllabus.gettool.root = root;
 evaltool.gettool.root = root;
+evalJSONtool.gettool.root = root;
 
 var app     = express();
 app.use(bodyParser.json());
@@ -79,10 +81,12 @@ function threeregion(req, res) {
 app.get('/CloudChat/*', ChatServer.gettool);
 app.get('/Syllabus/*', syllabus.gettool);
 app.get("/EvalTool/*", evaltool.gettool);
+app.get("/EvalJSONP/*", evalJSONtool.gettool);
 
 // Handle form submitions in evaltool.js.
 app.post("/EvalTool/eval*", evaltool.posttool);
-app.post("/EvalTool/sendMail", evaltool.mailtool)
+app.post("/EvalTool/sendMail", evaltool.mailtool);
+app.post("/EvalJSONP/*", evalJSONtool.posttool); 
 
 
 app.listen(8080, function() {

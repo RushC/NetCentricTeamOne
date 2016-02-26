@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" href="side.css"></link>
+		<!-- jQuery and jQueryUI used for animations. -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+		<script src="side.js"></script>
+	</head>
+	<body>
+		<div id="navDiv">
+			<button id="startButton" onclick="start()"></button>
+            <span id="quizNav">
+                <button id="firstButton" onclick="first()" disabled="true"></button>
+                <button id="lastButton" onclick="last()" disabled="true"></button>
+                <button id="previousButton" onclick="previous()" disabled="true"></button>
+                <button id="nextButton" onclick="next()" disabled="true"></button>
+                <button id="submitButton" onclick="done()" disabled="true"></button>
+            </span>
+			<button id="emailButton" onclick="email()" disabled="true"></button>
+		</div>
+        <form id="quiz" method="post">
+            <input type="hidden"></input>
+        </form>
+	</body>
+</html>

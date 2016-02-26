@@ -81,7 +81,7 @@ var questions = [
  */
  var answers = [3, 1, 2, 1, 1, 2, 1, 1, 2, 1];
 
- /**
+/**
  * Determines the number of answers the user guessed correctly and
  * adds it to the cookie.
  */
