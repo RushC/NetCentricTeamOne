@@ -14,6 +14,7 @@ ChatServer.gettool.root = root;
 syllabus.gettool.root = root;
 evaltool.gettool.root = root;
 evalJSONtool.gettool.root = root;
+schedule.gettool.root = root;
 
 var app     = express();
 app.use(bodyParser.json());
