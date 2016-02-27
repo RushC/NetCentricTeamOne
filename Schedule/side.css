@@ -1,0 +1,19 @@
+div#sideDiv{
+	text-align: center;
+	background-color: white;
+	margin-left: auto;
+	margin-right: auto;
+	padding-top: 20px;
+	padding-bottom: 20px;
+	position: relative;
+	border: solid 2px #FF5722;
+	border-radius: 20px;
+}
+
+.sideMessage {
+	font-family: "Roboto";
+    font-weight: bold;
+    color: blue; 
+    margin: 0;
+    font-weight: bold;
+}

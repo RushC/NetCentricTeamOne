@@ -17,12 +17,6 @@ var schedule = [
             },
             {
                 num: 3,
-                date: "W: 1/20",
-                topic: "Server-Side Javascript",
-                notes: "David 10"
-            },
-            {
-                num: 3,
                 date: "F: 1/15",
                 topic: "Regular Expressions",
                 notes: "David 12"
@@ -366,7 +360,9 @@ function gettool(req, res) {
     var filename = gettool.root + req.path;
     switch(req.path) {
         case "/Schedule/content" : //request for the content of the schedule:
+			console.log("about to send content as some sick jsonp");
             res.jsonp(JSON.stringify(schedule));
+			break;
         default : //generic request handling:
             // Retrieve the file path.
 			var filename = gettool.root + req.path;
@@ -383,17 +379,6 @@ function gettool(req, res) {
 			});
 			break;
     }
-    // Send the file as a response.
-    res.send
-    res.sendfile(filename, function(err) {
-        // Log any error.
-        if (err) {
-            console.log(err);
-            res.status(err.status).end();
-        }
-        else
-            console.log("Sent " + filename);
-    });
 }
 
 exports.gettool = gettool;
