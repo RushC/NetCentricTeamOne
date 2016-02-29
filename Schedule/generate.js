@@ -1,8 +1,14 @@
 addEventListener("load", doStuffInANamedFunctionBecauseBracketsDoesntWantToCooperate);
 
+/**
+ * NOTE: We apologize for Matt's poor naming conventions.
+ */
 function doStuffInANamedFunctionBecauseBracketsDoesntWantToCooperate() {
     //request the schedule information from the server:
     $.get("/Schedule/content?callback=addContent");
+    
+    // Load side page.
+    parent.document.getElementById("sframe").contentDocument.location = "/Schedule/side.html";
 }
 
 function addContent(res) {
@@ -24,8 +30,7 @@ function addContent(res) {
             if (row == 0) {
                 var $tag = $("<td headers=\"tag\" rowspan=" + res[tag].classes.length + " >" +res[tag].tag + "</td>").attr("class", shading);
             }
-			//else { var $tag = $("<td></td>").attr("class", shading); }
-            //redifine shading to highlight based on the type of class (lecture, lab, presentation):
+            //redefine shading to highlight based on the type of class (lecture, lab, presentation):
             switch (res[tag].classes[row].type) {
                 case "Lab" : shading = "lab"; break;
                 case "Presentation" : shading = "presentation"; break;
@@ -39,8 +44,10 @@ function addContent(res) {
 			var $notes = $("<td>" + res[tag].classes[row].notes + "</td>").attr("class", shading);
             //append everything to the row:
             $row.append($num).append($date);
+            // Ensure that a tag was created for the current row.
 			if ($tag) {
 				$row.append($tag);
+                $tag = undefined;
 			}
 			$row.append($topic).append($project).append($notes);
 			//$tag.attr("rowspan", res[tag].classes.length);
@@ -52,7 +59,7 @@ function addContent(res) {
 	
 	
 	$("body").append($table);
-	//fix undefined shit:
+	// Clear all undefined values.
 	$("td").each(function() {
 		if (this.innerHTML == "undefined")
 		this.innerHTML = " ";
