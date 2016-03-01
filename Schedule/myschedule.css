@@ -1,10 +1,11 @@
 table{
 	border-collapse: collapse;
-
+    border: solid 2px black;
+    text-align: center;
 }
 
 td{
-	border: 1px black solid;
+	border: solid 2px black
 }
 
 th{
@@ -30,12 +31,13 @@ tfoot{
 
 
 .lab{
-	font-style: italic;
-	background-color: #90CAF9;
+	background-color: #009688;
+    color: white;
 }
 
 .presentation{
-	background-color: #FFAB91;
+	background-color: #FF5722;
+    color: white
 }
 
 .lecture{
@@ -43,5 +45,5 @@ tfoot{
 }
 
 .quiz{
-	color: red;
+    font-weight: bold;
 }
