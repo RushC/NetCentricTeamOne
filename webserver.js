@@ -7,6 +7,7 @@ var syllabus  = require('./Syllabus/syllabus');
 var evaltool  = require('./EvalTool/evaltool');
 var evalJSONtool = require('./EvalJSONP/EvalJSONP.js');
 var schedule = require('./Schedule/schedule.js');
+var canvasanimation = require('./CanvasAnimation/tool.js');
 
 //setup the root path
 var root = __dirname;
@@ -15,6 +16,7 @@ syllabus.gettool.root = root;
 evaltool.gettool.root = root;
 evalJSONtool.gettool.root = root;
 schedule.gettool.root = root;
+canvasanimation.gettool.root = root;
 
 var app     = express();
 app.use(bodyParser.json());
@@ -85,6 +87,7 @@ app.get('/Syllabus/*', syllabus.gettool);
 app.get("/EvalTool/*", evaltool.gettool);
 app.get("/EvalJSONP/*", evalJSONtool.gettool);
 app.get("/Schedule/*", schedule.gettool);
+app.get("/CanvasAnimation/*", canvasanimation.gettool);
 
 // Handle form submitions in evaltool.js.
 app.post("/EvalTool/eval*", evaltool.posttool);
