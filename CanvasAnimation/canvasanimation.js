@@ -1,3 +1,20 @@
+/**
+ * Constructor for a Flag object.
+ *
+ * @param image - the fully loaded image to draw
+ * @param yOffset - the distance from the top to draw the flag
+ *                  (not accounting for any transformations based on rotation).
+ * @param maxWidth - the width of the ellipse that represents the flag's path.
+ * @param maxHeight - the height of the ellipse that represents the flag's path.
+ * @param startRotation - the starting location of the flag on its path in degrees.
+ *                        0 degrees places the flag at the bottom of the ellipse.
+ * @param rotationAmount - how many times the flag should rotate in one cycle arounf
+ *                         the ellipse.
+ * @param scaleFactor - the amount the flag should be scaled when the flag is at the
+ *                      top of its ellipse. This is used to give the flag a sense of
+ *                      depth as it travels to the "background". A factor of 1.0 means
+ *                      the flag will never change size.
+ */
 function Flag(image, yOffset, maxWidth, maxHeight, startRotation, rotationAmount, scaleFactor) {
     this.image = image;
     this.rotation = startRotation % 360 || 0;
@@ -6,12 +23,19 @@ function Flag(image, yOffset, maxWidth, maxHeight, startRotation, rotationAmount
     this.scaleFactor = scaleFactor || 0.5;
     this.rotationAmount = rotationAmount || 2
     this.yOffset = yOffset;
+    
     // Create the canvas to draw the flag on.
     this.canvas = document.createElement('canvas');
     this.canvas.width = image.width;
     this.canvas.height = image.height;
     this.y = 0;
     
+    /**
+     * Draws the flag to the specified drawing context.
+     *
+     * @param drawingContext - the drawing context on which the flag should be drawn.
+     *                         This context will not be transformed in any way.
+     */
     this.draw = function(drawingContext) {
         var context = this.canvas.getContext('2d');
         
@@ -53,31 +77,67 @@ function Flag(image, yOffset, maxWidth, maxHeight, startRotation, rotationAmount
     }
 }
 
+// All of the images that can be used.
 var imgs = [];
-var flags = [];
+var flags;
+// The list of flag image resources.
 var flagNames = [ "usa", "uk", "china", "japan", "france", "italy", "germany", "canada", "korea", "africa", "brazil" ];
+// A counter used to know when all of the flags are loaded.
 var readyImgs = flagNames.length;
 
-addEventListener("load", function() {    
+addEventListener("load", function() {
+    // Set the size of the main canvas.
+    document.getElementById("flag").width = document.body.clientWidth;
+    document.getElementById("flag").height = document.body.clientWidth;
+    
+    // Load all of the flag image resources.
     for (var i = 0; i < flagNames.length; ++i) {
+        // Load the image.
         imgs[i] = new Image();
         imgs[i].src = "/CanvasAnimation/" + flagNames[i] + "_flag.png";
+        
+        // Listen for when the image is loaded.
         imgs[i].onload = function() {
-            if (--readyImgs == 0)
+            // If the loaded image was the last one...
+            if (--readyImgs == 0) {
+                // Create all of the flags.
                 makeFlags();
+                // Request the first animation frame.
+                requestAnimationFrame(drawFlags);
+            }
         }
     }
 });
 
+// Creates all of the flag objects based on the current settings.
 function makeFlags() {
+    // Clear any flags that may already exist.
+    flags = [];
+    // Determine the number of flags in each row.
     var flagsPerRow = 12;
+    // Determine how many rows of flags there will be.
     var rows = 4;
-    for (var i = 0; i < flagsPerRow; ++i) {
+    
+    // Loop through each of the rows and create each of the flags.
+    for (var i = 0; i < flagsPerRow; ++i)
             for (var j = 0; j < rows; ++j)
-                flags.push(new Flag(imgs[Math.round(Math.random() * (imgs.length - 1))], j*(document.getElementById("flag").height / rows), 800, 75, i * (360/flagsPerRow), Math.floor(Math.random()*10)));
-        }
-    requestAnimationFrame(drawFlags);
+                flags.push(new Flag(
+                    // Choose a random image.
+                    imgs[Math.round(Math.random() * (imgs.length - 1))], 
+                    // Calculate the y offset.
+                    j*(document.getElementById("flag").height / rows), 
+                    // Scale the width of the path based on the width of the main canvas.
+                    document.getElementById("flag").width - 300,
+                    // Let the user choose the height of the path.
+                    75,
+                    // Space out all of the flags in each row equally.
+                    i * (360/flagsPerRow), 
+                    // Randomly determine how fast each flag spins.
+                    Math.floor(Math.random()*5)
+                ));   
 }
+
+// Draws each of the flags on the main canvas.
 function drawFlags() {
     // Clear the canvas holding the animation.
     var canvas = document.getElementById("flag");
@@ -86,9 +146,16 @@ function drawFlags() {
     // Draw all of the flags to the canvas.
     for (var i = 0; i < flags.length; i++) {
         flags[i].draw(canvas.getContext('2d'));
-        flags[i].rotation = (flags[i].rotation + 1) % 360;
+        
+        // Increment the flags' rotations for the next frame.
+        flags[i].rotation = (flags[i].rotation + 0.5) % 360;
     }
+    
+    // Sort the flags based on their perceived closeness to the front.
+    // This allows the flags that are in the fron to be drawn over top
+    // of the flags in the back in the next frame of animation.
     flags.sort(function(a, b) { return (a.y - a.yOffset) - (b.y - b.yOffset)});
+    
     // Request another animation frame to continue the animation.
     requestAnimationFrame(drawFlags);
 }
