@@ -38,7 +38,7 @@ function Flag(image, yOffset, maxWidth, maxHeight, startRotation, rotationAmount
      */
     this.draw = function(drawingContext) {
         var context = this.canvas.getContext('2d');
-        
+                
         // Clear the canvas.
         context.clearRect(0, 0, this.canvas.width, this.canvas.height)
         
@@ -79,11 +79,13 @@ function Flag(image, yOffset, maxWidth, maxHeight, startRotation, rotationAmount
 
 // All of the images that can be used.
 var imgs = [];
-var flags;
+var flags = [];
 // The list of flag image resources.
 var flagNames = [ "usa", "uk", "china", "japan", "france", "italy", "germany", "canada", "korea", "africa", "brazil" ];
 // A counter used to know when all of the flags are loaded.
 var readyImgs = flagNames.length;
+// The ID for the animation's callback request.
+var request;
 
 addEventListener("load", function() {
     // Set the size of the main canvas.
@@ -101,23 +103,29 @@ addEventListener("load", function() {
             // If the loaded image was the last one...
             if (--readyImgs == 0) {
                 // Create all of the flags.
-                makeFlags();
-                // Request the first animation frame.
-                requestAnimationFrame(drawFlags);
+                makeFlags(4, 12, 0.5, 5, 1);
+                // Load the side panel.
+                parent.document.getElementById("sframe").contentDocument.location = "/CanvasAnimation/side.html";
             }
         }
     }
 });
 
-// Creates all of the flag objects based on the current settings.
-function makeFlags() {
+// Creates all of the flag objects based on the given settings.
+function makeFlags(rows, flagsPerRow, degrees, maxSpinRate, minSpinRate) {
+    console.log(rows);
+    console.log(flagsPerRow);
+    console.log(degrees);
+    // Cancel any requests for an animation frame callback.
+    if (request)
+        cancelAnimationFrame(request);
+            
+    // Define the degrees increment.
+    this.degrees = degrees;
+    
     // Clear any flags that may already exist.
     flags = [];
-    // Determine the number of flags in each row.
-    var flagsPerRow = 12;
-    // Determine how many rows of flags there will be.
-    var rows = 4;
-    
+        
     // Loop through each of the rows and create each of the flags.
     for (var i = 0; i < flagsPerRow; ++i)
             for (var j = 0; j < rows; ++j)
@@ -133,8 +141,11 @@ function makeFlags() {
                     // Space out all of the flags in each row equally.
                     i * (360/flagsPerRow), 
                     // Randomly determine how fast each flag spins.
-                    Math.floor(Math.random()*5)
-                ));   
+                    minSpinRate + Math.floor(Math.random()*(maxSpinRate - minSpinRate))
+                ));
+    
+    // Request the first animation frame.
+    request = requestAnimationFrame(drawFlags);
 }
 
 // Draws each of the flags on the main canvas.
@@ -148,14 +159,14 @@ function drawFlags() {
         flags[i].draw(canvas.getContext('2d'));
         
         // Increment the flags' rotations for the next frame.
-        flags[i].rotation = (flags[i].rotation + 0.5) % 360;
+        flags[i].rotation = (flags[i].rotation + degrees) % 360;
     }
-    
+        
     // Sort the flags based on their perceived closeness to the front.
-    // This allows the flags that are in the fron to be drawn over top
+    // This allows the flags that are in the front to be drawn over top
     // of the flags in the back in the next frame of animation.
     flags.sort(function(a, b) { return (a.y - a.yOffset) - (b.y - b.yOffset)});
     
     // Request another animation frame to continue the animation.
-    requestAnimationFrame(drawFlags);
+    request = requestAnimationFrame(drawFlags);
 }
