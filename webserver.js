@@ -95,6 +95,6 @@ app.post("/EvalTool/sendMail", evaltool.mailtool);
 app.post("/EvalJSONP/*", evalJSONtool.posttool); 
 
 
-app.listen(26500, function() {
+app.listen(8080, function() {
   console.log('Server running at http://127.0.0.1:8080/');
 });

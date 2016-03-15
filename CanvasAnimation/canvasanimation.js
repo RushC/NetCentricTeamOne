@@ -133,7 +133,7 @@ function makeFlags(rows, flagsPerRow, degrees, maxSpinRate, minSpinRate) {
                     // Choose a random image.
                     imgs[Math.round(Math.random() * (imgs.length - 1))], 
                     // Calculate the y offset.
-                    j*120, 
+                    j*100, 
                     // Scale the width of the path based on the width of the main canvas.
                     document.getElementById("flag").width - 300,
                     // Let the user choose the height of the path.
