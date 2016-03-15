@@ -62,7 +62,7 @@ function Flag(image, yOffset, maxWidth, maxHeight, startRotation, rotationAmount
         var y = -(this.image.height - this.canvas.height) / 2;
         
         // Draw the image to the flag's canvas.
-        context.drawImage(this.image, x, y, w, h);
+        context.drawImage(this.image, x, 0, w, h);
         
         // Make the flag darker as it gets further back.
         context.fillStyle = "rgba(0, 0, 0, " + (-scale + 1) + ")";
@@ -70,7 +70,7 @@ function Flag(image, yOffset, maxWidth, maxHeight, startRotation, rotationAmount
         
         // Calculate the location where the flag should be drawn.
         x = Math.sin(this.rotation * Math.PI / 180) * this.maxWidth / 2 + this.maxWidth / 2;
-        this.y = this.yOffset + Math.cos(this.rotation * Math.PI / 180) * this.maxHeight / 2 + this.maxHeight / 2;
+        this.y = this.yOffset  + Math.cos(this.rotation * Math.PI / 180) * this.maxHeight / 2 + this.maxHeight / 2;
         
         // Draw the the flag's canvas to the drawing context.
         drawingContext.drawImage(this.canvas, x, this.y);
@@ -133,11 +133,11 @@ function makeFlags(rows, flagsPerRow, degrees, maxSpinRate, minSpinRate) {
                     // Choose a random image.
                     imgs[Math.round(Math.random() * (imgs.length - 1))], 
                     // Calculate the y offset.
-                    j*(document.getElementById("flag").height / rows), 
+                    j*120, 
                     // Scale the width of the path based on the width of the main canvas.
                     document.getElementById("flag").width - 300,
                     // Let the user choose the height of the path.
-                    75,
+                    200 + j * 58,
                     // Space out all of the flags in each row equally.
                     i * (360/flagsPerRow), 
                     // Randomly determine how fast each flag spins.
