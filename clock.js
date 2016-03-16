@@ -43,51 +43,25 @@ window.addEventListener("load", function() {
 
 	    // Set the time label's value to the time string.
 	    document.getElementById("current-time").innerHTML = timeString;
-	     
-	    // Retrieve the graphics context for the clock element.
-	    var canvas = document.getElementById("clock");
-	    var context = canvas.getContext("2d");
-	    var maxArmRadius = 75;
-	     
-	    // Center position for the clock.
-	    var centerX = canvas.width / 2;
-	    var centerY = canvas.height / 2;
-	    
-	    /**
-		 * Draws a clock arm.
-		 * 
-		 * Parameters:
-		 * 		rotation - the number of degrees the arm should be rotated from 12:00
-		 *		thickness - the thickness of the arm
-		 *		length - the length of the arm as a percentage of the maximum hand radius.
-		 *		color - the color of the arm
-	     */
-	    function drawArm(rotation, thickness, length, color) {
-	    	// Convert the rotation from degrees to radians.
-	        var armRadians = (2 * Math.PI * rotation) - (Math.PI / 2);
+		
+		
+		// Draw the clock using SVG
+		function svgClock() {
+			// Get current time.. again
+			var now = new Date();
+			var h, m, s;
+			h = 30 * ((now.getHours() % 12) + now.getMinutes() / 60);
+			m = 6 * now.getMinutes();
+			s = 6 * now.getSeconds();
 
-	        // Calculate the endpoint for the arm to be drawn to.
-	        var endX = centerX + Math.cos(armRadians) * (length * maxArmRadius);
-	        var endY = centerY + Math.sin(armRadians) * (length * maxArmRadius);
-	     
-	     	// Set the context's line width and stroke style.
-	        context.lineWidth = thickness;
-	        context.strokeStyle = color;
-	     	
-	     	// Draw a line from the clock's center to the calculated endpoint.
-	        context.beginPath();
-	        context.moveTo(centerX, centerY);
-	        context.lineTo(endX, endY);
-	        context.stroke();
-	    }
-
-	    // Draw the clock background image on the canvas.
-	    // (This also prevents the need to clear the canvas each second.)
-	    context.drawImage(clockBG, 0, 0);
-
-	    // Draw each arm over the clock. 
-	    drawArm(((h + (m/60) + (s/3600))/12), 6, 0.50, '#000000');  				// Hour
-	    drawArm(((m + (s/60))/60),  4, 0.75, "#000000"); 							// Minute
-	    drawArm(s / 60, 2, 1.00, '#FF0000'); 				  						// Second
+			// Find pointers of the clock, rotate
+			document.getElementById('h_pointer').setAttribute('transform', 'rotate(' + h + ', 50, 50)');
+			document.getElementById('m_pointer').setAttribute('transform', 'rotate(' + m + ', 50, 50)'); 
+			document.getElementById('s_pointer').setAttribute('transform', 'rotate(' + s + ', 50, 50)');
+			
+			// Loop every second
+			setTimeout(svgClock, 1000);
+		}
+	    svgClock();
 	}
 });
