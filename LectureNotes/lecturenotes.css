@@ -1,7 +1,36 @@
 div#notesDiv{
-	
+    overflow-y: scroll;
+    height: 500px;
+    display: block;
 }
 
 div#textDiv{
 	
+}
+
+div.note {
+	font-weight: strong;
+	border-radius: 2px;
+	border: solid #009688 1px;
+	margin-bottom: 5px;
+	opacity: 0.9;
+	padding: 5px;
+	overflow: hidden;
+	font-size: 15px;
+	cursor: pointer;
+}
+
+div.note label {
+	cursor: pointer;
+}
+
+div.note.hover {
+	background-color: #009688;
+	color: white;
+}
+
+div.note.selected {
+	background-color: #FF5722;
+	border-color: #FF5722;
+	color: white;
 }

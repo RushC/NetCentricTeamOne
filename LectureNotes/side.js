@@ -18,7 +18,12 @@ $(document).ready(function() {
 });
 
 function addNotes() {
-	
+	var lectureID = prompt("Please input the lecture ID:");
+    var slideID = prompt("Please input the slide ID:");
+    var noteID = prompt("Please input the note ID:");
+    var note = prompt("Please input the note:");
+    
+    parent.document.getElementById("cframe").contentWindow.addNote(lectureID, slideID, noteID, note);
 }
 
 function deleteNotes() {
