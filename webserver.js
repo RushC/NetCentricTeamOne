@@ -8,6 +8,7 @@ var evaltool  = require('./EvalTool/evaltool');
 var evalJSONtool = require('./EvalJSONP/EvalJSONP.js');
 var schedule = require('./Schedule/schedule.js');
 var canvasanimation = require('./CanvasAnimation/tool.js');
+var lecturenotes = require('./LectureNotes/tool.js');
 
 //setup the root path
 var root = __dirname;
@@ -17,6 +18,7 @@ evaltool.gettool.root = root;
 evalJSONtool.gettool.root = root;
 schedule.gettool.root = root;
 canvasanimation.gettool.root = root;
+lecturenotes.gettool.root = root;
 
 var app     = express();
 app.use(bodyParser.json());
@@ -82,17 +84,19 @@ function threeregion(req, res) {
 	  });
 }
 
+// Specify GET tools.
 app.get('/CloudChat/*', ChatServer.gettool);
 app.get('/Syllabus/*', syllabus.gettool);
 app.get("/EvalTool/*", evaltool.gettool);
 app.get("/EvalJSONP/*", evalJSONtool.gettool);
 app.get("/Schedule/*", schedule.gettool);
 app.get("/CanvasAnimation/*", canvasanimation.gettool);
+app.get("/LectureNotes/*", lecturenotes.gettool);
 
-// Handle form submitions in evaltool.js.
+// Specify POST tools.
 app.post("/EvalTool/eval*", evaltool.posttool);
 app.post("/EvalTool/sendMail", evaltool.mailtool);
-app.post("/EvalJSONP/*", evalJSONtool.posttool); 
+app.post("/EvalJSONP/*", evalJSONtool.posttool);
 
 
 app.listen(8080, function() {
