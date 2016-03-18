@@ -11,21 +11,56 @@ div#sideDiv{
 	font-family: "Roboto";
 }
 
+button:focus {
+	outline: none;
+}
+
 div#sideDiv button {
-	border-radius: 5px;
+	position: relative;
+	display: block;
+	border-width: 0;
+	border-radius: 50%;
+	width: 50px;
+	height: 50px;
+	margin-left: auto;
+	margin-right: auto;
+	cursor: pointer;
 	background-color: white;
-    border: solid 1.5px #FF5722;
-    padding: 10px 10px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 15px;
-    margin: 4px 2px;
-    cursor: pointer;
-	color: blue;
-	font-weight: bold;
+	background-size: auto auto;
+}
+
+div#sideDiv button.hover {
+	border-radius: 5px;
+}
+
+#addButton.hover, #viewButton.hover {
+    background-color: #009688;
+}
+
+div#sideDiv #deleteButton.hover {
+    background-color: #FF5722;
+}
+
+div#sideDiv button#addButton {
+	background-image: url(add.png);
 }
 
 div#sideDiv button#addButton:hover {
-	color: white;
+	background-image: url(add-hover.png);
+}
+
+div#sideDiv button#deleteButton {
+	background-image: url(delete.png);
+}
+
+div#sideDiv button#deleteButton:hover {
+	background-image: url(delete-hover.png);
+}
+
+div#sideDiv button#viewButton {
+	background-image: url(search.png);
+}
+
+div#sideDiv button#viewButton:hover {
+	background-image: url(search-hover.png);
 }
