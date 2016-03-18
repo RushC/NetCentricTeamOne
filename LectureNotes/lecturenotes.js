@@ -9,7 +9,7 @@ addEventListener("load", function() {
         alert("Could not open notes database.");
     }
     
-    //otherwise set the database variable:
+    //otherwise set the database and generate the radio buttons:
     req.onsuccess = function(e) {
         var database = event.target.result;
         //handle any database errors:
@@ -24,7 +24,7 @@ addEventListener("load", function() {
             div.removeChild(div.firstChild);
         }
         //populate the div with radio buttons for the notes:
-        var objectStore database.transaction("notes").objectStore("notes");
+        var objectStore = database.transaction("notes").objectStore("notes");
         //use a cursor to iterate through each note:
         objectStore.openCursor().onsuccess = function(e) {
             var cursor = e.target.result;
@@ -76,6 +76,15 @@ addEventListener("load", function() {
             }
         }
     }
-    
-    //
+
+    req.onupgradeneeded = function(e) {
+        //get the database object:
+        var database = e.target.result;
+        //create the objectStore for notes:
+        var objectStore = db.createObjectStore("notes", {keyPath: "noteID"});
+        //create indexes for lectureID, slideID, and note:
+        objectStore.createIndex("lectureID", "lectureID", {unique : false});
+        objectStore.createIndex("slideID", "slideID", {unique : false});
+        objectStore.createIndex("note", "note", {unique : false});
+    }
 });
