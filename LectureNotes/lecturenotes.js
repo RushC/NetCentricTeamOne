@@ -81,7 +81,7 @@ addEventListener("load", function() {
         //get the database object:
         var database = e.target.result;
         //create the objectStore for notes:
-        var objectStore = db.createObjectStore("notes", {keyPath: "noteID"});
+        var objectStore = database.createObjectStore("notes", {keyPath: "noteID"});
         //create indexes for lectureID, slideID, and note:
         objectStore.createIndex("lectureID", "lectureID", {unique : false});
         objectStore.createIndex("slideID", "slideID", {unique : false});
