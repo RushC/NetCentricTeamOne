@@ -1,11 +1,5 @@
-div#notesDiv{
-    overflow-y: scroll;
-    height: 500px;
-    display: block;
-}
-
 div#textDiv{
-	
+	height: 200px;
 }
 
 div.note {
@@ -33,4 +27,8 @@ div.note.selected {
 	background-color: #FF5722;
 	border-color: #FF5722;
 	color: white;
+}
+
+textarea {
+    width: 97%;
 }

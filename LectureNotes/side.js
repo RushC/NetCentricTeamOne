@@ -27,7 +27,15 @@ function addNotes() {
 }
 
 function deleteNotes() {
-	
+	// Retrieve the selected note.
+    var note = $("input:checked", parent.document.getElementById("cframe").contentDocument);
+    
+    // Ensure a note is selected.
+    if (!note)
+        return;
+    
+    // Delete the note from the list.
+    parent.document.getElementById("cframe").contentWindow.deleteNote(note[0].value);
 }
 
 function viewNotes() {

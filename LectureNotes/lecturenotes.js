@@ -30,12 +30,15 @@ addEventListener("load", function() {
             var cursor = e.target.result;
             if (cursor) {
                 // Add a radio button for the note.
-                addNoteButton(cursor.value.lectureID + ", " 
-                              + cursor.value.slideID + ", " 
-                              + cursor.value.noteID);
+                addNoteButton(
+                    "Section " + cursor.value.lectureID
+                               + " - Slide "+ cursor.value.slideID
+                               + " - Note " + cursor.value.noteID,
+                    cursor.value.noteID, cursor.value.note
+                );
                 
                 // Set the text for the text field.
-                $("#noteTextField").value = cursor.value.note;
+                $("#noteTextField").html(cursor.value.note);
                 
                 //repeat for the next note in the database:
                 cursor.continue();
@@ -55,6 +58,18 @@ addEventListener("load", function() {
     }
 });
 
+/**
+ * Adds a note with the specified fields to the database.
+ *
+ * @param lectureID
+ *      the ID of the lecture that the inserted note belongs to
+ * @param slideID
+ *      the ID of the slide that the inserted note belongs to
+ * @param noteID
+ *      the ID of the note
+ * @param note
+ *      the content of the note
+ */
 function addNote(lectureID, slideID, noteID, note) {
     var objectStore = database.transaction(["notes"], "readwrite").objectStore("notes");
     objectStore.add({
@@ -63,10 +78,35 @@ function addNote(lectureID, slideID, noteID, note) {
         lectureID: lectureID,
         note: note
     });
-    addNoteButton(lectureID + ", " + slideID + ", " + noteID);
+    // Add a radio button for the note.
+    addNoteButton(
+        "Section " + lectureID
+                   + " - Slide " + slideID
+                   + " - Note " + noteID,
+        noteID, note
+    );
 }
 
-function addNoteButton(text) {
+/**
+ * Removes the specified note from the list.
+ *
+ * @param noteID
+ *      the ID of the note to remove from the list.
+ */
+function deleteNote(noteID) {
+    // Retrieve the object store for the notes.
+    var objectStore =  database.transaction(["notes"], "readwrite").objectStore("notes");
+    console.log(noteID);
+    
+    // Remove the note from the database.
+    objectStore.delete(noteID);
+
+    // Remove the radio button for the note.
+    var button = $('input[value="' + noteID + '"]');
+    $(button[0].parentElement).slideUp("fast");
+}
+
+function addNoteButton(text, noteID, note) {
     //get the div that holds the radio buttons:
     var div = document.getElementById("notesDiv");
     
@@ -78,6 +118,8 @@ function addNoteButton(text) {
     button.type = "radio";
     button.name = "note";
     button.hidden = true;
+    // Set the radio button's value to the note's identification.
+    button.value = noteID;
 
     // Add listeners to change the style when the div is hovered over.
     buttonDiv.addEventListener("mouseenter", function() {
@@ -86,7 +128,24 @@ function addNoteButton(text) {
     buttonDiv.addEventListener("mouseleave", function() {
         $(this).switchClass("hover", "", 100);
     });
+    
+    //create the label describing the note:
+    var label = document.createElement("LABEL");
+    label.innerHTML = text;
 
+    //add the label and button to the buttonDiv:
+    buttonDiv.appendChild(button);
+    buttonDiv.appendChild(label);
+    
+    // Add a div containing the note's contents.
+    var content = document.createElement('TEXTAREA');
+    content.innerHTML = note;
+    content.style.display = "block";
+    content.rows = 10;
+    //content.cols = 100;
+    $(content).hide();
+    buttonDiv.appendChild(content);
+    
     // Add a click listener to the div.
     buttonDiv.addEventListener("click", function() {
         // Set the radio button's checked
@@ -97,21 +156,17 @@ function addNoteButton(text) {
         for (var di = 0; di < this.parentElement.children.length; di++) {
             // Ensure the div is not the current div.
             var d = this.parentElement.children[di];
-            if (d != this)
+            if (d != this) {
                 $(d).switchClass("selected", "");
+                $(d.lastChild).slideUp("fast");
+            }
         }
+        // Expose the content.
+        $(content).slideDown("fast");
     });
-
-    //create the label describing the note:
-    var label = document.createElement("LABEL");
-    label.innerHTML = text;
-
-    //add the label and button to the buttonDiv:
-    buttonDiv.appendChild(button);
-    buttonDiv.appendChild(label);
 
     //add the buttonDiv to the div:
     div.appendChild(buttonDiv);
     
-    $(buttonDiv).hide().fadeIn();
+    $(buttonDiv).hide().slideDown("fast");
 }
