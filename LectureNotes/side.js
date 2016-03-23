@@ -18,26 +18,8 @@ $(document).ready(function() {
 });
 
 function addNotes() {
-	var lectureID = prompt("Please input the lecture ID:");
-    var slideID = prompt("Please input the slide ID:");
-    var noteID = prompt("Please input the note ID:");
-    var note = prompt("Please input the note:");
+	var lectureID = prompt("Please input the lecture number:");
+    var slideID = prompt("Please input the slide number:");
     
-    parent.document.getElementById("cframe").contentWindow.addNote(lectureID, slideID, noteID, note);
-}
-
-function deleteNotes() {
-	// Retrieve the selected note.
-    var note = $("input:checked", parent.document.getElementById("cframe").contentDocument);
-    
-    // Ensure a note is selected.
-    if (!note)
-        return;
-    
-    // Delete the note from the list.
-    parent.document.getElementById("cframe").contentWindow.deleteNote(note[0].value);
-}
-
-function viewNotes() {
-	
+    parent.document.getElementById("cframe").contentWindow.addNote(lectureID, slideID, "");
 }

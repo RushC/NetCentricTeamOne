@@ -31,9 +31,9 @@ addEventListener("load", function() {
             if (cursor) {
                 // Add a radio button for the note.
                 addNoteButton(
-                    "Section " + cursor.value.lectureID
-                               + " - Slide "+ cursor.value.slideID
-                               + " - Note " + cursor.value.noteID,
+                    "Note " + cursor.value.noteID 
+                                + ": Lecture " + cursor.value.lectureID
+                                + " - Slide "+ cursor.value.slideID,
                     cursor.value.noteID, cursor.value.note
                 );
                 
@@ -50,7 +50,7 @@ addEventListener("load", function() {
         //get the database object:
         var database = e.target.result;
         //create the objectStore for notes:
-        var objectStore = database.createObjectStore("notes", {keyPath: "noteID"});
+        var objectStore = database.createObjectStore("notes", {keyPath: "noteID", autoIncrement: true});
         //create indexes for lectureID, slideID, and note:
         objectStore.createIndex("lectureID", "lectureID", {unique : false});
         objectStore.createIndex("slideID", "slideID", {unique : false});
@@ -70,21 +70,44 @@ addEventListener("load", function() {
  * @param note
  *      the content of the note
  */
-function addNote(lectureID, slideID, noteID, note) {
+function addNote(lectureID, slideID, note) {
     var objectStore = database.transaction(["notes"], "readwrite").objectStore("notes");
     objectStore.add({
-        noteID: noteID,
         slideID: slideID,
         lectureID: lectureID,
         note: note
-    });
-    // Add a radio button for the note.
-    addNoteButton(
-        "Section " + lectureID
-                   + " - Slide " + slideID
-                   + " - Note " + noteID,
-        noteID, note
-    );
+    }).onsuccess = function(e) {
+        // Add a radio button for the note.
+        addNoteButton(
+            "NEW"   + ": Lecture " + lectureID
+                    + " - Slide "+ slideID,
+            e.target.result.noteID, note
+        );
+    };
+}
+
+/**
+ * Saves the specified note for the specified noteID stored in
+ * the databse.
+ * 
+ * @param noteID - the database key for the note object to modify.
+ * @param note - thr note to save to the note object.
+ */
+function saveNote(noteID, note) {
+    // Open the object store where all f the notes are stored,
+    var objectStore = database.transaction(["notes"], "readwrite").objectStore("notes");
+    
+    console.log(note);
+    
+    var transaction = objectStore.get(noteID);
+    // Wait for a success message.
+    transaction.onsuccess = function(e) {        
+        var oldNote = e.target.result;
+        oldNote.note = note;
+        
+        // Update the note.
+        objectStore.put(oldNote);
+    };
 }
 
 /**
@@ -138,13 +161,36 @@ function addNoteButton(text, noteID, note) {
     buttonDiv.appendChild(label);
     
     // Add a div containing the note's contents.
+    var contentDiv = document.createElement('DIV');
     var content = document.createElement('TEXTAREA');
+    var saveButton = document.createElement('BUTTON');
+    var deleteButton = document.createElement('BUTTON');
+    
+    // Add the div to the button div.
+    contentDiv.appendChild(content);
+    contentDiv.appendChild(saveButton);
+    contentDiv.appendChild(deleteButton);
+    buttonDiv.appendChild(contentDiv);
+    
+    // Set the settings for the textarea.
     content.innerHTML = note;
     content.style.display = "block";
     content.rows = 10;
-    //content.cols = 100;
-    $(content).hide();
-    buttonDiv.appendChild(content);
+    
+    // Set the settings for the save button.
+    saveButton.innerHTML = "Save";
+    saveButton.onclick = function() {
+        saveNote(noteID, content.value);
+    }
+    
+    // Set the settings for the delete button.
+    deleteButton.innerHTML = "Delete";
+    deleteButton.onclick = function() {
+        deleteNote(noteID);
+    }
+    
+    // Hide the content initially.
+    $(contentDiv).hide();
     
     // Add a click listener to the div.
     buttonDiv.addEventListener("click", function() {
@@ -162,7 +208,7 @@ function addNoteButton(text, noteID, note) {
             }
         }
         // Expose the content.
-        $(content).slideDown("fast");
+        $(contentDiv).slideDown("fast");
     });
 
     //add the buttonDiv to the div:
