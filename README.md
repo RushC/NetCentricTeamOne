@@ -15,3 +15,5 @@
 ![](Screenshots/Schedule1.PNG)
 
 ![](Screenshots/Animation1.gif)
+
+![](Screenshots/LectureNotes1.gif)
