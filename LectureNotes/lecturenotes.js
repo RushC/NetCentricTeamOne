@@ -79,9 +79,10 @@ function addNote(lectureID, slideID, note) {
     }).onsuccess = function(e) {
         // Add a radio button for the note.
         addNoteButton(
-            "NEW"   + ": Lecture " + lectureID
+            "Note " + e.target.result
+                    + ": Lecture " + lectureID
                     + " - Slide "+ slideID,
-            e.target.result.noteID, note
+            e.target.result, note
         );
     };
 }
