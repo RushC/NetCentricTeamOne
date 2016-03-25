@@ -84,6 +84,11 @@ function threeregion(req, res) {
 	  });
 }
 
+
+app.get('/RosterJSP*, function(req, res) {
+	res.redirect("http://localhost:8080/WebRoster/roster.jsp");
+});
+
 // Specify GET tools.
 app.get('/CloudChat/*', ChatServer.gettool);
 app.get('/Syllabus/*', syllabus.gettool);
@@ -99,6 +104,6 @@ app.post("/EvalTool/sendMail", evaltool.mailtool);
 app.post("/EvalJSONP/*", evalJSONtool.posttool);
 
 
-app.listen(8080, function() {
-  console.log('Server running at http://127.0.0.1:8080/');
+app.listen(8888, function() {
+  console.log('Server running at http://127.0.0.1:8888/');
 });
