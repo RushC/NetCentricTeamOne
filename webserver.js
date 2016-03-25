@@ -86,8 +86,8 @@ function threeregion(req, res) {
 	  });
 }
 
-app.get('/RosterJSP*', function(req, res) {
-	res.redirect("http://localhost:8080/WebRoster/roster.jsp");
+app.get('/WebRoster/Roster.jsp', function(req, res) {
+	res.redirect("http://localhost:8080/WebRoster/Roster.jsp");
 });
 
 // Specify GET tools.
