@@ -84,6 +84,14 @@ function threeregion(req, res) {
 	  });
 }
 
+app.get('/Services/services.html', function (req, res) {
+	fs.readFile('Services/services.html', 'utf8', function (err,data) {
+		if (err) {
+			return console.log(err);	
+		}
+	res.send(data);
+	});	
+});
 
 app.get('/RosterJSP*', function(req, res) {
 	res.redirect("http://localhost:8080/WebRoster/roster.jsp");
