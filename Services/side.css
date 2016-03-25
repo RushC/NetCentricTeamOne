@@ -1,4 +1,4 @@
-div#sideDiv{
+.sideDiv{
 	text-align: center;
 	background-color: white;
 	margin-left: auto;
@@ -10,9 +10,21 @@ div#sideDiv{
 	border-radius: 20px;
 }
 
-.sideMessage {
-	font-family: "Roboto";
-    font-weight: bold;
-    color: blue; 
-    margin: 0;
+legend{
+	text-align: center;
+	background-color: white;
+	margin-left: auto;
+	margin-right: auto;
+	position: relative;
+	border: solid 2px #FF5722;
+	border-radius: 20px;
+	color: #009688;
+	font-weight: bold;
+	font-family: Roboto;
+	padding-left: 3px;
+	padding-right: 3px;	
+}
+
+button{
+	
 }
