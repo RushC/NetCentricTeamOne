@@ -9,6 +9,7 @@ var evalJSONtool = require('./EvalJSONP/EvalJSONP.js');
 var schedule = require('./Schedule/schedule.js');
 var canvasanimation = require('./CanvasAnimation/tool.js');
 var lecturenotes = require('./LectureNotes/tool.js');
+var services = require('./Services/tool.js');
 
 //setup the root path
 var root = __dirname;
@@ -19,6 +20,7 @@ evalJSONtool.gettool.root = root;
 schedule.gettool.root = root;
 canvasanimation.gettool.root = root;
 lecturenotes.gettool.root = root;
+services.gettool.root = root;
 
 var app     = express();
 app.use(bodyParser.json());
@@ -84,15 +86,6 @@ function threeregion(req, res) {
 	  });
 }
 
-app.get('/Services/services.html', function (req, res) {
-	fs.readFile('Services/services.html', 'utf8', function (err,data) {
-		if (err) {
-			return console.log(err);	
-		}
-	res.send(data);
-	});	
-});
-
 app.get('/RosterJSP*', function(req, res) {
 	res.redirect("http://localhost:8080/WebRoster/roster.jsp");
 });
@@ -105,6 +98,7 @@ app.get("/EvalJSONP/*", evalJSONtool.gettool);
 app.get("/Schedule/*", schedule.gettool);
 app.get("/CanvasAnimation/*", canvasanimation.gettool);
 app.get("/LectureNotes/*", lecturenotes.gettool);
+app.get("/Services/*", services.gettool);
 
 // Specify POST tools.
 app.post("/EvalTool/eval*", evaltool.posttool);
