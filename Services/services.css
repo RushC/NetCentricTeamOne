@@ -1,0 +1,49 @@
+table{
+	border-collapse: collapse;
+    border: solid 2px black;
+    text-align: center;
+}
+
+td{
+	border: solid 2px black
+}
+
+th{
+	font-style: italic;
+	background-color: #FF5722;
+	color: white;
+}
+
+tfoot{
+	background-color: #696969;
+	font-weight: bold;
+	text-align: center;
+	color: white;
+}
+.light{
+	
+}
+
+.dark{
+	background-color: #607D8B;
+	color: white;
+}
+
+
+.lab{
+	background-color: #009688;
+    color: white;
+}
+
+.presentation{
+	background-color: #FF5722;
+    color: white;
+}
+
+.lecture{
+	
+}
+
+.quiz{
+    font-weight: bold;
+}
