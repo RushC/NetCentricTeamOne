@@ -18,5 +18,10 @@ $(document).ready(function() {
 
 function rosterJSP()
 {
-	parent.document.getElementById("cframe").contentWindow.location = "http://localhost:8888/WebRoster/Roster.jsp"
+	parent.document.getElementById("cframe").contentWindow.location = "http://localhost:8080/WebRoster/Roster.jsp"
+}
+
+function rosterMVC()
+{
+	parent.document.getElementById("cframe").contentWindow.location = "http://localhost:8080/WebRosterMVC/Roster.jsp"
 }
