@@ -1,5 +1,8 @@
 *Thumbs.db*
 ~*.doc
-WebRosterProject/nbproject/private/
-WebRosterProject/build/
-WebRosterProject/dist/
+WebRoster/nbproject/private/
+WebRoster/build/
+WebRoster/dist/
+/WebRosterMVC/nbproject/private/
+/WebRosterMVC/build/
+/WebRosterMVC/dist/
