@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author mwd5503
  */
-    @WebServlet(urlPatterns = {"/"})
+    //@WebServlet(urlPatterns = {"/Controller"})
 public class RosterCRUDController extends HttpServlet {
     
     /**
@@ -27,35 +27,34 @@ public class RosterCRUDController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String dest = request.getRequestURI();
+        System.out.println("GET " + request.getRequestURL() + " QUERY STRING: " + request.getQueryString());
+        String dest = request.getParameter("dest");
+        if (dest == null && request.getRequestURL().toString().endsWith("/Controller"))
+            dest = "browse";
+        String url = "/views/browse.jsp";
+        String r = request.getRequestURL().toString();
         switch(dest) {
-            case "/WebRosterMVC/browse" :
-            case "/WebRosterMVC/" :
-                dest = "/WEB-INF/views/browse.jsp";
+            case "browse" :
                 break;
-            case "/WebRosterMVC/update" :
-                dest = "/WEB-INF/views/update.jsp";
+            case "update" :
+                url = "/views/update.jsp";
                 break;
-            case "/WebRosterMVC/addTeam" :
-                dest = "/WEB-INF/views/addTeam.jsp";
+            case "addStudent" :
+                url = "/views/addStudent.jsp";
                 break;
-            case "/WebRosterMVC/addStudent" :
-                dest = "/WEB-INF/views/addStudent.jsp";
+            case "addTeam" :
+                url = "/views/addTeam.jsp";
                 break;
-            case "/WebRosterMVC/deleteStudent" :
-                dest = "/WEB-INF/views/deleteStudent.jsp";
+            case "removeStudent" :
+                url = "/views/removeStudent.jsp";
                 break;
-            case "/WebRosterMVC/deleteTeam" :
-                dest = "/WEB-INF/views/deleteTeam.jsp";
+            case "removeTeam" :
+                url = "/views/removeTeam.jsp";
                 break;
         }
-//        if (request.getParameter("dest") == null) {
-//            dest += "browse.jsp";
-//        }
-//        else {
-//            dest += request.getParameter("dest") + ".jsp";
-//        }
-        RequestDispatcher dispatcher = request.getRequestDispatcher(dest);
+        System.out.println("SENT: " + url);
+        System.out.flush();
+        RequestDispatcher dispatcher = request.getRequestDispatcher(url);
         dispatcher.forward(request, response);
     }
 
