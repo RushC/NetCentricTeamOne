@@ -1,14 +1,6 @@
 package Model;
 
-import java.beans.XMLEncoder;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
-import java.util.ArrayList;
-import java.util.Scanner;
-
-import javax.servlet.ServletContext;
+import java.util.HashMap;
 
 /**
  * A Roster contains a collection of Students.
@@ -17,10 +9,14 @@ import javax.servlet.ServletContext;
  */
 public class Roster implements java.io.Serializable {
     private Student[]       students;
-    
+    private Team[]          teams;
     
     public void putStudents(Student[] students) {
         this.students = students;
+    }
+    
+    public void putTeams(Team[] teams) {
+        this.teams = teams;
     }
     
     /**
@@ -28,5 +24,9 @@ public class Roster implements java.io.Serializable {
      */
     public Student[] getStudents() { 
         return students;      
+    }
+    
+    public Team[] getTeams() {
+        return teams;
     }
 }

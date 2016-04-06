@@ -1,12 +1,13 @@
-
 package Controller;
 
 import Model.Roster;
 import Model.Student;
+import Model.Team;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.function.Predicate;
 import java.util.logging.Level;
@@ -30,7 +31,8 @@ public class RosterCRUDController extends HttpServlet {
     public static final String ID_HEADER    = "PSU_ID"      ; // header value for the id of a student
     public static final String TEAM_HEADER  = "Team"        ; // header value for the team number of a student
     
-    private static final ArrayList<Student> students = new ArrayList<>(); // Current State of the roster
+    private static final ArrayList<Student>     students    = new ArrayList<>();    // Current State of the roster
+    private static final HashMap<Integer, Team> teams       = new HashMap<>();      // All of the teams in the roster.
     
     private void loadStudents(ServletContext context, String filePath) throws IOException {
         RosterCRUDController.students.clear();
@@ -66,9 +68,43 @@ public class RosterCRUDController extends HttpServlet {
                 student.setTeamNumber(teamNumber);
                 
                 // Add the student to the list.
-                RosterCRUDController.students.add(student);
+                students.add(student);
+                
+                // Add the student to their team.
+                addStudentToTeam(student);
             }
         }
+    }
+    
+    /**
+     * Adds the specified Student into their respective team.
+     * 
+     * @param s the student to sort into their team.
+     */
+    private void addStudentToTeam(Student s) {
+        // Check if the team map currently has the student's team.
+        int teamNumber = Integer.parseInt(s.getTeamNumber());
+        if (!teams.containsKey(teamNumber)) {
+            Team team = new Team();
+            team.setTeamID(teamNumber);
+            
+            // If not, add the team.
+            teams.put(teamNumber, team);
+        }
+        
+        // Add the student to their respective team.
+        teams.get(teamNumber).addStudent(s);
+    }
+    
+    /**
+     * Creates a sorted array of teams from the team map.
+     * 
+     * @return the sorted team array.
+     */
+    private Team[] generateTeamArray() {
+        return teams.values().stream()
+                .sorted((a, b) -> a.getTeamID() - b.getTeamID())
+                .toArray(Team[]::new);
     }
     
     private void writeStudents(File f) {
@@ -121,6 +157,7 @@ public class RosterCRUDController extends HttpServlet {
         // Send a roster bean containg the student roster:
         Roster roster = new Roster();
         roster.putStudents(students.toArray(new Student[0]));
+        roster.putTeams(generateTeamArray());
         request.setAttribute("roster", roster);
         
         // Forward the response:
@@ -158,7 +195,11 @@ public class RosterCRUDController extends HttpServlet {
             for (Student s : students) {
                 if (s.getID().equals(student.getID())) {
                     unique = false;
-                    break;
+                    
+                    // Update the student instead.
+                    s.setFirstName(student.getFirstName());
+                    s.setLastName(student.getLastName());
+                    s.setTeamNumber(student.getTeamNumber());
                 }
             }
         }
@@ -170,11 +211,7 @@ public class RosterCRUDController extends HttpServlet {
         
         // Indicate the result.
         request.setAttribute("postSuccess", unique);
-
-        // Forward the response.
-        RequestDispatcher dispatcher
-                = request.getRequestDispatcher("/views/addStudent.jsp");
-        dispatcher.forward(request, response);
+        response.sendRedirect("/WebRosterMVC/Controller");
     }
     
     /**
@@ -189,7 +226,8 @@ public class RosterCRUDController extends HttpServlet {
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String type = request.getParameter("type"); // part of query string, either "team" or "student"
-        String what = request.getParameter("what"); // part of query string, either a student id or team number
+        String what = request.getParameter("id"); // part of query string, either a student id or team number
+        System.out.println(type);
         String url = request.getRequestURI(); // where to forward to when done deleting
         // Determine deletion type:
         if (type == "team") { // Delete all students on a team
@@ -216,9 +254,7 @@ public class RosterCRUDController extends HttpServlet {
             response.setStatus(400);            
         }
         
-        // Forward the response.
-        RequestDispatcher dispatcher
-                = request.getRequestDispatcher(request.getRequestURI());
+       RequestDispatcher dispatcher = request.getRequestDispatcher("/WebRosterMVC/Controller");
         dispatcher.forward(request, response);
     }
     
@@ -232,7 +268,7 @@ public class RosterCRUDController extends HttpServlet {
      */
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException {        
         
         // Get the values to update:
         //implementation note: define these key/value pairs in query string or form data
@@ -240,6 +276,7 @@ public class RosterCRUDController extends HttpServlet {
         String firstName = request.getParameter("firstName"); // new first name of student or empty string if unchanged
         String lastName = request.getParameter("lastName"); // new last name of student or empty string if unchanged
         String team = request.getParameter("team"); // new team number of student or empty string if unchanged
+        System.out.printf("%s\t%s\t%s\t%s\n", id, firstName, lastName, request.getQueryString());
         
         // Make sure everything was specified.
         if (id == null || firstName == null || lastName == null || team == null) {
@@ -268,6 +305,8 @@ public class RosterCRUDController extends HttpServlet {
                     request.setAttribute("studentBean", student);
                 }
             }
+            
+            System.out.println(updated);
             
             // Indicate whether or not a student was updated to the new values:
             request.setAttribute("updateSuccess", updated);

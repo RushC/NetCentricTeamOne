@@ -1,0 +1,36 @@
+#teamsDiv {
+    text-align: center;
+}
+
+fieldset {
+    display: inline;
+    width: auto;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+table {
+    border-collapse: collapse;
+    border: solid 2px black;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+td {
+    border: solid 2px black;
+    cursor: pointer;
+}
+
+th {
+    font-style: italic;
+    background-color: #FF5722;
+    border-color: #FF5722;
+    color: white;
+    cursor: pointer;
+}
+
+tr:hover td, tr.edit td {
+    background-color: #009688;
+    color: white;
+    font-weight: strong;
+}
