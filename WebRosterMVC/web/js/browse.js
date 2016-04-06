@@ -16,14 +16,24 @@ function studentEdit(id) {
 }
 
 function deleteStudent(id) {
-    // Create a delete request.
-    var params = "?" + $.param({
-        id: id,
-        type: "student"
+    $.post("/WebRosterMVC/Controller", {
+            id: id,
+            type: "student",
+            action: "delete",
+            success: function(res) {
+                document.location.href = document.location.href;
+            }
     });
-    
-    $.ajax("/WebRosterMVC/Controller", {
-        type: "DELETE"
+}
+
+function deleteTeam(id) {
+    $.post("/WebRosterMVC/Controller", {
+            id: $("#teamSelect")[0].value,
+            type: "team",
+            action: "delete",
+            success: function(res) {
+                document.location.href = document.location.href;
+            }
     });
 }
 
@@ -35,7 +45,7 @@ function sortTable(col) {
     // Retrieve each of the table's rows.
     var headerRow = $("tr")[0];
     var addRow = $("tr").last()[0];
-    var studentRows = $("tr").slice(1, -1);
+    var studentRows = $("tr.view").slice(1, -1);
     
     // Sort the students.
     studentRows.sort(function(a, b) {

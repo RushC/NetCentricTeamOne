@@ -1,4 +1,58 @@
 body {
-  color : red;  
+    color : red;  
 }
 
+.addStudentField{
+    color: #009688;
+}
+
+.navField{
+    text-align: center;
+    background-color: white;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    position: relative;
+    border: solid 2px #FF5722;
+    border-radius: 20px;
+}
+
+legend{
+    text-align: center;
+    background-color: white;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    border: solid 2px #FF5722;
+    border-radius: 20px;
+    color: #009688;
+    font-weight: bold;
+    font-family: Roboto;
+    padding-left: 7px;
+    padding-right: 7px;	
+}
+
+a, input{
+    text-decoration: none !important;
+    cursor: pointer;
+    text-align: center;
+    background-color: white;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-bottom: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 7px;
+    padding-right: 7px;
+    position: relative;
+    border: solid 1.8px #FF5722;
+    border-radius: 5px;
+    color: #009688;
+    width: 6.5em;
+}
+
+a.hover:enabled, input.hover:enabled{
+    background-color: #FF5722;
+    color: #FFFFFF
+}

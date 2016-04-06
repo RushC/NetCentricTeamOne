@@ -178,40 +178,68 @@ public class RosterCRUDController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        // Create a new student object and add it to the student list:
-        Student student = new Student();
-        
-        // Set the values for the student based on the form data
-        student.setLastName(request.getParameter("lastName").trim()); // value from an input element with name="lastName"
-        student.setFirstName(request.getParameter("firstName").trim()); // value from an input element with name="firstName"
-        student.setID(request.getParameter("id").trim()); // value from an input elementwith name="id"
-        student.setTeamNumber(request.getParameter("team").trim()); // value from an input element with name="team"
-        
-        // Make sure the ID is unique:
-        boolean unique = false;
-        if (!student.getID().isEmpty()) {
-            unique = true;
-            for (Student s : students) {
-                if (s.getID().equals(student.getID())) {
-                    unique = false;
-                    
-                    // Update the student instead.
-                    s.setFirstName(student.getFirstName());
-                    s.setLastName(student.getLastName());
-                    s.setTeamNumber(student.getTeamNumber());
-                }
+        System.out.printf("%s\t%s\t%s\n",
+                request.getParameter("type"),
+                request.getParameter("action"),
+                request.getParameter("id"));
+        String action = request.getParameter("action");
+        // Check if something is being deleted.
+        if (action != null && "delete".equalsIgnoreCase(action.trim())) {
+            System.out.println("Deleting...");
+            String type = request.getParameter("type"); // part of query string, either "team" or "student"
+            String what = request.getParameter("id").trim(); // part of query string, either a student id or team number
+            // Determine deletion type:
+            if ("team".equalsIgnoreCase(type.trim())) { // Delete all students on a team
+                // Remove all students in the student list with the given team number.
+                boolean deleted = students.removeIf((Student s) -> {
+                    return s.getTeamNumber().equalsIgnoreCase(what);
+                        });
+                teams.remove(Integer.parseInt(what));
+            } 
+            else if ("student".equalsIgnoreCase(type.trim())) {
+                // Remove the student with the given ID.
+                boolean deleted = students.removeIf((Student s) -> {
+                    System.out.println("Deleting.....");
+                    return s.getID().equalsIgnoreCase(what);
+                        });
+            }
+            else { // Otherwise respond with status 400 (bad request)
+                response.setStatus(400);            
             }
         }
         
-        // If unique, add the student to the list.
-        if (unique) {
-            students.add(student);
+        else {
+            // Create a new student object and add it to the student list:
+            Student student = new Student();
+
+            // Set the values for the student based on the form data
+            student.setLastName(request.getParameter("lastName").trim()); // value from an input element with name="lastName"
+            student.setFirstName(request.getParameter("firstName").trim()); // value from an input element with name="firstName"
+            student.setID(request.getParameter("id").trim()); // value from an input elementwith name="id"
+            student.setTeamNumber(request.getParameter("team").trim()); // value from an input element with name="team"
+
+            // Make sure the ID is unique:
+            boolean unique = false;
+            if (!student.getID().isEmpty()) {
+                unique = true;
+                for (Student s : students) {
+                    if (s.getID().equals(student.getID())) {
+                        unique = false;
+
+                        // Update the student instead.
+                        s.setFirstName(student.getFirstName());
+                        s.setLastName(student.getLastName());
+                        s.setTeamNumber(student.getTeamNumber());
+                    }
+                }
+            }
+
+            // If unique, add the student to the list.
+            if (unique) {
+                students.add(student);
+            }
         }
-        
-        // Indicate the result.
-        request.setAttribute("postSuccess", unique);
-        response.sendRedirect("/WebRosterMVC/Controller");
+        response.sendRedirect("index.jsp");
     }
     
     /**
@@ -227,16 +255,12 @@ public class RosterCRUDController extends HttpServlet {
             throws ServletException, IOException {
         String type = request.getParameter("type"); // part of query string, either "team" or "student"
         String what = request.getParameter("id"); // part of query string, either a student id or team number
-        System.out.println(type);
-        String url = request.getRequestURI(); // where to forward to when done deleting
         // Determine deletion type:
         if (type == "team") { // Delete all students on a team
             // Remove all students in the student list with the given team number.
             boolean deleted = students.removeIf((Student s) -> {
                 return s.getTeamNumber() == what;
                     });
-            // update the url to the deleteTeam.jsp page
-            url = "/views/deleteTeam.jsp";
             // Indicate whether or not any students were removed.
             request.setAttribute("deleteSuccess", deleted);
         } 
@@ -245,8 +269,6 @@ public class RosterCRUDController extends HttpServlet {
             boolean deleted = students.removeIf((Student s) -> {
                 return s.getID() == what;
                     });
-            // update the url to the deleteStudent.jsp page.
-            url = "/views/deleteStudent.jsp";
             // Indicate whether or not any students were removed.
             request.setAttribute("deleteSuccess", deleted);
         }

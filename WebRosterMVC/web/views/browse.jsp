@@ -30,7 +30,7 @@
                     %>
                 </select>
                 <legend>Teams</legend>
-                <button onclick="deleteTeam">Delete Team</button>
+                <button onclick="deleteTeam()">Delete Team</button>
             </fieldset>
         </div>
         <table>
