@@ -29,8 +29,8 @@
                 else {
                     // Object reference application has the value 
                     // pageContext.getServletContext()
-                    roster.loadData(application, "/WEB-INF/data/Roster.txt");
-                    out.println(roster.getStudents());
+                    //.loadData(application, "/WEB-INF/data/Roster.txt");
+                    //out.println(roster.getStudents());
                 }
             %>
         </div>

@@ -12,6 +12,6 @@
     </head>
     <body>
         <jsp:include page="navigation.jsp"/>
-        <h1>Todo: update Page</h1>
+        <h1>Todo: update page</h1>
     </body>
 </html>

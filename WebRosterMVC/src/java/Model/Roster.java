@@ -22,23 +22,11 @@ public class Roster implements java.io.Serializable {
     public void putStudents(Student[] students) {
         this.students = students;
     }
+    
     /**
      * Accessor method.
      */
-    public String getStudents() { 
-        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            XMLEncoder encoder = new XMLEncoder(out);
-            
-            // Encode the students array into XML.
-            encoder.writeObject(students);
-            encoder.close();
-            
-            // Convert the byte array output into a string.
-            return out.toString();
-            
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "";
-        }        
+    public Student[] getStudents() { 
+        return students;      
     }
 }

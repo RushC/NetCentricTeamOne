@@ -17,7 +17,6 @@
             <legend> Navigation </legend>
             <a href="?dest=browse">Browse</a>
             <a href="?dest=update">Update</a>
-            <a href="?dest=addTeam">Add Team</a>
             <a href="?dest=addStudent">Add Student</a>
             <a href="?dest=removeTeam">Remove Team</a>
             <a href="?dest=removeStudent">Remove Student</a>

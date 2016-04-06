@@ -12,6 +12,20 @@
     </head>
     <body>
         <jsp:include page="navigation.jsp"/>
-        <h1>Todo: add student page</h1>
+        <h1>Todo: make it not shit</h1>
+        <form method="POST">
+            <fieldset>
+                <legend>Update a Student's Information</legend>
+                <label>ID: </label>
+                <input type='text' name="id" value="id"/>
+                <label>First Name: </label>
+                <input type="text" name="firstName" value="" />
+                <label>Last Name: </label>
+                <input type="text" name="lastName" value=""/>
+                <label>Team Number: </label>
+                <input type="text" name="team" value=""/>
+                <input type="submit" value="DO IT!!">
+            </fieldset>
+        </form>
     </body>
 </html>
