@@ -37,6 +37,21 @@ function deleteTeam(id) {
     });
 }
 
+function editStudent(id) {
+    // Retrieve the table row for the student.
+    var row = $("tr.edit#" + id)[0];
+    
+    $.post("/WebRosterMVC/Controller", {
+            id: id,
+            firstName: row.children[0].value,
+            lastName: row.children[1].value,
+            team: row.children[3].value,
+            success: function(res) {
+                document.location.href = document.location.href;
+            }
+    });
+}
+
 // Sorts the table by the specifed column.
 function sortTable(col) {
     // Retrieve the table.

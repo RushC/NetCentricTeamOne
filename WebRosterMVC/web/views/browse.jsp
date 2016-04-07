@@ -51,8 +51,8 @@
                 <td><%=student.getTeamNumber()%></td>
             </tr>
             <!-- Generate a hidden form for editing each student. -->
+            <tr class="edit" hidden="true" id="<%=student.getID()%>">
             <form method="POST" id="<%=student.getID()%>">
-                <tr class="edit" hidden="true" id="<%=student.getID()%>">
                     <td><input type="text" name="lastName" value="<%=student.getLastName()%>"/></td>
                     <td><input type="text" name="firstName" value="<%=student.getFirstName()%>"/></td>
                     <td>
@@ -74,8 +74,8 @@
                         <input type="submit" />
                         <button id="<%=student.getID()%>" onclick="deleteStudent(this.id)">Delete</button>
                     </td>
-                </tr>
             </form>
+                </tr>
             <%
                 }
             %>
