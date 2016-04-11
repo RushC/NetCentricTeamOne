@@ -10,6 +10,7 @@ var schedule = require('./Schedule/schedule.js');
 var canvasanimation = require('./CanvasAnimation/tool.js');
 var lecturenotes = require('./LectureNotes/tool.js');
 var services = require('./Services/tool.js');
+var amazon = require('./AmazonBook/tool.js');
 
 //setup the root path
 var root = __dirname;
@@ -21,6 +22,7 @@ schedule.gettool.root = root;
 canvasanimation.gettool.root = root;
 lecturenotes.gettool.root = root;
 services.gettool.root = root;
+amazon.gettool.root = root;
 
 var app     = express();
 app.use(bodyParser.json());
@@ -99,11 +101,13 @@ app.get("/Schedule/*", schedule.gettool);
 app.get("/CanvasAnimation/*", canvasanimation.gettool);
 app.get("/LectureNotes/*", lecturenotes.gettool);
 app.get("/Services/*", services.gettool);
+app.get("/AmazonBook/*", amazon.gettool);
 
 // Specify POST tools.
 app.post("/EvalTool/eval*", evaltool.posttool);
 app.post("/EvalTool/sendMail", evaltool.mailtool);
 app.post("/EvalJSONP/*", evalJSONtool.posttool);
+app.post("/AmazonBook/*", amazon.posttool);
 
 
 app.listen(8888, function() {

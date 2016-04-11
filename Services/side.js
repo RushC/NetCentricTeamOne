@@ -29,3 +29,7 @@ function rosterMVC()
 function rosterJTable() {
     parent.document.getElementById('cframe').contentWindow.location = "http://localhost:8080/WebRosterJTable/";
 }
+
+function amazon() {
+    parent.document.getElementById('cframe').contentWindow.location = "http://localhost:8888/AmazonBook/amazon.html";
+}
