@@ -1,5 +1,7 @@
 package DAO;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import JDBC.DBUtility;
 import MODEL.Student;
@@ -78,9 +81,40 @@ public class CrudDao {
                 student.setTeam(rs.getString("TEAM"));
                 students.add(student);
             }
+            
+            // Check if no students were found.
+            if (students.isEmpty()) {
+                Statement statement = dbConnection.createStatement();
+                try (Scanner in = new Scanner(ClassLoader.getSystemClassLoader().getResourceAsStream("/DAO/students.sql"))) {
+                    while (in.hasNextLine())
+                        // Read a query from each line.
+                        statement.execute(in.nextLine());
+                }
+                // Try loading the students again.
+                return getAllStudents();
+            }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
+            
+            // If there was an exception, the Student table likely wasn't created
+            // yet. Load the SQL file and run all of its queries.
+            try {
+                Statement statement = dbConnection.createStatement();
+                try (Scanner in = new Scanner(ClassLoader.getSystemClassLoader().getResourceAsStream("/DAO/students.sql"))) {
+                    while (in.hasNextLine()) {
+                        // Read a query from each line.
+                        statement.execute(in.nextLine());
+                        System.out.println("SUP BITCH!");
+                    }
+                }
+                // Try loading the students again.
+                return getAllStudents();
+            } catch (SQLException ex) {
+                // At this point, I don't know wtf happened.
+                e.printStackTrace();
+            }
         }
+        
         return students;
     }
     

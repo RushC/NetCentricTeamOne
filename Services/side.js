@@ -25,3 +25,7 @@ function rosterMVC()
 {
     parent.document.getElementById("cframe").contentWindow.location = "http://localhost:8080/WebRosterMVC/";
 }
+
+function rosterJTable() {
+    parent.document.getElementById('cframe').contentWindow.location = "http://localhost:8080/WebRosterJTable/";
+}
