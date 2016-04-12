@@ -81,38 +81,13 @@ public class CrudDao {
                 student.setTeam(rs.getString("TEAM"));
                 students.add(student);
             }
-            
-            // Check if no students were found.
-            if (students.isEmpty()) {
-                Statement statement = dbConnection.createStatement();
-                try (Scanner in = new Scanner(ClassLoader.getSystemClassLoader().getResourceAsStream("/DAO/students.sql"))) {
-                    while (in.hasNextLine())
-                        // Read a query from each line.
-                        statement.execute(in.nextLine());
-                }
-                // Try loading the students again.
-                return getAllStudents();
-            }
         } catch (SQLException e) {
             System.err.println(e.getMessage());
+            System.out.println("Exception");
             
-            // If there was an exception, the Student table likely wasn't created
-            // yet. Load the SQL file and run all of its queries.
-            try {
-                Statement statement = dbConnection.createStatement();
-                try (Scanner in = new Scanner(ClassLoader.getSystemClassLoader().getResourceAsStream("/DAO/students.sql"))) {
-                    while (in.hasNextLine()) {
-                        // Read a query from each line.
-                        statement.execute(in.nextLine());
-                        System.out.println("SUP BITCH!");
-                    }
-                }
-                // Try loading the students again.
-                return getAllStudents();
-            } catch (SQLException ex) {
-                // At this point, I don't know wtf happened.
-                e.printStackTrace();
-            }
+            // Attempt to initialize the Student table.
+            initStudentTable();
+            return getAllStudents();
         }
         
         return students;
@@ -141,7 +116,9 @@ public class CrudDao {
                 students.add(student);
             }
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
+            System.out.println("Table not initialized. Initializing...");
+            initStudentTable();
+            return getStudents(sindex, size, sorting);
         }
         return students;
     }    
@@ -159,4 +136,26 @@ public class CrudDao {
         }
         return rowCount;
     }    
+    
+    /**
+     * Attempts to run the queries in students.sql.
+     */
+    private void initStudentTable() {
+        try {
+            System.out.println("MADE IT!");
+            Statement statement = dbConnection.createStatement();
+            try (Scanner in = new Scanner(getClass().getClassLoader().getResourceAsStream("/DAO/students.sql"))) {
+                while (in.hasNextLine()) {
+                    // Read a query from each line.
+                    String query = in.nextLine().trim();
+                    // Remove the semicolon from the query.
+                    query = query.substring(0, query.lastIndexOf(';'));
+                    statement.execute(query);
+                }
+            }
+        } catch (SQLException ex) {
+            // At this point, I don't know wtf happened.
+            ex.printStackTrace();
+        }
+    }
 }
