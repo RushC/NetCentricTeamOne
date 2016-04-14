@@ -27,10 +27,10 @@ function posttool(req, res) {
 	response = res;
 	setTimeout(function () {
 		if (control == "NOT DONE")
-			searchResult = "Connection to AWS TimeOut";
+			searchResult = "Connection to AWS timed out";
 		response.send(searchResult);
 		control = "NOT DONE";
-	}, 600);
+	}, 700);
 }
 
 var searchResult = "NONE";
@@ -63,8 +63,8 @@ function amazonSearch() {
 	prodAdv = aws.createProdAdvClient(id, key, "NetCentric");
 
 	searchResult = "NONE";
-
-
+	
+	
 	prodAdv.call("ItemSearch", {SearchIndex: "Books", Keywords: search, ResponseGroup: "ItemAttributes", TotalPages: "2"}, function (err, result) {
 		//console.log(JSON.stringify(result, null, 2));
 
@@ -81,9 +81,13 @@ function amazonSearch() {
 
 			books.push({asin, pageURL, author, edition, isbn, title});
 		}
-
+		
+		//Initial HTML
+		searchResult = "<h1 style=\"color: #FF5722;\">Search Results:</h1>";
+		searchResult += "<link href='https://fonts.googleapis.com/css?family=Roboto:400,900,700' rel='stylesheet' type='text/css'>"
+		searchResult += "<style>body{font-family: Roboto}</style>"
+		
 		//For each book
-		searchResult = "<h1 style=\"color: #FF5722;\">Search Results:</h1><br>";
 		for (var i = 0; i < books.length; i++) {
 			//Retrieve image
 			var asin = book[i].ASIN;
@@ -98,7 +102,7 @@ function amazonSearch() {
 
 
 			//Numbering
-			searchResult += ("<b>" + (i + 1) + ".</b> ");
+			searchResult += ("<h3><b>" + (i + 1) + ".</b> ");
 
 			//URL and Title
 			//Truncate URL first
@@ -107,7 +111,7 @@ function amazonSearch() {
 				title = title.substring(0, 100);
 				title += "...";
 			}
-			searchResult += ("<a href=\"" + books[i].pageURL + "\">" + title + "</a>" + "<br>");
+			searchResult += ("<a href=\"" + books[i].pageURL + "\">" + title + "</a></h3>");
 
 			//Image
 			searchResult += ("<img src=\"" + picture + "\" style=\"width:200px;height:200px;\"<br><br>");
@@ -115,13 +119,16 @@ function amazonSearch() {
 			picture = "PICTURE NOT LOADED";
 
 			//Author
-			searchResult += ("<b>Author:</b> " + books[i].author + "<br>");
+			if(books[i].author != undefined)
+				searchResult += ("<br><b>Author:</b> " + books[i].author + "<br>");
 
 			//Edition
-			searchResult += ("<b>Edition:</b> " + books[i].edition + "<br>");
+			if(books[i].edition != undefined)
+				searchResult += ("<b>Edition:</b> " + books[i].edition + "<br>");
 
 			//ISBN
-			searchResult += ("<b>ISBN:</b> " + books[i].isbn + "<br>");
+			if(books[i].isbn != undefined)
+				searchResult += ("<b>ISBN:</b> " + books[i].isbn + "<br>");
 
 			//Spacer
 			searchResult += ("<br><br>");
