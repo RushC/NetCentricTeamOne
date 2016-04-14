@@ -48,9 +48,7 @@ exports.posttool = posttool;
 
 //Amazon API
 //These are great clean programming concepts and ideas A++ trust me
-
 function amazonSearch() {
-	//var aws = require("./node_modules/aws-lib/lib/aws");
 	var aws = require("aws-lib");
 
 	//Temporary - my own key that took forever omg they had a robot call my phone
@@ -59,11 +57,9 @@ function amazonSearch() {
 
 	//Search parameters
 	var search = "test";
-
-	prodAdv = aws.createProdAdvClient(id, key, "NetCentric");
-
-	searchResult = "NONE";
 	
+	searchResult = "NONE";
+	prodAdv = aws.createProdAdvClient(id, key, "NetCentric");
 	
 	prodAdv.call("ItemSearch", {SearchIndex: "Books", Keywords: search, ResponseGroup: "ItemAttributes", TotalPages: "2"}, function (err, result) {
 		//console.log(JSON.stringify(result, null, 2));
@@ -91,7 +87,7 @@ function amazonSearch() {
 		for (var i = 0; i < books.length; i++) {
 			//Retrieve image
 			var asin = book[i].ASIN;
-			console.log("Searching: " + asin);
+			console.log("About to search: " + asin);
 			prodAdv.call("ItemLookup", {ItemId: asin, ResponseGroup: "Images", TotalPages: "2"}, function (err, result2) {
 				//console.log(JSON.stringify(result, null, 2));
 				picture = result2.Items.Item.LargeImage.URL;
@@ -99,7 +95,6 @@ function amazonSearch() {
 				pictureControl = "DONE";
 				//*********PLEASE MAKE THIS HAPPEN FIRST OMG******************
 			});
-
 
 			//Numbering
 			searchResult += ("<h3><b>" + (i + 1) + ".</b> ");
@@ -114,7 +109,7 @@ function amazonSearch() {
 			searchResult += ("<a href=\"" + books[i].pageURL + "\">" + title + "</a></h3>");
 
 			//Image
-			searchResult += ("<img src=\"" + picture + "\" style=\"width:200px;height:200px;\"<br><br>");
+			searchResult += ("<img src=\"" + picture + "\" style=\"width:200px;height:250px;\" border=\"4\" style=\"border-color:#FF5722;\" \"<br><br>");
 			console.log("PICTURE PLACEMENT COMPLETE");
 			picture = "PICTURE NOT LOADED";
 
