@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Models;
+package Model;
 
 import java.io.Serializable;
 
@@ -12,35 +12,37 @@ import java.io.Serializable;
  * @author njt5112
  */
 public class Entity implements Serializable {
-    private int lectureID;
-    private int pageID;
-    private int entityID;
+    private String lectureID;
+    private String pageID;
+    private String entityID;
     private String entityType;
-    private String entityLocation;
+    private String entityX;
+    private String entityY;
+    private String entityZ;
     private String entityContent;
     private String entityAnimation;
 
-    public int getLectureID() {
+    public String getLectureID() {
         return lectureID;
     }
 
-    public void setLectureID(int lectureID) {
+    public void setLectureID(String lectureID) {
         this.lectureID = lectureID;
     }
 
-    public int getPageID() {
+    public String getPageID() {
         return pageID;
     }
 
-    public void setPageID(int pageID) {
+    public void setPageID(String pageID) {
         this.pageID = pageID;
     }
 
-    public int getEntityID() {
+    public String getEntityID() {
         return entityID;
     }
 
-    public void setEntityID(int entityID) {
+    public void setEntityID(String entityID) {
         this.entityID = entityID;
     }
 
@@ -50,14 +52,6 @@ public class Entity implements Serializable {
 
     public void setEntityType(String entityType) {
         this.entityType = entityType;
-    }
-
-    public String getEntityLocation() {
-        return entityLocation;
-    }
-
-    public void setEntityLocation(String entityLocation) {
-        this.entityLocation = entityLocation;
     }
 
     public String getEntityContent() {
@@ -74,5 +68,29 @@ public class Entity implements Serializable {
 
     public void setEntityAnimation(String entityAnimation) {
         this.entityAnimation = entityAnimation;
+    }
+
+    public String getEntityX() {
+        return entityX;
+    }
+
+    public void setEntityX(String entityX) {
+        this.entityX = entityX;
+    }
+    
+    public String getEntityY() {
+        return entityY;
+    }
+
+    public void setEntityY(String entityY) {
+        this.entityY = entityY;
+    }
+    
+    public String getEntityZ() {
+        return entityZ;
+    }
+
+    public void setEntityZ(String entityZ) {
+        this.entityZ = entityZ;
     }
 }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Models;
+package Model;
 
 import java.io.Serializable;
 
@@ -12,24 +12,24 @@ import java.io.Serializable;
  * @author njt5112
  */
 public class Page implements Serializable {
-    private int lectureID;
-    private int pageID;
+    private String lectureID;
+    private String pageID;
     private String pageSequence;
     private String pageAudioURL;
 
-    public int getLectureID() {
+    public String getLectureID() {
         return lectureID;
     }
 
-    public void setLectureID(int lectureID) {
+    public void setLectureID(String lectureID) {
         this.lectureID = lectureID;
     }
 
-    public int getPageID() {
+    public String getPageID() {
         return pageID;
     }
 
-    public void setPageID(int pageID) {
+    public void setPageID(String pageID) {
         this.pageID = pageID;
     }
 

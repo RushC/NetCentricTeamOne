@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Models;
+package Model;
 
 import java.io.Serializable;
 
@@ -12,16 +12,16 @@ import java.io.Serializable;
  * @author njt5112
  */
 public class Lecture implements Serializable{
-    private int lectureID;
+    private String lectureID;
     private String lectureTitle;
     private String courseTitle;
     private String instructor;
 
-    public int getLectureID() {
+    public String getLectureID() {
         return lectureID;
     }
 
-    public void setLectureID(int lectureID) {
+    public void setLectureID(String lectureID) {
         this.lectureID = lectureID;
     }
 
