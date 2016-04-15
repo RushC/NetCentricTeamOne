@@ -11,6 +11,7 @@ var canvasanimation = require('./CanvasAnimation/tool.js');
 var lecturenotes = require('./LectureNotes/tool.js');
 var services = require('./Services/tool.js');
 var amazon = require('./AmazonBook/tool.js');
+var showandtell = require('./ShowAndTell/tool.js');
 
 //setup the root path
 var root = __dirname;
@@ -23,6 +24,7 @@ canvasanimation.gettool.root = root;
 lecturenotes.gettool.root = root;
 services.gettool.root = root;
 amazon.gettool.root = root;
+showandtell.gettool.rot = root;
 
 var app     = express();
 app.use(bodyParser.json());
@@ -92,6 +94,10 @@ app.get('/WebRoster/Roster.jsp', function(req, res) {
 	res.redirect("http://localhost:8080/WebRoster/Roster.jsp");
 });
 
+app.get('/ShowAndTellProject', function(req, res) {
+	res.redirect("http://localhost:8080/ShowAndTellProject/");
+});
+
 // Specify GET tools.
 app.get('/CloudChat/*', ChatServer.gettool);
 app.get('/Syllabus/*', syllabus.gettool);
@@ -102,6 +108,7 @@ app.get("/CanvasAnimation/*", canvasanimation.gettool);
 app.get("/LectureNotes/*", lecturenotes.gettool);
 app.get("/Services/*", services.gettool);
 app.get("/AmazonBook/*", amazon.gettool);
+app.get("/ShowAndTell/*", amazon.gettool);
 
 // Specify POST tools.
 app.post("/EvalTool/eval*", evaltool.posttool);
