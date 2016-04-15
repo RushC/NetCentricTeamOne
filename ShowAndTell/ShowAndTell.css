@@ -1,23 +1,23 @@
-.sideDiv{
-	text-align: center;
-	background-color: white;
-	margin-left: auto;
-	margin-right: auto;
-	padding-top: 20px;
-	position: relative;
-	border: solid 2px #FF5722;
-	border-radius: 20px;
-}
-#entityPropertiesField {
+.externalFieldset {
 	padding: 10px;
 }
+
+.internalFieldset{
+	border: solid 1px #FF5722;
+	border-radius: 3px;
+}
+
+.internalLegend{
+	border: solid 1px #FF5722;
+}
+
 fieldset, legend{
 	text-align: center;
 	background-color: white;
 	margin-left: auto;
 	margin-right: auto;
 	margin-bottom: 3px;
-	margin-top:    6px;
+	margin-top: 7px;
 	position: relative;
 	border: solid 2px #FF5722;
 	border-radius: 20px;
@@ -25,7 +25,7 @@ fieldset, legend{
 	font-weight: bold;
 	font-family: Roboto;
 	padding-left: 3px;
-	padding-right: 3px;	
+	padding-right: 3px;
 }
 
 button{
