@@ -9,19 +9,19 @@
     </head>
     <body>
 		<div id="preview">
-            <from id="slideNav">
+            <form id="slideNav">
                 <button onclick="prev()">Previous</button>
-                <button onlick="next()">Next</button>
+                <button onclick="next()">Next</button>
                 <input type="number" name="slideNum"></input>
-                <button onlick="goToSlide()">Jump to Slide</button>
-            </from>
+                <button onclick="goToSlide()">Jump to Slide</button>
+            </form>
             <br>
             <div id="slide"></div>
         </div>
 		<div id="entities"></div>
         <br>
         <div id="entityProperties">
-            <fieldset>
+            <fieldset id="entityPropertiesField">
                 <legend>Entity Properties</legend>
                 <form>
                     <fieldset>

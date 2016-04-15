@@ -8,12 +8,16 @@
 	border: solid 2px #FF5722;
 	border-radius: 20px;
 }
-
+#entityPropertiesField {
+	padding: 10px;
+}
 fieldset, legend{
 	text-align: center;
 	background-color: white;
 	margin-left: auto;
 	margin-right: auto;
+	margin-bottom: 3px;
+	margin-top:    6px;
 	position: relative;
 	border: solid 2px #FF5722;
 	border-radius: 20px;
