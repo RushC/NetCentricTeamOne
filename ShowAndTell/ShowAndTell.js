@@ -1,17 +1,26 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <link rel="stylesheet" href="ShowAndTell.css"></link>
-        <!-- jQuery and jQueryUI used for animations. -->
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-        <script src="lecturenotes.js"></script>
-    </head>
-    <body>
-		<div id="notesDiv"></div>
-		<div id="textDiv">
-			<form>
-			</form>
-		</div>
-    </body>
-</html>
+// Global variables:
+var currentLecture;
+var currentSlide;
+var currentEntity;
+var entityList;
+
+// Commonly Referenced Elements:
+var slideDiv;
+var entitiesDiv;
+
+function moveEntity() {
+    // get the x y and z values:
+    var x = document.getElementById("xLoc").value;
+    var y = document.getElementById("yloc").value;
+    var z = document.getElementById("zLoc").value;
+    
+    // update the entity's element:
+    $("#"+currentEntity.id).css({top: x, left: y, "z-index": z});
+    
+    // update the entity object:
+    currentEntity.x = x;
+    currentEntity.y = y;
+    currentEntity.z = z;
+}
+
+

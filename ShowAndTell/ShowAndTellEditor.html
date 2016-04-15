@@ -16,21 +16,37 @@
                 <button onlick="goToSlide()">Jump to Slide</button>
             </from>
             <br>
-            <canvas id="slide"></canvas>
+            <div id="slide"></div>
         </div>
 		<div id="entities"></div>
         <br>
         <div id="entityProperties">
-            <form>
-                <label>Type:</label>
-                <select>
-                    <option value="textbox">Text Box</option>
-                    <option value="bulletlist">Bulletted List</option>
-                    <option value="image">Image</option>                    
-                </select>
-                <label>Location:</label>
-                <input type="number">
-            </form>
+            <fieldset>
+                <legend>Entity Properties</legend>
+                <form>
+                    <fieldset>
+                        <legend>Type</legend>
+                        <select onchange="changeType()">
+                            <option value="textbox">Text Box</option>
+                            <option value="bulletlist">Bulletted List</option>
+                            <option value="image">Image</option>                    
+                        </select>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Location</legend>
+                        <label>X Position:</label>
+                        <input type="number" id="xLoc" onchange="moveEntity">
+                        <label>Y Position:</label>
+                        <input type="number" id="yLoc" onchange="moveEntity">
+                        <label>Z index:</label>
+                        <input type="number" id="zLoc" onchange="moveEntity">
+                    </fieldset>
+                    <fieldset>
+                        <legend>Content</legend>
+                        <div id="entityContent"></div>
+                    </fieldset>
+                </form>
+            </fieldset>
         </div>
     </body>
 </html>
