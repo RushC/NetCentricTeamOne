@@ -12,6 +12,8 @@ var entityProperties;
 var xInput;
 var yInput;
 var zInput;
+var hInput;
+var wInput;
 var typeInput;
 var contentInput;
 
@@ -22,6 +24,8 @@ window.onload = function() {
     xInput = $("#xInput");
     yInput = $("#yInput");
     zInput = $("#zInput");
+    hInput = $("#hInput");
+    wInput = $("#wInput");
     typeInput = $("#typeInput");
     changedEntities.length = 0;
 };
