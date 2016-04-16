@@ -22,18 +22,34 @@ $(document).ready(function () {
     }
 });
 
-/*
-function something() {
-    parent.document.getElementById("cframe").contentWindow.location = "ShowAndTell/side.jsp"
+function createLecture(){
+    $.post("/ShowAndTellProject/Controller", {
+        action: "newLecture",
+        success: function (res) {
+            parent.document.getElementById('cframe').contentWindow.location =
+                    "http://localhost:8080/ShowAndTellProject/views/createLecture.jsp";
+        }
+    });
 }
 
-function createSlide() {
-    parent.document.getElementById("cframe").contentWindow.location = "ShowAndTell/side.jsp"
+function editLecture(){
+    var id = $("#lecture").val();
+    $.post("/ShowAndTellProject/Controller", {
+        id: id,
+        action: "changeLecture",
+        success: function (res) {
+            document.location.href = document.location.href;
+        }
+    });
 }
-function editSlide() {
-    parent.document.getElementById("cframe").contentWindow.location = "ShowAndTell/side.jsp"
+
+function deleteLecture() {
+    var id = $("#lecture").val();
+    $.post("/ShowAndTellProject/Controller", {
+        id: id,
+        action: "deleteLecture",
+        success: function (res) {
+            document.location.href = document.location.href;
+        }
+    });
 }
-function deleteSlide() {
-    parent.document.getElementById("cframe").contentWindow.location = "ShowAndTell/views/side.jsp"
-}
-*/

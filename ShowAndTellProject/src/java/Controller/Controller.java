@@ -20,6 +20,9 @@ import javax.servlet.http.HttpServletResponse;
  * @author njt5112
  */
 public class Controller extends HttpServlet {
+    public static final String NAME_HEADER = "LECTURE_NAME"   ; // header value for the name of a lecture
+    public static final String ID_HEADER   = "LECTURE_ID"      ; // header value for the id of a lecture
+    
     @Override
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
@@ -50,8 +53,11 @@ public class Controller extends HttpServlet {
                 getLecture
                 getLectureList
              */
+            System.out.println("ID: " + request.getParameter("id") + "\t\tAction: " +
+                    request.getParameter("action"));
             switch (action) {
-                case "newLecture":
+                case "newLecture": //
+                    //response.sendRedirect("views/createLecture.jsp");
                     break;
                 case "newPage":
                     break;
@@ -61,13 +67,13 @@ public class Controller extends HttpServlet {
                     break;
                 case "deletePage":
                     break;
-                case "deleteLecture":
+                case "deleteLecture": //
                     break;
                 case "changeEntity":
                     break;
                 case "changePage":
                     break;
-                case "changeLecture":
+                case "changeLecture": //
                     break;
                 case "getLecture":
                     break;

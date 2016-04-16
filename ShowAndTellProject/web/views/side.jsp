@@ -19,27 +19,21 @@
     <body>
         <fieldset class="sideDiv">
             <legend> Show & Tell </legend>
-            <select>
+            <select id="lecture">
                 <%
-                    System.out.println("Ayyyy lmao");
                     for (Lecture lecture : new CrudDao().getLectures()) {
-                        System.out.println(lecture);
                 %>
                 <option value="<%=lecture.getLectureID()%>"><%=lecture.getLectureTitle()%></option>
                 <%
                     }
                 %>
-                <!-- <option value="Something">Something</option> -->
             </select>
 
-            <!--
-            <button id="createSlide" onclick="createSlide()">Create Slide</button>
-            <button id="editSlide" onclick="editSlide()">Edit Slide</button>
-            <button id="deleteSlide" onclick="deleteSlide()">Delete Slide</button>
-            -->
-
-            <p class=sideMessage></p>
-        </fieldset>
+            <button id="editLecture" onclick="editLecture()">Edit Lecture</button>
+            <button id="deleteLecture" onclick="deleteLecture()">Delete Lecture</button>
+        </fieldset><br>
+        <fieldset class="sideDiv">
+            <button id="createLecture" onclick="createLecture()">Create Lecture</button>
+        </fieldset><br>
     </body>
 </html>
-
