@@ -19,6 +19,8 @@ var contentInput;
 
 // Initialize some of the global variables
 window.onload = function() {
+    slideDiv = $("#slideDiv");
+    entitiesDiv = $("#entitiesDiv");
     entityContent = $("#entityContent");
     entityProperties = $("#entityProperties");
     xInput = $("#xInput");
@@ -27,7 +29,14 @@ window.onload = function() {
     hInput = $("#hInput");
     wInput = $("#wInput");
     typeInput = $("#typeInput");
-    changedEntities.length = 0;
+    currentEntity = {
+        type: "textbox",
+        width: "10",
+        height: "10",
+        content: "TEST"
+    };
+    updatePropertyDiv();
+    updateEntityElementContent();
 };
 
 // function to move an entity:
@@ -46,6 +55,29 @@ function moveEntity() {
     currentEntity.z = z;
     
     currentEntity.changed = true;
+}
+
+// function to change the size of an entity:
+function resizeEntity() {
+    if (currentEntity) {
+        // get the new width and height:
+        var width = wInput.val();
+        var height = hInput.val();
+        
+        //only make changes if the width/height was actully changed:
+        if (width != currentEntity.width || height != currentEntity.height) {
+            // change the entity:
+            currentEntity.width = width;
+            currentEntity.height = height;
+            currentEntity.changed = true;
+            // change the entity's element as appropriate:
+            switch(currentEntity.type) {
+                case "textbox" :
+                    $("#"+currentEntity.id).children().css({
+                        rows: height, cols: width});
+            }
+        }
+    }
 }
 
 
@@ -121,7 +153,7 @@ function updatePropertyDiv() {
         // Set all the properties equal to those of the entity:
         xInput.val(currentEntity.x);
         yInput.val(currentEntity.y);
-        zInput.val(currentEnttiy.z);
+        zInput.val(currentEntity.z);
         // fill the content div with the appropriate elements based on the entity type:
         entityContent.empty();
         switch(currentEntity.type) {
@@ -156,7 +188,7 @@ function updatePropertyDiv() {
             case "textbox" :
             case "bulletlist" :
                 // set the type input selector first:
-                if(currentContext.type == "textbox")
+                if(currentEntity.type == "textbox")
                     typeInput[0].selectedIndex = 1;
                 else
                     typeInput[0].selectedIndex = 2;
@@ -181,7 +213,7 @@ function updatePropertyDiv() {
 }
 
 //YOU INSERT YOUR OWN FUNCTIONS IN MY CODE WITHOUT COMMENTS AGAIN AND I'LL
-//GUT YOU LIKE A FISH
+//GUT YOU LIKE A FISH ↓
 // nicks code:
 $(document).ready(function() {
 	// Animate the side div in.
@@ -251,7 +283,24 @@ function updateEntityElementContent() {
                 box.val(currentEntity.content);
                 box[0].rows = currentEntity.width;
                 box[0].cols = currentEntity.height;
-                
+                break;
+            case "bulletlist" :
+                // get the element for the entitiy:
+                var list = element.children("ul");
+                // empty the div and create a new list if one does'nt exist:
+                if(!list[0]) {
+                    element.empty();
+                    var list = $("<ul><ul>");
+                    element.append(list);
+                }
+                // empty the list:
+                list.empty();
+                // slice the content along line breaks to get the list entries:
+                var entries = currentEntity.content.split(/(\r\n|\n|\r)/gm);
+                // add each entry to the list:
+                for (var i = 0; i < entries.length; ++i) {
+                    var entry = $("<li>"+entries[i]+"</li>");
+                }
         }
     }
 }
