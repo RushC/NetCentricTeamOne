@@ -29,40 +29,43 @@ public class Controller extends HttpServlet {
         if(action != null){
             /*
             actions:
-                newLecture
-                newPage
-                newEntity
-                deleteEntity
-                deletePage
-                deleteLecture
-                changeEntity
-                changePage
-                changeLecture
-                getLecture
-                getLectureList
-            */
-            if(action.equals("newLecture")){
-                
-            }else if(action.equals("newPage")){
-                
-            }else if(action.equals("newEntity")){
-                
-            }else if(action.equals("deleteEntity")){
-                
-            }else if(action.equals("deletePage")){
-                
-            }else if(action.equals("deleteLecture")){
-                
-            }else if(action.equals("changeEntity")){
-                
-            }else if(action.equals("changePage")){
-                
-            }else if(action.equals("changeLecture")){
-                
-            }else if(action.equals("getLecture")){
-                
-            }else if(action.equals("getLectureList")){
-                
+            newLecture
+            newPage
+            newEntity
+            deleteEntity
+            deletePage
+            deleteLecture
+            changeEntity
+            changePage
+            changeLecture
+            getLecture
+            getLectureList
+             */
+            switch (action) {
+                case "newLecture":
+                    break;
+                case "newPage":
+                    break;
+                case "newEntity":
+                    break;
+                case "deleteEntity":
+                    break;
+                case "deletePage":
+                    break;
+                case "deleteLecture":
+                    break;
+                case "changeEntity":
+                    break;
+                case "changePage":
+                    break;
+                case "changeLecture":
+                    break;
+                case "getLecture":
+                    break;
+                case "getLectureList":
+                    break;
+                default:
+                    break;
             }
         }
     }

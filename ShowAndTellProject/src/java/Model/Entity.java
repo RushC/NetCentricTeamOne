@@ -21,6 +21,8 @@ public class Entity implements Serializable {
     private String entityZ;
     private String entityContent;
     private String entityAnimation;
+    private String entityWidth;
+    private String entityHeight;
 
     public String getLectureID() {
         return lectureID;
@@ -92,5 +94,21 @@ public class Entity implements Serializable {
 
     public void setEntityZ(String entityZ) {
         this.entityZ = entityZ;
+    }
+    
+    public String getEntityWidth() {
+        return entityWidth;
+    }
+
+    public String getEntityHeight() {
+        return entityHeight;
+    }
+
+    public void setEntityWidth(String entityWidth) {
+        this.entityWidth = entityWidth;
+    }
+
+    public void setEntityHeight(String entityHeight) {
+        this.entityHeight = entityHeight;
     }
 }
