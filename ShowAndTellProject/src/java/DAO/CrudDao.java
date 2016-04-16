@@ -23,7 +23,7 @@ import Model.*;
 public class CrudDao {
     // The path to the SQL file containing the queries to insert the necessary
     // tables in the database.
-    private static final String INIT_SQL_FILE = "DAO/initDatabase.sql";
+    private static final String INIT_SQL_FILE = "/DAO/initDatabase.sql";
     // The connection to the LectureDB database.
     private final Connection connection;
     
@@ -34,6 +34,69 @@ public class CrudDao {
     public CrudDao() {
         // Retrieve the connection for the LectureDB database.
         connection = DBUtility.getConnection();
+    }
+    
+    public void addEntity(Entity entity) {
+        // Create a query to insert the entity into the database.
+        String query = String.format(
+                "insert into ENTITY (PAGEID, LECTUREID, ENTITYTYPE, ENTITYX, "
+                        + "ENTITYY, ENTITYZ, ENTITYCONTENT, ENTITYANIMATION, "
+                        + "ENTITYWIDTH, ENTITYHEIGHT) values (%s, %s, '%s', %s "
+                        + "%s, %s, '%s', '%s')",
+                entity.getPageID(),
+                entity.getLectureID(),
+                entity.getEntityType(),
+                entity.getEntityX(),
+                entity.getEntityY(),
+                entity.getEntityZ(),
+                entity.getEntityContent(),
+                entity.getEntityAnimation(),
+                entity.getEntityWidth(),
+                entity.getEntityHeight()
+        );
+        
+        // Execute the query.
+        query(query);
+    }
+    
+    /**
+     * Inserts a Lecture into the database.
+     * 
+     * @param lecture the Lecture object whose properties should be added into
+     *                the database.
+     */
+    public void addLecture(Lecture lecture) {
+        // Create a query to insert the lecture into the database.
+        String query = String.format(
+                "insert into LECTURE (LECTURETITLE, COURSETITLE, INSTRUCTOR) "
+                + "values ('%s', '%s', '%s')",
+                lecture.getLectureTitle(),
+                lecture.getCourseTitle(),
+                lecture.getInstructor()
+        );
+        
+        // Execute the query.
+        query(query);
+    }
+    
+    /**
+     * Inserts the Page into the database.
+     * 
+     * @param page the Page object whose properties should be added into the
+     *             database.
+     */
+    public void addPage(Page page) {
+        // Create a query to insert the page into the database.
+        String query = String.format(
+                "insert into PAGE (LECTUREID, PAGESEQUENCE, PAGEAUDIOURL) "
+                + "values (%s, %s, '%s')",
+                page.getLectureID(),
+                page.getPageSequence(),
+                page.getPageAudioURL()
+        );
+        
+        // Execute the query.
+        query(query);
     }
     
     /**
@@ -57,9 +120,9 @@ public class CrudDao {
                 entity.setEntityID("" + results.getInt("ENTITYID"));
                 entity.setPageID("" + results.getInt("PAGEID"));
                 entity.setLectureID("" + results.getInt("LECTUREID"));
-                entity.setEntityType(results.getNString("ENTITYTYPE"));
-                entity.setEntityContent(results.getNString("ENTITYCONTENT"));
-                entity.setEntityAnimation(results.getNString("ENTITYANIMATION"));
+                entity.setEntityType(results.getString("ENTITYTYPE"));
+                entity.setEntityContent(results.getString("ENTITYCONTENT"));
+                entity.setEntityAnimation(results.getString("ENTITYANIMATION"));
                 entity.setEntityX("" + results.getInt("ENTITYX"));
                 entity.setEntityY("" + results.getInt("ENTITYY"));
                 entity.setEntityZ("" + results.getInt("ENTITYZ"));
@@ -83,7 +146,7 @@ public class CrudDao {
     public Lecture[] getLectures() {
         // Create a query to select every row from the Lecture table and order
         // them alphabetically by name.
-        String query = "select * from LECTURE order by LECTURENAME";
+        String query = "select * from LECTURE order by LECTURETITLE";
         
         // Retrieve the list of objects for the query.
         List<Lecture> lectures = getResultsFromQuery(query, (results) -> {
@@ -91,9 +154,9 @@ public class CrudDao {
                 // Create a new Lecture object with the information from the row.
                 Lecture lecture = new Lecture();
                 lecture.setLectureID("" + results.getInt("LECTUREID"));
-                lecture.setLectureTitle(results.getNString("LECTURETITLE"));
-                lecture.setCourseTitle(results.getNString("COURSETITLE"));
-                lecture.setInstructor(results.getNString("INSTRUCTOR"));
+                lecture.setLectureTitle(results.getString("LECTURETITLE"));
+                lecture.setCourseTitle(results.getString("COURSETITLE"));
+                lecture.setInstructor(results.getString("INSTRUCTOR"));
                 return lecture;
             } catch (SQLException e) {
                 System.err.println(e.getMessage());
@@ -219,6 +282,25 @@ public class CrudDao {
             }
         } catch (SQLException e) {
             // Print the error message.
+            System.err.println(e.getMessage());
+        }
+    }
+    
+    /**
+     * Runs the specified query.
+     * 
+     * @param query a string representing a SQL query.
+     */
+    public void query(String query) {
+        try {
+            // Create a new statement for the database connection.
+            Statement statement = connection.createStatement();
+            
+            // Execute the query.
+            statement.executeQuery(query);
+        
+        // Print any errors.
+        } catch (SQLException e) {
             System.err.println(e.getMessage());
         }
     }
