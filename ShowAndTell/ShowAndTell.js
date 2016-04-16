@@ -195,6 +195,8 @@ $(document).ready(function() {
 			$(this).switchClass("hover", "", 200);
 		});
 	}
+	parent.document.getElementById("sframe").contentDocument.location = "http://localhost:8080/ShowAndTellProject/views/side.jsp";
+	//parent.document.getElementById("sframe").contentDocument.location = "side.html";
 });
 //end of nicks code
 

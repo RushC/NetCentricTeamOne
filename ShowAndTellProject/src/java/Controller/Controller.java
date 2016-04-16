@@ -5,7 +5,11 @@
  */
 package Controller;
 
+import models.Entity;
+import models.Lecture;
+import models.Page;
 import java.io.IOException;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +23,10 @@ public class Controller extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
+        if (request.getRequestURI().endsWith("side.jsp")) {
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/views/side.jsp");
+        dispatcher.forward(request, response);
+        }
         doPost(request, response);
     }
 
@@ -26,21 +34,24 @@ public class Controller extends HttpServlet {
     protected void doPost(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
+        response.setContentType("application/json");
+        response.getWriter().print("Testing");
         if(action != null){
             /*
-            actions:
-            newLecture
-            newPage
-            newEntity
-            deleteEntity
-            deletePage
-            deleteLecture
-            changeEntity
-            changePage
-            changeLecture
-            getLecture
-            getLectureList
+                actions:
+                newLecture
+                newPage
+                newEntity
+                deleteEntity
+                deletePage
+                deleteLecture
+                changeEntity
+                changePage
+                changeLecture
+                getLecture
+                getLectureList
              */
+            response.getWriter().print("Testing");
             switch (action) {
                 case "newLecture":
                     break;

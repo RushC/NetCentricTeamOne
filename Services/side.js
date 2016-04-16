@@ -16,13 +16,11 @@ $(document).ready(function() {
 	}
 });
 
-function rosterJSP()
-{
+function rosterJSP() {
 	parent.document.getElementById("cframe").contentWindow.location = "http://localhost:8080/WebRoster/Roster.jsp"
 }
 
-function rosterMVC()
-{
+function rosterMVC() {
     parent.document.getElementById("cframe").contentWindow.location = "http://localhost:8080/WebRosterMVC/";
 }
 
