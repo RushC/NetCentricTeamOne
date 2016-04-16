@@ -1,6 +1,6 @@
 package DAO;
 
-import models.Entity;
+import Model.Entity;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
