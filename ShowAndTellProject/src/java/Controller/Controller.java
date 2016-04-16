@@ -5,9 +5,9 @@
  */
 package Controller;
 
-import models.Entity;
-import models.Lecture;
-import models.Page;
+import Model.Entity;
+import Model.Lecture;
+import Model.Page;
 import java.io.IOException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
