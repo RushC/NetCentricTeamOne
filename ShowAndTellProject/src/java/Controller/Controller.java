@@ -35,7 +35,6 @@ public class Controller extends HttpServlet {
             HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
         response.setContentType("application/json");
-        response.getWriter().print("Testing");
         if(action != null){
             /*
                 actions:
@@ -51,7 +50,6 @@ public class Controller extends HttpServlet {
                 getLecture
                 getLectureList
              */
-            response.getWriter().print("Testing");
             switch (action) {
                 case "newLecture":
                     break;

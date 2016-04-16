@@ -4,8 +4,9 @@
     Author     : njt5112
 --%>
 
+<%@page import="DAO.CrudDao"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="models.*" %>
+<%@page import="Model.*" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -18,9 +19,18 @@
     <body>
         <fieldset class="sideDiv">
             <legend> Show & Tell </legend>
-            <!-- <select>
-                    <option value="Something">Something</option>
-            </select> -->
+            <select>
+                <%
+                    System.out.println("Ayyyy lmao");
+                    for (Lecture lecture : new CrudDao().getLectures()) {
+                        System.out.println(lecture);
+                %>
+                <option value="<%=lecture.getLectureID()%>"><%=lecture.getLectureTitle()%></option>
+                <%
+                    }
+                %>
+                <!-- <option value="Something">Something</option> -->
+            </select>
 
             <!--
             <button id="createSlide" onclick="createSlide()">Create Slide</button>
@@ -28,7 +38,7 @@
             <button id="deleteSlide" onclick="deleteSlide()">Delete Slide</button>
             -->
 
-            <!-- <p class=sideMessage></p> -->
+            <p class=sideMessage></p>
         </fieldset>
     </body>
 </html>
