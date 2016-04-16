@@ -33,7 +33,10 @@ window.onload = function() {
         type: "textbox",
         width: "10",
         height: "10",
-        content: "TEST"
+        content: "TEST",
+        id: "SOMETHING",
+        x: 4,
+        y: 4
     };
     updatePropertyDiv();
     updateEntityElementContent();
@@ -47,8 +50,10 @@ function moveEntity() {
     var z = zInput.val;
     
     // update the entity's element:
-    $("#"+currentEntity.id).css({top: x, left: y, "z-index": z});
-    
+    $("#"+currentEntity.id).animate({top: y, left: x, "z-index": z});
+    console.log($("#"+currentEntity.id));
+    console.log("AND:");
+    console.log($("#"+currentEntity.id)[0]);
     // update the entity object:
     currentEntity.x = x;
     currentEntity.y = y;
@@ -243,14 +248,16 @@ function updateEntityElementContent() {
         var element = $("#" + currentEntity.id);
         // create the element if it doesn't exist:
         if (!element[0]) {
+            console.log("TEST MOTHERFUCKER")
             element = $('<div id="' + currentEntity.id +'"></div>');
-            element.css({position: "absolute",
-                        left: currentEntity.x,
-                        top: currentEntity.y,
-                        "z-index": currentEntity.z,
-                        size:  "auto"});
+            element.animate({position: "absolute"});
+//                        left: currentEntity.x,
+//                        top: currentEntity.y,
+//                        "z-index": currentEntity.z,
+//                        size:  "auto"});
+            console.log(element);
             // add the element to the SHIT FUCKING TITS
-            slideDiv.add(element);
+            slideDiv.append(element);
         }
         // add/update the appropriate contents
         switch(currentEntity.type) {
