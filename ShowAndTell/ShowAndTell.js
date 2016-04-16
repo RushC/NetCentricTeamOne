@@ -23,8 +23,10 @@ window.onload = function() {
     yInput = $("#yInput");
     zInput = $("#zInput");
     typeInput = $("#typeInput");
+    changedEntities.length = 0;
 };
 
+// function to move an entity:
 function moveEntity() {
     // get the x y and z values:
     var x = xInput.val;
@@ -38,6 +40,8 @@ function moveEntity() {
     currentEntity.x = x;
     currentEntity.y = y;
     currentEntity.z = z;
+    
+    currentEntity.changed = true;
 }
 
 
@@ -64,6 +68,8 @@ function newEntity() {
     
 }
 
+
+// function to change the type of an entity
 function changeType() {
     // warn user that changing the type could discard content:
     if (window.confirm("Entity content may be discarded if type is changed. Continue?")) {
@@ -100,21 +106,18 @@ function changeType() {
             entityContent.append(image);
             entityContent.show();
             
-            
         }
     }
 }
 
 
+// Function that does exactly as it says on the tin:
 function updatePropertyDiv() {
     if (currentEntity) { //if the current entity is defined
         // Set all the properties equal to those of the entity:
         xInput.val(currentEntity.x);
         yInput.val(currentEntity.y);
         zInput.val(currentEnttiy.z);
-<<<<<<< Updated upstream
-        //switch()
-=======
         // fill the content div with the appropriate elements based on the entity type:
         entityContent.empty();
         switch(currentEntity.type) {
@@ -165,8 +168,7 @@ function updatePropertyDiv() {
                 break;
         }
         updateEntityElementContent();
-    
->>>>>>> Stashed changes
+    // otherwise reset all values to default:
     } else {
         xInput.val(0);
         yInput.val(0);
@@ -174,6 +176,9 @@ function updatePropertyDiv() {
     }
 }
 
+//YOU INSERT YOUR OWN FUNCTIONS IN MY CODE WITHOUT COMMENTS AGAIN AND I'LL
+//GUT YOU LIKE A FISH
+// nicks code:
 $(document).ready(function() {
 	// Animate the side div in.
 	$("#sideDiv").hide().fadeIn();
@@ -191,8 +196,9 @@ $(document).ready(function() {
 		});
 	}
 });
+//end of nicks code
 
-
+// function to do exactly what its name implies
 function updateEntityElementContent() {
         if (currentEntity) {
         //first get the element
