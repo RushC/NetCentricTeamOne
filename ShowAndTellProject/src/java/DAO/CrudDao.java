@@ -37,6 +37,12 @@ public class CrudDao {
         connection = DBUtility.getConnection();
     }
     
+    /**
+     * Inserts an entity into the Database.
+     * 
+     * @param entity an Entity object whose properties should be added to the 
+     *               database.
+     */
     public void addEntity(Entity entity) {
         // Create a query to insert the entity into the database.
         String query = String.format(
@@ -242,7 +248,7 @@ public class CrudDao {
             System.err.println(e.getMessage());
             
             // Initialize the database.
-            initDatabase();
+            initTables();
             
             // Attempt to retry the query.
             try {
@@ -260,7 +266,7 @@ public class CrudDao {
      * If the tables have not been created, the tables are created using the
      * queries specified in initDatabase.sql.
      */
-    public void initDatabase() {
+    public void initTables() {
         // Attempt to execute a SQL statement.
         try {
             // Open the init SQL file.
@@ -303,6 +309,99 @@ public class CrudDao {
         // Print any errors.
         } catch (SQLException e) {
             System.err.println(e.getMessage());
+            System.err.println("Messed up query: " + query);
         }
+    }
+    
+    /**
+     * Updates the specified Entity in the database.
+     * 
+     * @param entity an Entity object whose properties should be updated in the
+     *               database. The Entity object must have an ID that is
+     *               in the database, as the record with that ID will be the
+     *               one that is updated.
+     */
+    public void updateEntity(Entity entity) {
+        // Create a query to update the entity in the database.
+        String query = String.format(
+                "update ENTITY set "
+                        + "ENTITYTYPE='%s',"
+                        + "ENTITYX=%s,"
+                        + "ENTITYY=%s,"
+                        + "ENTITYZ=%s,"
+                        + "ENTITYCONTENT='%s',"
+                        + "ENTITYANIMATION='%s'"
+                        + "ENTITYWIDTH=%s,"
+                        + "ENTITYHEIGHT=%s"
+                        + "where ENTITYID=%s"
+                        + "and PAGEID=%s"
+                        + "and LECTUREID=%s",
+                entity.getEntityType(),
+                entity.getEntityX(),
+                entity.getEntityY(),
+                entity.getEntityZ(),
+                entity.getEntityContent(),
+                entity.getEntityAnimation(),
+                entity.getEntityWidth(),
+                entity.getEntityHeight(),
+                entity.getEntityID(),
+                entity.getPageID(),
+                entity.getLectureID()
+        );
+        
+        // Execute the query.
+        query(query);
+    }
+    
+    /**
+     * Updates the specified lecture in the database.
+     * 
+     * @param lecture a Lecture object whose properties should be updated in the
+     *                database. The Lecture object must have an ID that is in
+     *                the database, as the record with that ID will be the one
+     *                that is updated.
+     */
+    public void updateLecture(Lecture lecture) {
+        // Create a query to update the lecture in the database.
+        String query = String.format(
+                "update LECTURE set "
+                        + "LECTURETITLE='%s',"
+                        + "COURSETITLE='%s',"
+                        + "INSTRUCTOR='%s'"
+                        + "where LECTUREID=%s",
+                lecture.getLectureTitle(),
+                lecture.getCourseTitle(),
+                lecture.getInstructor(),
+                lecture.getLectureID()
+        );
+        
+        // Execute the query.
+        query(query);
+    }
+    
+    /**
+     * Updates the specified page in the database.
+     * 
+     * @param page a Page object whose properties should be updated in the
+     *                database. The Page object must have an ID that is in
+     *                the database, as the record with that ID will be the one
+     *                that is updated.
+     */
+    public void updatePage(Page page) {
+        // Create a query to update the Page in the database.
+        String query = String.format(
+                "update PAGE set "
+                        + "PAGESEQUENCE=%s,"
+                        + "PAGEAUDIOURL='%s'"
+                        + "where PAGEID=%s"
+                        + "and LECTUREID=%s",
+                page.getPageSequence(),
+                page.getPageAudioURL(),
+                page.getPageID(),
+                page.getLectureID()
+        );
+        
+        // Execute the query.
+        query(query);
     }
 }
