@@ -3,6 +3,7 @@ var currentLecture;
 var currentSlide;
 var currentEntity;
 var entityList;
+var awaitingResponse = false;
 
 // Commonly Referenced Elements:
 var slideDiv;
@@ -16,6 +17,45 @@ var hInput;
 var wInput;
 var typeInput;
 var contentInput;
+
+// constructors for creating new lecture/slide/entities:
+function Entity() {
+    this.lectureID = currentLecture.id;
+    this.slideID = currentSlide.id;
+    this.type = "textbox"
+    this.id = "";
+    this.x = 0;
+    this.y = 0;
+    this.z = 0;
+    this.height = 0;
+    this.width = 0;
+    this.content = "";
+    this.status = "added";
+}
+
+function Lecture() {
+    this.id;
+    this.lectureTitle;
+    this.courseTitle;
+    this.instructor;
+}
+
+function Slide() {
+    //todo
+}
+
+// constructor to create a message to the server:
+function saveMessage(action) {
+    // what type of change is being made (add/change/delete) for lecutre/slide
+    this.action = action;
+    // what is being changed (the lecture or slide)
+    this.what;
+    // list of entities
+    this.addedEntities = [];
+    this.changedEntities = [];
+    this.deletedEntities = [];
+    
+}
 
 // Initialize some of the global variables
 window.onload = function() {
@@ -96,16 +136,11 @@ function newEntity() {
     entityContent.empty();
     // make sure the properties div is showing
     entityProperties.show();
+    // create a new entitiy:
+    currentEntity = new Entity();
+    // add the entity to the list:
+    entityList.push(currentEntity);
     
-//    // ask server to add a new entity to the slide:
-//    $.post("ShowAndTell",
-//           {action: "newEntity",
-//            lectureID: currentLecture.lectureID,
-//            pageID: currentSlide.slideID,
-//            }
-    
-    //});
-       
     
 }
 
@@ -314,9 +349,18 @@ function updateEntityElementContent() {
 
 
 
+// function to save the current slide to the server:
+function() saveToServer() {
+    // if the slide is new:
+    if (currentSlide.status == "added") {
+        //create a new 
+    }
+    
+    //otherwise
+}
 
-
-
+function processSaveResponse(resp) {
+}
 
 
 
