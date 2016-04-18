@@ -107,6 +107,60 @@ public class CrudDao {
     }
     
     /**
+     * Deletes the specified Entity in the database.
+     * 
+     * @param entityID the ID of the entity in the database.
+     * @param pageID the ID of the page in the database.
+     * @param lectureID the ID of the lecture in the database.
+     */
+    public void deleteEntity(int entityID, int pageID, int lectureID) {
+        // Create a query to delete the entity with the specified ID.
+        String query = String.format(
+                "delete from ENTITY "
+                        + "where ENTITYID=%s "
+                        + "and PAGEID=%s "
+                        + "and LECTUREID=%s",
+                entityID,
+                pageID,
+                lectureID
+        );
+        
+        // Execute the query.
+        query(query);
+    }
+    
+    /**
+     * Deletes the specified Lecture in the database.
+     * 
+     * @param lectureID the ID of the lecture to delete in the database.
+     */
+    public void deleteLecture(int lectureID) {
+        // Create a query to delete the lecture with the specified ID.
+        String query = String.format(
+                "delete from LECTURE "
+                        + "where LECTUREID=%s",
+                lectureID
+        );
+        
+        // Execute the query.
+        query(query);
+    }
+    
+    public void deletePage(int lectureID, int pageID) {
+        // Create a query to delete the page in the database.
+        String query = String.format(
+                "delete from PAGE "
+                        + "where LECTUREID=%s "
+                        + "and PAGEID=%s",
+                lectureID,
+                pageID
+        );
+        
+        // Execute the query.
+        query(query);
+    }
+    
+    /**
      * Retrieves all of the Entity objects in the database for the specified
      * page in the specified lecture.
      * 

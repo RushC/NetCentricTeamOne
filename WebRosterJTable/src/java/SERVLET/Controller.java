@@ -32,6 +32,7 @@ public class Controller extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
+        request.getParameter("what");
         String action = request.getParameter("action");
         List<Student> studentList;//WTF = new ArrayList<>();
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
