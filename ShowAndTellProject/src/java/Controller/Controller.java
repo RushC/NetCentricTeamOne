@@ -5,10 +5,12 @@
  */
 package Controller;
 
+import DAO.CrudDao;
 import Model.Entity;
 import Model.Lecture;
 import Model.Page;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -20,8 +22,9 @@ import javax.servlet.http.HttpServletResponse;
  * @author njt5112
  */
 public class Controller extends HttpServlet {
-    public static final String NAME_HEADER = "LECTURE_NAME"   ; // header value for the name of a lecture
-    public static final String ID_HEADER   = "LECTURE_ID"      ; // header value for the id of a lecture
+    //public static final String NAME_HEADER = "LECTURE_NAME"   ; // header value for the name of a lecture
+    //public static final String ID_HEADER   = "LECTURE_ID"      ; // header value for the id of a lecture
+    CrudDao lectureDB = new CrudDao();
     
     @Override
     protected void doGet(HttpServletRequest request,
@@ -57,23 +60,25 @@ public class Controller extends HttpServlet {
                     request.getParameter("action"));
             switch (action) {
                 case "newLecture": //
+                    Lecture newLecture = new Lecture();
+                    lectureDB.addLecture(newLecture);
                     //response.sendRedirect("views/createLecture.jsp");
                     break;
-                case "newPage":
+                case "newPage": //
                     break;
                 case "newEntity":
                     break;
                 case "deleteEntity":
                     break;
-                case "deletePage":
+                case "deletePage": //
                     break;
                 case "deleteLecture": //
                     break;
                 case "changeEntity":
                     break;
-                case "changePage":
+                case "updatePage": //
                     break;
-                case "changeLecture": //
+                case "updateLecture": //
                     break;
                 case "getLecture":
                     break;
@@ -83,5 +88,9 @@ public class Controller extends HttpServlet {
                     break;
             }
         }
+    }
+    
+    private Lecture getLecture(HttpServletRequest request){
+        
     }
 }
