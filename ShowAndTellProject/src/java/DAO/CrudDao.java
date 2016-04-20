@@ -113,7 +113,7 @@ public class CrudDao {
      * @param pageID the ID of the page in the database.
      * @param lectureID the ID of the lecture in the database.
      */
-    public void deleteEntity(int entityID, int pageID, int lectureID) {
+    public void deleteEntity(String entityID, String pageID, String lectureID) {
         // Create a query to delete the entity with the specified ID.
         String query = String.format(
                 "delete from ENTITY "
@@ -134,7 +134,7 @@ public class CrudDao {
      * 
      * @param lectureID the ID of the lecture to delete in the database.
      */
-    public void deleteLecture(int lectureID) {
+    public void deleteLecture(String lectureID) {
         // Create a query to delete the lecture with the specified ID.
         String query = String.format(
                 "delete from LECTURE "
@@ -146,7 +146,7 @@ public class CrudDao {
         query(query);
     }
     
-    public void deletePage(int lectureID, int pageID) {
+    public void deletePage(String lectureID, String pageID) {
         // Create a query to delete the page in the database.
         String query = String.format(
                 "delete from PAGE "

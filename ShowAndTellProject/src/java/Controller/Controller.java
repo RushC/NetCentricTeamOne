@@ -42,47 +42,33 @@ public class Controller extends HttpServlet {
         String action = request.getParameter("action");
         response.setContentType("application/json");
         if(action != null){
-            /*
-                actions:
-                newLecture
-                newPage
-                newEntity
-                deleteEntity
-                deletePage
-                deleteLecture
-                changeEntity
-                changePage
-                changeLecture
-                getLecture
-                getLectureList
-             */
             System.out.println("ID: " + request.getParameter("id") + "\t\tAction: " +
                     request.getParameter("action"));
             switch (action) {
                 case "newLecture": //
-                    Lecture newLecture = new Lecture();
-                    lectureDB.addLecture(newLecture);
+                    Lecture lecture = getLecture(request);
+                    lectureDB.addLecture(lecture);
                     //response.sendRedirect("views/createLecture.jsp");
                     break;
                 case "newPage": //
-                    break;
-                case "newEntity":
-                    break;
-                case "deleteEntity":
+                    Page page = getPage(request);
+                    lectureDB.addPage(page);
                     break;
                 case "deletePage": //
+                    page = getPage(request);
+                    lectureDB.deletePage(page.getLectureID(), page.getPageID());
                     break;
                 case "deleteLecture": //
-                    break;
-                case "changeEntity":
+                    lecture = getLecture(request);
+                    lectureDB.deleteLecture(lecture.getLectureID());
                     break;
                 case "updatePage": //
+                    page = getPage(request);
+                    lectureDB.updatePage(page);
                     break;
                 case "updateLecture": //
-                    break;
-                case "getLecture":
-                    break;
-                case "getLectureList":
+                    lecture = getLecture(request);
+                    lectureDB.updateLecture(lecture);
                     break;
                 default:
                     break;
@@ -91,6 +77,22 @@ public class Controller extends HttpServlet {
     }
     
     private Lecture getLecture(HttpServletRequest request){
-        
+        return null;
+    }
+    
+    private Page getPage(HttpServletRequest request) {
+        return null;
+    }
+    
+    private Entity[] getAddedEntities(HttpServletRequest request) {
+        return null;
+    }
+    
+    private Entity[] getDeletedEntities(HttpServletRequest request) {
+        return null;
+    }
+    
+    private Entity[] getUpdatedEntities(HttpServletRequest request) {
+        return null;
     }
 }
