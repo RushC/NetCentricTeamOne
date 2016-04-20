@@ -12,7 +12,7 @@
     </head>
     <body>
         <jsp:include page="navigation.jsp"/>
-        <h1>Todo: make it not shit</h1>
+        <h1>Todo: make it not kittens</h1>
         <form class="addStudentField" method="POST">
             <fieldset>
                 <legend>Update a Student's Information</legend>

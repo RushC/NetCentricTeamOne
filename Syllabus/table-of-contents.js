@@ -1,10 +1,13 @@
 // Run this when the document is loaded.
 window.onload = function() {
+	//Clear sidebar
+	parent.document.getElementById("sframe").contentDocument.location = "null";
+	
 	// Create a table of contents element.
 	var contents = createContentsElement();
 
 	// Retrieve each of the h1 elements in the body.
-	var h1 = document.querySelectorAll("h1")//index(document.body, "H1");
+	var h1 = index(document.body, "H1");
 	for (var i in h1) {
 		// Create a link for each element.
 		var h1link = scrollLink(h1[i]);

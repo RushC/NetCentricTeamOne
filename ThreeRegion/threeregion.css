@@ -5,7 +5,7 @@ a:active{}
 
 html, body { height: 100%; }
 
-#navigationbar {color: white; font-size: 1em; background-color: #009688;}
+#navigationbar {color: white; font-size: 1.25em; background-color: #009688;}
 #sidenavigation {float: left; height: 75%; width: 150px; background-color: #009688;}
  
 

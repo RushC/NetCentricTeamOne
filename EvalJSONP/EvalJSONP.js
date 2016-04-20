@@ -201,7 +201,7 @@ function updateUser(userID, answer, direction) {
 			users[userID].currentQuestion = questions.length;
 			break;
 		default:
-			console.log("WTF>>>\n\n\n\n\n\n\n\n\n\n\n<<<SOME KIND OF SHIT WENT DOWN HERE");
+			console.log("WTF>>>\n\n\n\n\n\n\n\n\n\n\n<<<SOME KIND OF kittens WENT DOWN HERE");
 	}
 
 }
