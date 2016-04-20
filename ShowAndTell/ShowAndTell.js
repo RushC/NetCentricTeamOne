@@ -39,6 +39,7 @@ function Entity(me) {
         this.width = me.entityWidth   || 0;
         this.content = me.entityContent || "";
         this.status = me ? "unchanged" : "added";
+        this.changed = me ?;
     }
 }
 
@@ -56,6 +57,7 @@ function Slide(ms) {
     this.seq = ms.pageSequence || slideCount;
     this.audio = ms.pageAudioURL || "";
     this.status = ms ? "unchanged" : "added";
+    this.changed = ms ?;
 }
 
 ////////////////////////////////////////////
@@ -144,12 +146,9 @@ $(document).ready(function() {
 ////////////////////////////////////////////
 // function to save the current slide to the server:
 function() saveToServer() {
-    // if the slide is new:
-    if (currentSlide.status == "added") {
-        //create a new 
-    }
+    //create a list of newly added entities:
     
-    //otherwise
+    
 }
 
 function processSaveResponse(resp) {
