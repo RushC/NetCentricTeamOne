@@ -1,11 +1,16 @@
-// Global variables:
+////////////////////////////////////////////
+// General Global variables:
+////////////////////////////////////////////
 var currentLecture;
 var currentSlide;
 var currentEntity;
 var entityList;
+var slideCount;
 var awaitingResponse = false;
 
+////////////////////////////////////////////
 // Commonly Referenced Elements:
+////////////////////////////////////////////
 var slideDiv;
 var entitiesDiv;
 var entityContent;
@@ -18,46 +23,75 @@ var wInput;
 var typeInput;
 var contentInput;
 
+////////////////////////////////////////////
 // constructors for creating new lecture/slide/entities:
-function Entity() {
-    this.lectureID = currentLecture.id;
-    this.slideID = currentSlide.id;
-    this.type = "textbox"
-    this.id = "";
-    this.x = 0;
-    this.y = 0;
-    this.z = 0;
-    this.height = 0;
-    this.width = 0;
-    this.content = "";
-    this.status = "added";
+////////////////////////////////////////////
+function Entity(me) {
+        this.lectureID = me.lectureID || currentLecture.id;
+        this.slideID = me.PageID || currentSlide.id;
+        this.type = me.entityType || "textbox";
+        this.id = me.entityID || "";
+        this.x = me.entityX || 0;
+        this.y = me.entityY || 0;
+        this.z = me.entityZ || 0;
+        this.anim = me.entityAnimation || "none";
+        this.height = me.entityHeight || 0;
+        this.width = me.entityWidth   || 0;
+        this.content = me.entityContent || "";
+        this.status = me ? "unchanged" : "added";
+    }
 }
 
-function Lecture() {
-    this.id;
-    this.lectureTitle;
-    this.courseTitle;
-    this.instructor;
+function Lecture(ml) {
+    this.id = ml.lectureID || "";
+    this.lectureTitle = ml.lectureTitle || "Lecture Title";
+    this.courseTitle = ml.courseTitle || "Course Title";
+    this.instructor = ml.instructor || "Instructor Name";
+    this.status = ml ? "unchanged" : "added";
 }
 
-function Slide() {
-    //todo
+function Slide(ms) {
+    this.id = ms.pageID || "";
+    this.lectureID = ms.lectureID || currentLecture.id;
+    this.seq = ms.pageSequence || slideCount;
+    this.audio = ms.pageAudioURL || "";
+    this.status = ms ? "unchanged" : "added";
 }
 
-// constructor to create a message to the server:
-function saveMessage(action) {
-    // what type of change is being made (add/change/delete) for lecutre/slide
-    this.action = action;
-    // what is being changed (the lecture or slide)
-    this.what;
-    // list of entities
-    this.addedEntities = [];
-    this.changedEntities = [];
-    this.deletedEntities = [];
-    
+////////////////////////////////////////////
+// constructors for objects that will translate into their java bean equivalents (need this because the json representation has to be exactly the same as the java class - will not work if there are extra fields such as status)
+////////////////////////////////////////////
+function ModelEntity(e) {
+    this.lectureID = e.lectureID;
+    this.pageID = e.slideID;
+    this.entityID = e.id;
+    this.entityType = e.type;
+    this.entityX = e.x;
+    this.entityY = e.y;
+    this.entityZ = e.z;
+    this.animation = e.anim;
+    this.entityContent = e.content;
+    this.entityWidth = e.width;
+    this.entityHeight = e.height;
 }
 
-// Initialize some of the global variables
+function modelSlide(s) {
+    this.lectureID = s.lectureID;
+    this.pageID = s.pageID;
+    this.pageSequence = s.seq;
+    this.pageAudioURL = s.aduio;
+}
+
+function ModelLecture(l) {
+    this.lectureID = l.ID;
+    this.lectureTitle = l.lectureTitle;
+    this.courseTitle = l.courseTitle;
+    this.instructor = l.instructor;
+}
+
+////////////////////////////////////////////
+// Script Initialization
+////////////////////////////////////////////
 window.onload = function() {
     slideDiv = $("#slideDiv");
     entitiesDiv = $("#entitiesDiv");
@@ -81,6 +115,68 @@ window.onload = function() {
     updatePropertyDiv();
     updateEntityElementContent();
 };
+
+// nicks code:
+$(document).ready(function() {
+	// Animate the side div in.
+	$("#sideDiv").hide().fadeIn();
+	
+	// Add hover functionality to each button.
+	var buttons = $("button");
+	for (var i = 0; i < buttons.length; i++) {
+		// Add the hover class when the mouse enters the button.
+		$(buttons[i]).mouseenter(function() {
+			$(this).switchClass("", "hover", 200);
+		});
+		// Remove the hover class when the mouse leaves the button.
+		$(buttons[i]).mouseleave(function() {
+			$(this).switchClass("hover", "", 200);
+		});
+	}
+	parent.document.getElementById("sframe").contentDocument.location = "http://localhost:8080/ShowAndTellProject/views/side.jsp";
+	//parent.document.getElementById("sframe").contentDocument.location = "side.html";
+});
+//end of nicks code
+
+
+////////////////////////////////////////////
+// Functions to communicate with server
+////////////////////////////////////////////
+// function to save the current slide to the server:
+function() saveToServer() {
+    // if the slide is new:
+    if (currentSlide.status == "added") {
+        //create a new 
+    }
+    
+    //otherwise
+}
+
+function processSaveResponse(resp) {
+}
+
+
+////////////////////////////////////////////
+// Functions to modify entities
+////////////////////////////////////////////
+
+// function to create a new entity:
+function newEntity() {
+    // Reset the properties values:
+    xInput.val = 0;
+    yInput.val = 0;
+    zInput.val = 0;
+    typeInput[0].selectedIndex = 0;
+    entityContent.empty();
+    // make sure the properties div is showing
+    entityProperties.show();
+    // create a new entitiy:
+    currentEntity = new Entity();
+    // add the entity to the list:
+    entityList.push(currentEntity);
+    
+    
+}
 
 // function to move an entity:
 function moveEntity() {
@@ -126,25 +222,6 @@ function resizeEntity() {
 }
 
 
-// function to create a new entity:
-function newEntity() {
-    // Reset the properties values:
-    xInput.val = 0;
-    yInput.val = 0;
-    zInput.val = 0;
-    typeInput[0].selectedIndex = 0;
-    entityContent.empty();
-    // make sure the properties div is showing
-    entityProperties.show();
-    // create a new entitiy:
-    currentEntity = new Entity();
-    // add the entity to the list:
-    entityList.push(currentEntity);
-    
-    
-}
-
-
 // function to change the type of an entity
 function changeType() {
     // warn user that changing the type could discard content:
@@ -186,6 +263,10 @@ function changeType() {
     }
 }
 
+
+////////////////////////////////////////////
+// Functions to handle UI elements
+////////////////////////////////////////////
 
 // Function that does exactly as it says on the tin:
 function updatePropertyDiv() {
@@ -251,30 +332,6 @@ function updatePropertyDiv() {
         zInput.val(0);
     }
 }
-
-//YOU INSERT YOUR OWN FUNCTIONS IN MY CODE WITHOUT COMMENTS AGAIN AND I'LL
-//GUT YOU LIKE A FISH ↓
-// nicks code:
-$(document).ready(function() {
-	// Animate the side div in.
-	$("#sideDiv").hide().fadeIn();
-	
-	// Add hover functionality to each button.
-	var buttons = $("button");
-	for (var i = 0; i < buttons.length; i++) {
-		// Add the hover class when the mouse enters the button.
-		$(buttons[i]).mouseenter(function() {
-			$(this).switchClass("", "hover", 200);
-		});
-		// Remove the hover class when the mouse leaves the button.
-		$(buttons[i]).mouseleave(function() {
-			$(this).switchClass("hover", "", 200);
-		});
-	}
-	parent.document.getElementById("sframe").contentDocument.location = "http://localhost:8080/ShowAndTellProject/views/side.jsp";
-	//parent.document.getElementById("sframe").contentDocument.location = "side.html";
-});
-//end of nicks code
 
 // function to do exactly what its name implies
 function updateEntityElementContent() {
@@ -347,20 +404,6 @@ function updateEntityElementContent() {
     }
 }
 
-
-
-// function to save the current slide to the server:
-function() saveToServer() {
-    // if the slide is new:
-    if (currentSlide.status == "added") {
-        //create a new 
-    }
-    
-    //otherwise
-}
-
-function processSaveResponse(resp) {
-}
 
 
 
