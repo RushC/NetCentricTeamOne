@@ -69,10 +69,10 @@
                     <legend>Slide Options</legend>
                         <form>
                             <label>Slide Sequence</label>
-                            <input type="number">
+                            <input type="number" id="seqInput">
                             <div class=tooltip> <!-- Tooltip example straight from w3 schools woo! -->
                                 <label>Override Existing Slide In Sequence:</label>
-                                <input type="checkbox">
+                                <input type="checkbox" id="slideOverrideInput" onchange="toggleSlideOverride()">
                                 <span class="tooltiptext">Delete the slide in the destination sequence instead of swapping sequences</span>
                             </div>
                             <button onclick="deleteSlide()">Delete</button>
@@ -85,7 +85,7 @@
                 <fieldset class="internalFieldset">
                     <legend class="internalLegend">New Slide</legend>
                     <form>
-                        
+                        <input type=number>
                     </form>
                 </fieldset>
             </div>

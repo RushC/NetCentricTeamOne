@@ -57,7 +57,6 @@ function Slide(ms) {
     this.seq = ms.pageSequence || slideCount;
     this.audio = ms.pageAudioURL || "";
     this.status = ms ? "unchanged" : "added";
-    this.changed = ms ? false : true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -141,31 +140,51 @@ window.onload = function() {
 ////////////////////////////////////////////
 // function to save the current slide to the server:
 function saveToServer() {
+    // define the action for the post
+    if (curentSlide.status == "added")
+        action = "newPage";
+    else if (currentSlide.status == "deleted")
+        action = "deletePage";
+    else action = "updatePage";
+    
     // create a list of newly added entities and a list of changed entities:
     var added = [];
     var changed = [];
+    var deleted = [];
     for (var i = 0; i < entityList.length; ++i) {
         if (entityList[i].status == "added")
             added.push(new ModelEntity(entityList[i]));
+        else if (entityList[i].status == "deleted")
+            deleted.push(new ModelEntity(entityList[i]));
         else if (entityList[i].changed)
             changed.push(new ModelEntity(entityList[i]));
     }
-    // indicated if the slide was modified, created, or left unchanged
-    var slideState = currentSlide.status;
-    if (currentSlide.changed && !currentSlide.status == "added")
-        slideState = "changed";
     
-    // create and send the message
-    $.post("/ShowAndTell/Controller", {
-        "pageStatus" : slideState,
-        "workingPage" : new ModelSlide(currentSlide),
-        "newEntities" : added,
-        "changedEntities" : changed}, processSaveResponse);
+    // indicated if the slide was modified, created, or left unchanged
+    if (curentSlide.status == "added")
+        action = "newPage";
+    else if (currentSlide.status == "deleted")
+        action = "deletePage";
+    else action = "updatePage";
+    
     // indicate that we are waiting for the response
     awaitingResponse = true;
+    // create and send the message
+    $.post("/ShowAndTell/Controller", {
+        "action" : action,
+        "workingPage" : new ModelSlide(currentSlide),
+        "newEntities" : added,
+        "changedEntities" : changed,
+        "deletedEntities" : deleted}, processSaveResponse);
+    // set a timeout for 10s to alert user and reset awaitingResponse in case the server could not be reached/does not respond
+    setTimeout(function() {
+        alert("Connection Timeout: unable to upload to server");
+        awaitingResponse = false;
+    }, 10000);
 }
 
-function processSaveResponse(resp) {
+function processSaveResponse(response) {
+    var resp = JSON.parse(response);
     // make sure the save was successful
     if (resp.saveResponse != "success") {
         alert("Could not upload changes to server");
@@ -189,7 +208,7 @@ function processSaveResponse(resp) {
 
 
 ////////////////////////////////////////////
-// Functions to modify entities
+// Functions to modify entities           //
 ////////////////////////////////////////////
 
 // function to create a new entity:
@@ -306,7 +325,7 @@ function changeType() {
 
 
 ////////////////////////////////////////////
-// Functions to handle UI elements
+// Functions to handle UI elements        //
 ////////////////////////////////////////////
 
 // Function that does exactly as it says on the tin:
