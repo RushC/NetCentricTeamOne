@@ -4,6 +4,14 @@
  * and open the template in the editor.
  */
 
+function Lecture(ml) {
+    this.id = ml.lectureID || "";
+    this.lectureTitle = ml.lectureTitle || "Lecture Title";
+    this.courseTitle = ml.courseTitle || "Course Title";
+    this.instructor = ml.instructor || "Instructor Name";
+    this.status = ml ? "unchanged" : "added";
+}
+
 $(document).ready(function () {
     // Animate the side div in.
     $("#sideDiv").hide().fadeIn();
@@ -25,9 +33,9 @@ $(document).ready(function () {
 function createLecture(){
     $.post("/ShowAndTellProject/Controller", {
         action: "newLecture",
+        lecture: new Lecture(),
         success: function (res) {
-            parent.document.getElementById('cframe').contentWindow.location =
-                    "http://localhost:8080/ShowAndTellProject/views/createLecture.jsp";
+            document.location.href = document.location.href;
         }
     });
 }
