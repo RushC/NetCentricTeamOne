@@ -7,6 +7,8 @@ var currentEntity;
 var entityList;
 var slideCount;
 var awaitingResponse = false;
+var idPlaceHolder = "fakeID";   // used with fakeIDCount to generate ids for preview elements of new entities or slides
+var fakeIDCount = 0;            // used to identify entities or slides without unique ids assigned by the server
 
 ////////////////////////////////////////////
 // Commonly Referenced Elements:
@@ -30,7 +32,7 @@ function Entity(me) {
         this.lectureID = me.lectureID || currentLecture.id;
         this.slideID = me.PageID || currentSlide.id;
         this.type = me.entityType || "textbox";
-        this.id = me.entityID || "";
+        this.id = me.entityID || idPlaceHolder + fakeIDCount++;
         this.x = me.entityX || 0;
         this.y = me.entityY || 0;
         this.z = me.entityZ || 0;
@@ -52,7 +54,7 @@ function Lecture(ml) {
 }
 
 function Slide(ms) {
-    this.id = ms.pageID || "";
+    this.id = ms.pageID || idPlaceHolder + fakeIDCount++;
     this.lectureID = ms.lectureID || currentLecture.id;
     this.seq = ms.pageSequence || slideCount;
     this.audio = ms.pageAudioURL || "";
@@ -115,7 +117,7 @@ window.onload = function() {
         y: 4
     };
     updatePropertyDiv();
-    updateEntityElementContent();
+    updateEntityPreviewContent();
 };
 
 
@@ -123,13 +125,50 @@ window.onload = function() {
 // Functions to communicate with server
 ////////////////////////////////////////////
 // function to save the current slide to the server:
-function() saveToServer() {
-    //create a list of newly added entities:
+function saveToServer() {
+    // create a list of newly added entities and a list of changed entities:
+    var added = [];
+    var changed = [];
+    for (var i = 0; i < entityList.length; ++i) {
+        if (entityList[i].status == "added")
+            added.push(new ModelEntity(entityList[i]));
+        else if (entityList[i].changed)
+            changed.push(new ModelEntity(entityList[i]));
+    }
+    // indicated if the slide was modified, created, or left unchanged
+    var slideState = currentSlide.status;
+    if (currentSlide.changed && !currentSlide.status == "added")
+        slideState = "changed";
     
-    
+    // create and send the message
+    $.post("/ShowAndTell/Controller", {
+        "pageStatus" : slideState,
+        "workingPage" : new ModelSlide(currentSlide),
+        "newEntities" : added,
+        "changedEntities" : changed}, processSaveResponse);
+    // indicate that we are waiting for the response
+    awaitingResponse = true;
 }
 
 function processSaveResponse(resp) {
+    // make sure the save was successful
+    if (resp.saveResponse != "success") {
+        alert("Could not upload changes to server");
+        awaitingResponse = false;
+        return;
+    }
+    
+    // reset the entityList, currentSlide, and current entity
+    currentSlide = new slide(resp.pageResponse);
+    entityList = [];
+    for (var i = 0; i < resp.entityResonse.length; ++i)
+        entityList.push(new Entity(resp.entityResponse[i]));
+    currentEntity = entityList[0];
+    
+    // update ui elements
+    refreshPreview();
+    updatePropertyDiv();
+    
 }
 
 
@@ -139,6 +178,8 @@ function processSaveResponse(resp) {
 
 // function to create a new entity:
 function newEntity() {
+    if (awaitingResponse)
+        return;
     // Reset the properties values:
     xInput.val = 0;
     yInput.val = 0;
@@ -157,12 +198,15 @@ function newEntity() {
 
 // function to move an entity:
 function moveEntity() {
+    if (awaitingResponse)
+        return;
     // get the x y and z values:
     var x = xInput.val;
     var y = yInput.val;
     var z = zInput.val;
     
-    // update the entity's element:
+    // get the entity's preview div
+    var preview = $("#" + currentEntity.id);
     $("#"+currentEntity.id).animate({top: y, left: x, "z-index": z});
     console.log($("#"+currentEntity.id));
     console.log("AND:");
@@ -177,6 +221,8 @@ function moveEntity() {
 
 // function to change the size of an entity:
 function resizeEntity() {
+    if (awaitingResponse)
+        return;
     if (currentEntity) {
         // get the new width and height:
         var width = wInput.val();
@@ -201,6 +247,8 @@ function resizeEntity() {
 
 // function to change the type of an entity
 function changeType() {
+    if (awaitingResponse)
+        return;
     // warn user that changing the type could discard content:
     if (window.confirm("Entity content may be discarded if type is changed. Continue?")) {
         // if changing to an image
@@ -295,13 +343,13 @@ function updatePropertyDiv() {
                 textContent[0].height = currentEntity.height;
                 textContent[0].innerHTML = currentEntity.content;
                 entityContent.append(textContent);
-                textContent.onChange = updateEntityElementContent;
+                textContent.onChange = updateEntityPreviewContent;
                 break;
             default :
                 Console.log("Bad Entity Type" + currentEntity.type);
                 break;
         }
-        updateEntityElementContent();
+        updateEntityPreviewContent();
     // otherwise reset all values to default:
     } else {
         xInput.val(0);
@@ -310,23 +358,28 @@ function updatePropertyDiv() {
     }
 }
 
-// function to do exactly what its name implies
-function updateEntityElementContent() {
-        if (currentEntity) {
+// function to update the current entity's representation on the slide preview
+function updateEntityPreviewContent() {
+    if (currentEntity) {
         //first get the element
         var element = $("#" + currentEntity.id);
         // create the element if it doesn't exist:
         if (!element[0]) {
-            console.log("TEST MOTHERFUCKER")
             element = $('<div id="' + currentEntity.id +'"></div>');
-            element.animate({position: "absolute"});
-//                        left: currentEntity.x,
-//                        top: currentEntity.y,
-//                        "z-index": currentEntity.z,
-//                        size:  "auto"});
-            console.log(element);
-            // add the element to the SHIT FUCKING TITS
+            // add the element to the slide div preview
             slideDiv.append(element);
+            // set the css for the element
+            element[0].top = currentEntity.y;
+            element[0].left = currentEntity.x;
+            element[0]["z-index"] = currentEntity.z;
+            element[0].size = "auto";
+            element[0].position = "absolute";
+//            element.animate({position: "absolute",
+//                left: currentEntity.x,
+//                top: currentEntity.y,
+//                "z-index": currentEntity.z,
+//                size:  "auto"});
+            
         }
         // add/update the appropriate contents
         switch(currentEntity.type) {
@@ -352,6 +405,7 @@ function updateEntityElementContent() {
                     box = $('<textarea></textarea>');
                     box[0].wrap = true;
                     box[0].readOnly = true;
+                    box[0].resize = "none";
                     element.empty();
                     element.append(box);
                 }
@@ -374,9 +428,8 @@ function updateEntityElementContent() {
                 // slice the content along line breaks to get the list entries:
                 var entries = currentEntity.content.split(/(\r\n|\n|\r)/gm);
                 // add each entry to the list:
-                for (var i = 0; i < entries.length; ++i) {
+                for (var i = 0; i < entries.length; ++i)
                     var entry = $("<li>"+entries[i]+"</li>");
-                }
         }
     }
 }
