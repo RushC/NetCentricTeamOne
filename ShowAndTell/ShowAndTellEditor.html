@@ -19,7 +19,7 @@
                         <input type="number" name="slideNum"></input>
                         <button onclick="goToSlide()">Jump to Slide</button>
                     </form>
-                    <div id="slideDiv"></div>
+                    <div id="slidePreviewDiv"></div>
                 </fieldset>
             </div>
             <div id="entityProperties">
@@ -63,5 +63,32 @@
             </div>
         </div>
         <div id="entitiesDiv"></div>
+        <div id="slideDiv">
+            <div id="slideOptionsDiv">
+                <fieldset class="externalFieldset">
+                    <legend>Slide Options</legend>
+                        <form>
+                            <label>Slide Sequence</label>
+                            <input type="number">
+                            <div class=tooltip> <!-- Tooltip example straight from w3 schools woo! -->
+                                <label>Override Existing Slide In Sequence:</label>
+                                <input type="checkbox">
+                                <span class="tooltiptext">Delete the slide in the destination sequence instead of swapping sequences</span>
+                            </div>
+                            <button onclick="deleteSlide()">Delete</button>
+                            <br>
+                            <button onclick="showNewSlideOptions()">Add New Slide</button>
+                        </form>
+                </fieldset>
+            </div>
+            <div id="newSlideDiv" hidden>
+                <fieldset class="internalFieldset">
+                    <legend class="internalLegend">New Slide</legend>
+                    <form>
+                        
+                    </form>
+                </fieldset>
+            </div>
+        </div>
     </body>
 </html>

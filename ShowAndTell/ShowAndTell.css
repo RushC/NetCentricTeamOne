@@ -25,7 +25,7 @@
 div {
     display: inline-block;
 }
-#slideDiv {
+#slidePreviewDiv {
     width: 600px;
     height: 400px;
     border: solid;
@@ -68,4 +68,28 @@ button{
 button.hover:enabled{
 	background-color: #FF5722;
 	color: #FFFFFF
+}
+
+/* Tooltip CSS from w3 schools example */
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 200px;
+    background-color: #FF5722;
+    color: white;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+ 
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
 }

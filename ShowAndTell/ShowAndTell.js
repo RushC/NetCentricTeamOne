@@ -1,33 +1,32 @@
 ////////////////////////////////////////////
-// General Global variables:
+// General Global variables               //
 ////////////////////////////////////////////
-var currentLecture;
-var currentSlide;
-var currentEntity;
-var entityList;
-var slideCount;
-var awaitingResponse = false;
+var currentLecture;             // current lecture being edited
+var currentSlide;               // current slide being edited
+var currentEntity;              // current entity being edited
+var entityList;                 // list of entities for the current slide
+var slideList;                  // list of slides for this lecture
+var awaitingResponse = false;   // true when waiting for the server to respond to an upload
 var idPlaceHolder = "fakeID";   // used with fakeIDCount to generate ids for preview elements of new entities or slides
 var fakeIDCount = 0;            // used to identify entities or slides without unique ids assigned by the server
 
 ////////////////////////////////////////////
-// Commonly Referenced Elements:
+// Commonly Referenced Elements           //
 ////////////////////////////////////////////
-var slideDiv;
-var entitiesDiv;
-var entityContent;
-var entityProperties;
-var xInput;
-var yInput;
-var zInput;
-var hInput;
-var wInput;
-var typeInput;
-var contentInput;
+var slidePreviewDiv;               // div containing the slide preview
+var entitiesDiv;            // div containing a list of entities on the current slide
+var ContentInputDiv;        // div containing the content input for an entity
+var entityProperties;       // div containing the editable properties of the currently selected entity
+var xInput;                 // input for the currently selected entity's horizontal position on the slide
+var yInput;                 // input for the currently selected entity's vertical position on the slide
+var zInput;                 // input for the currently selected entity's z-index based draw order
+var hInput;                 // input for the currently selected entity's height
+var wInput;                 // input for the currently selected entity's width
+var typeInput;              // input for the currentyl selected entity's type
 
-////////////////////////////////////////////
-// constructors for creating new lecture/slide/entities:
-////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+// constructors for creating new lecture/slide/entities  //
+///////////////////////////////////////////////////////////
 function Entity(me) {
         this.lectureID = me.lectureID || currentLecture.id;
         this.slideID = me.PageID || currentSlide.id;
@@ -41,8 +40,7 @@ function Entity(me) {
         this.width = me.entityWidth   || 0;
         this.content = me.entityContent || "";
         this.status = me ? "unchanged" : "added";
-        this.changed = me ?;
-    }
+        this.changed = me ? false : true;
 }
 
 function Lecture(ml) {
@@ -59,12 +57,14 @@ function Slide(ms) {
     this.seq = ms.pageSequence || slideCount;
     this.audio = ms.pageAudioURL || "";
     this.status = ms ? "unchanged" : "added";
-    this.changed = ms ?;
+    this.changed = ms ? false : true;
 }
 
-////////////////////////////////////////////
-// constructors for objects that will translate into their java bean equivalents (need this because the json representation has to be exactly the same as the java class - will not work if there are extra fields such as status)
-////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
+// Constructors for objects that will translate into their java bean equivalents          //
+//(need this because the json representation has to be exactly the same as the java class //
+//- will not work if there are extra fields such as status)                               //
+////////////////////////////////////////////////////////////////////////////////////////////
 function ModelEntity(e) {
     this.lectureID = e.lectureID;
     this.pageID = e.slideID;
@@ -94,12 +94,12 @@ function ModelLecture(l) {
 }
 
 ////////////////////////////////////////////
-// Script Initialization
+// Script Initialization                  //
 ////////////////////////////////////////////
 window.onload = function() {
-    slideDiv = $("#slideDiv");
+    slidePreviewDiv = $("#slidePreviewDiv");
     entitiesDiv = $("#entitiesDiv");
-    entityContent = $("#entityContent");
+    ContentInputDiv = $("#entityContent");
     entityProperties = $("#entityProperties");
     xInput = $("#xInput");
     yInput = $("#yInput");
@@ -107,22 +107,37 @@ window.onload = function() {
     hInput = $("#hInput");
     wInput = $("#wInput");
     typeInput = $("#typeInput");
-    currentEntity = {
-        type: "textbox",
-        width: "10",
-        height: "10",
-        content: "TEST",
-        id: "SOMETHING",
-        x: 4,
-        y: 4
-    };
+    // check to make sure the element variables are non null
+    var badElements = {
+        "Missing Element slidePreviewDiv" : slidePreviewDiv,
+        "Missing Element entitiesDiv" : entitiesDiv,
+        "Missing Element ContentInputDiv" : ContentInputDiv,
+        "Missing Element entityProperties" : entityProperties,
+        "Missing Element xInput" : xInput,
+        "Missing Element yInput" : yInput,
+        "Missing Element zInput" : zInput,
+        "Missing Element hInput" : hInput,
+        "Missing Element wInput" : wInput,
+        "Missing Element typeInput" : typeInput
+    }
+    for (var e in badElements) {
+        if (!badElements[e][0])
+            console.log(e + "!");
+    }
+    
+    // set the current entity, current slide, and current lecture for testing purposes:
+    currentLecture = new Lecture();
+    currentLecture.id = "fakeLectureID";
+    currentSlide = new Slide();
+    currentEntity = new Entity();
+    
     updatePropertyDiv();
     updateEntityPreviewContent();
 };
 
 
 ////////////////////////////////////////////
-// Functions to communicate with server
+// Functions to communicate with server   //
 ////////////////////////////////////////////
 // function to save the current slide to the server:
 function saveToServer() {
@@ -158,7 +173,7 @@ function processSaveResponse(resp) {
         return;
     }
     
-    // reset the entityList, currentSlide, and current entity
+    // reset the entityList, currentSlide, and currentEntity
     currentSlide = new slide(resp.pageResponse);
     entityList = [];
     for (var i = 0; i < resp.entityResonse.length; ++i)
@@ -166,7 +181,8 @@ function processSaveResponse(resp) {
     currentEntity = entityList[0];
     
     // update ui elements
-    refreshPreview();
+    regenSlidePreview();
+    updateEntitiesDiv();
     updatePropertyDiv();
     
 }
@@ -185,7 +201,7 @@ function newEntity() {
     yInput.val = 0;
     zInput.val = 0;
     typeInput[0].selectedIndex = 0;
-    entityContent.empty();
+    ContentInputDiv.empty();
     // make sure the properties div is showing
     entityProperties.show();
     // create a new entitiy:
@@ -254,9 +270,9 @@ function changeType() {
         // if changing to an image
         if(typeInput[0].value == "image") {
             // hide the content div:
-            entityContent.hide();
+            ContentInputDiv.hide("slow");
             // clear the content div:
-            entityContent.empty();
+            ContentInputDiv.empty();
             // add a button to upload a file:
 //            var loadButton = $("<button>Upload Image");
 //            loadButton[0].onclick = function() {
@@ -280,9 +296,9 @@ function changeType() {
                     reader.readAsDataURL(file);
                 }
             };
-            entityContent.append(fileButton);
-            entityContent.append(image);
-            entityContent.show();
+            ContentInputDiv.append(fileButton);
+            ContentInputDiv.append(image);
+            ContentInputDiv.show("slow");
             
         }
     }
@@ -301,7 +317,7 @@ function updatePropertyDiv() {
         yInput.val(currentEntity.y);
         zInput.val(currentEntity.z);
         // fill the content div with the appropriate elements based on the entity type:
-        entityContent.empty();
+        ContentInputDiv.empty();
         switch(currentEntity.type) {
             case "image" : // create an image preview and a image loader if the entity is an image
                 // set the type input first:
@@ -325,9 +341,9 @@ function updatePropertyDiv() {
                         reader.readAsDataURL(file);
                     }
                 };
-                entityContent.append(fileButton);
-                entityContent.append(image);
-                entityContent.show();
+                ContentInputDiv.append(fileButton);
+                ContentInputDiv.append(image);
+                ContentInputDiv.show();
                 break;
                 
             // create a basic text box if the input is a text box or list:
@@ -342,7 +358,7 @@ function updatePropertyDiv() {
                 textContent[0].width = currentEntity.width;
                 textContent[0].height = currentEntity.height;
                 textContent[0].innerHTML = currentEntity.content;
-                entityContent.append(textContent);
+                ContentInputDiv.append(textContent);
                 textContent.onChange = updateEntityPreviewContent;
                 break;
             default :
@@ -367,7 +383,7 @@ function updateEntityPreviewContent() {
         if (!element[0]) {
             element = $('<div id="' + currentEntity.id +'"></div>');
             // add the element to the slide div preview
-            slideDiv.append(element);
+            slidePreviewDiv.append(element);
             // set the css for the element
             element[0].top = currentEntity.y;
             element[0].left = currentEntity.x;
@@ -432,6 +448,19 @@ function updateEntityPreviewContent() {
                     var entry = $("<li>"+entries[i]+"</li>");
         }
     }
+}
+
+
+// function to update the entity list div
+function updateEntitiesDiv() {
+    //todo
+    console.log("updateEntitesDiv() has not been implemented yet!");
+}
+
+// function to regenerate the slide preview without recreating elements that already exist
+function regenSlidePreview() {
+    //todo
+    console.log("regenSlidePreview() has not been implemented yet!");
 }
 
 
