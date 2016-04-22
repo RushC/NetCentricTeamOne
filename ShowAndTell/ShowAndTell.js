@@ -28,34 +28,34 @@ var typeInput;              // input for the currentyl selected entity's type
 // constructors for creating new lecture/slide/entities  //
 ///////////////////////////////////////////////////////////
 function Entity(me) {
-        this.lectureID = me.lectureID || currentLecture.id;
-        this.slideID = me.PageID || currentSlide.id;
-        this.type = me.entityType || "textbox";
-        this.id = me.entityID || idPlaceHolder + fakeIDCount++;
-        this.x = me.entityX || 0;
-        this.y = me.entityY || 0;
-        this.z = me.entityZ || 0;
-        this.anim = me.entityAnimation || "none";
-        this.height = me.entityHeight || 0;
-        this.width = me.entityWidth   || 0;
-        this.content = me.entityContent || "";
+        this.lectureID = me ? me.lectureID : currentLecture.id;
+        this.slideID = me ? me.PageID : currentSlide.id;
+        this.type = me ? me.entityType : "textbox";
+        this.id = me ? me.entityID : idPlaceHolder + fakeIDCount++;
+        this.x = me ? me.entityX : 0;
+        this.y = me ? me.entityY : 0;
+        this.z = me ? me.entityZ : 0;
+        this.anim = me ? me.entityAnimation : "none";
+        this.height = me ? me.entityHeight : 0;
+        this.width = me ? me.entityWidth   : 0;
+        this.content = me ? me.entityContent : "";
         this.status = me ? "unchanged" : "added";
         this.changed = me ? false : true;
 }
 
 function Lecture(ml) {
-    this.id = ml.lectureID || "";
-    this.lectureTitle = ml.lectureTitle || "Lecture Title";
-    this.courseTitle = ml.courseTitle || "Course Title";
-    this.instructor = ml.instructor || "Instructor Name";
+    this.id = ml ? ml.lectureID : "";
+    this.lectureTitle = ml ? ml.lectureTitle : "Lecture Title";
+    this.courseTitle = ml ? ml.courseTitle : "Course Title";
+    this.instructor = ml ? ml.instructor : "Instructor Name";
     this.status = ml ? "unchanged" : "added";
 }
 
 function Slide(ms) {
-    this.id = ms.pageID || idPlaceHolder + fakeIDCount++;
-    this.lectureID = ms.lectureID || currentLecture.id;
-    this.seq = ms.pageSequence || slideCount;
-    this.audio = ms.pageAudioURL || "";
+    this.id = ms ? ms.pageID : idPlaceHolder + fakeIDCount++;
+    this.lectureID = ms ? ms.lectureID : currentLecture.id;
+    this.seq = ms ? ms.pageSequence : slideCount;
+    this.audio = ms ? ms.pageAudioURL : "";
     this.status = ms ? "unchanged" : "added";
 }
 
