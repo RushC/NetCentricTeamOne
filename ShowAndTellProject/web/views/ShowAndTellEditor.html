@@ -1,13 +1,29 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" href="ShowAndTell.css" />
+        <link rel="stylesheet" href="css/ShowAndTell.css" />
         <!-- jQuery and jQueryUI used for animations. -->
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-        <script src="html2canvas.js"></script>
-        <script src="ShowAndTell.js"></script>
-		<script src="side.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+        <script src="js/html2canvas.js"></script>
+        <script src="js/ShowAndTell.js"></script>
+        <script>
+            addEventListener("load", function() {
+                //parent.document.getElementById("sframe").contentDocument.location = "side.jsp";
+                // Add hover functionality to each button.
+                var buttons = $("button");
+                for (var i = 0; i < buttons.length; i++) {
+                    // Add the hover class when the mouse enters the button.
+                    $(buttons[i]).mouseenter(function () {
+                        $(this).stop(true, true).switchClass("", "hover", 200);
+                    });
+                    // Remove the hover class when the mouse leaves the button.
+                    $(buttons[i]).mouseleave(function () {
+                        $(this).stop(true, true).switchClass("hover", "", 200);
+                    });
+                }
+            });
+        </script>
     </head>
     <body>
         <div id="lectureProperties"></div>

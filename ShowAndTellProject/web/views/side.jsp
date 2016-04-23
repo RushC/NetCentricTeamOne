@@ -21,17 +21,32 @@
             <legend> Show & Tell </legend>
             <select id="lecture">
                 <%
-                    for (Lecture lecture : new CrudDao().getLectures()) {
+                    Lecture[] lectures = new CrudDao().getLectures();
+                    for (Lecture lecture : lectures) {
                 %>
-                <option value="<%=lecture.getLectureID()%>"><%=lecture.getLectureTitle()%></option>
+                <option value="<%=lecture.getLectureID()%>"><%=lecture.getCourseTitle() + ": " + lecture.getLectureTitle()%></option>
                 <%
                     }
                 %>
             </select>
 
-            <button id="editLecture" onclick="editLecture()">Edit Lecture</button>
-            <button id="deleteLecture" onclick="deleteLecture()">Delete Lecture</button>
+            <button id="editLecture" onclick="editLecture()">Edit Lecture</button>            
+            <%
+                if (lectures.length > 0) {
+            %>
+            <button id="deleteLecture" onclick="deleteLecture()">Delete Lecture</button><br>
+            <label>Course:</label><br>
+            <textarea cols="10" id="courseTitle"><%=lectures[0].getCourseTitle()%></textarea>
+            <label>Lecture:</label><br>
+            <textarea cols="10" id="lectureTitle"><%=lectures[0].getLectureTitle()%></textarea>
+            <label>Instructor:</label>
+            <textarea cols="10" id="instructor"><%=lectures[0].getInstructor()%></textarea>
+            <%
+                }
+            %>
         </fieldset><br>
+        <fieldset id="editField">
+        </fieldset>
         <fieldset class="sideDiv">
             <button id="createLecture" onclick="createLecture()">Create Lecture</button>
         </fieldset><br>

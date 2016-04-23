@@ -88,7 +88,7 @@ function ModelSlide(s) {
 }
 
 function ModelLecture(l) {
-    this.lectureID = l.ID;
+    this.lectureID = l.id;
     this.lectureTitle = l.lectureTitle;
     this.courseTitle = l.courseTitle;
     this.instructor = l.instructor;
@@ -587,14 +587,17 @@ function regenSlidePreview() {
  * @param {page} the Slide object currently diplayed in the slide preview div.
  */
 function pageSnapshot(slide) {
-    // Retrieve the preview div.
-    var previewDiv = document.getElementById("previewDiv");
+    // Retrieve the slide div.
+    var previewDiv = document.getElementById("slidePreviewDiv");
     
     // Create a canvas element from the previewDiv using the html2canvas library.
     html2canvas(previewDiv, {
        onrendered: function(canvas) {
+           console.log("Snapshot successful");
+           
            // Set the slide's image property to the data url from the canvas.
            slide.audio = canvas.toDataURL();
+           slide.lectureID = "10";
            
            // Sends a new post request for the new slide.
            var lecture = new Lecture();
@@ -603,18 +606,20 @@ function pageSnapshot(slide) {
            lecture.lectureTitle = "Lecture";
            lecture.id = "10";
            var newPages = [ new ModelSlide(slide) ];
-           $.post("http://localhost:8080/ShowAndTellProject/Controller", JSON.stringify({
+           $.post("/ShowAndTellProject/Controller", {
                 action: "updateLecture",
-                newPages: newPages,
-                updatedPages: [],
-                deletedPages: [],
-                newEntities: [],
-                updatedEntites: [],
-                deletedEntites: [],
-                lecture: lecture
-            }));
+                newPages: JSON.stringify(newPages),
+                updatedPages: JSON.stringify([]),
+                deletedPages: JSON.stringify([]),
+                newEntities: JSON.stringify([]),
+                updatedEntities: JSON.stringify([]),
+                deletedEntities: JSON.stringify([]),
+                lecture: JSON.stringify(new ModelLecture(lecture))
+            });
        } 
     });
+    
+    console.log("In Snapshot");
 }
 
 

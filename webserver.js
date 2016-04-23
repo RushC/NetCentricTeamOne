@@ -27,9 +27,10 @@ amazon.gettool.root = root;
 showandtell.gettool.rot = root;
 
 var app     = express();
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({
-  extended: true
+  extended: true,
+  limit: '50mb'
 }));
 app.set("jsonp callback", true);
 
@@ -95,6 +96,7 @@ app.get('/WebRoster/Roster.jsp', function(req, res) {
 });
 
 app.get('/ShowAndTellProject', function(req, res) {
+    
 	res.redirect("http://localhost:8080/ShowAndTellProject/");
 });
 

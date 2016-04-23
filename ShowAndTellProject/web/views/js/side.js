@@ -1,15 +1,16 @@
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 function Lecture(ml) {
-    this.id = ml.lectureID || "";
-    this.lectureTitle = ml.lectureTitle || "Lecture Title";
-    this.courseTitle = ml.courseTitle || "Course Title";
-    this.instructor = ml.instructor || "Instructor Name";
+    this.id = ml ? ml.lectureID : "";
+    this.lectureTitle = ml ? ml.lectureTitle : "Lecture Title";
+    this.courseTitle = ml ? ml.courseTitle : "Course Title";
+    this.instructor = ml ? ml.instructor : "Instructor Name";
     this.status = ml ? "unchanged" : "added";
+}
+
+function ModelLecture(l) {
+    this.lectureID = l.id;
+    this.lectureTitle = l.lectureTitle;
+    this.courseTitle = l.courseTitle;
+    this.instructor = l.instructor;
 }
 
 $(document).ready(function () {
@@ -31,12 +32,10 @@ $(document).ready(function () {
 });
 
 function createLecture(){
+    var lec = { test : { one : "a", two : "b", three : "c"}, test2 : {one : "a", two : "b"}};
     $.post("/ShowAndTellProject/Controller", {
         action: "newLecture",
-        lecture: new Lecture(),
-        success: function (res) {
-            document.location.href = document.location.href;
-        }
+        "lecture": JSON.stringify([new ModelLecture(new Lecture()), new ModelLecture(new Lecture())])//JSON.stringify([new ModelLecture(new Lecture()), new ModelLecture(new Lecture())])
     });
 }
 
@@ -53,8 +52,10 @@ function editLecture(){
 
 function deleteLecture() {
     var id = $("#lecture").val();
+    var lecture = new Lecture();
+    lecture.id = id;
     $.post("/ShowAndTellProject/Controller", {
-        id: id,
+        lecture: JSON.stringify(new ModelLecture(lecture)),
         action: "deleteLecture",
         success: function (res) {
             document.location.href = document.location.href;

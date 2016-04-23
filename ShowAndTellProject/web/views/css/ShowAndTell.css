@@ -1,0 +1,95 @@
+.externalFieldset {
+	padding: 10px;
+}
+
+.internalFieldset{
+	border: solid 1px #FF5722;
+	border-radius: 3px;
+}
+
+.internalLegend{
+	border: solid 1px #FF5722;
+}
+
+#wtfCSS {
+    float: left;
+    text-align: center;
+}
+#previewDiv {
+    width: auto;
+}
+
+#entityProperties {
+    width: 45%;
+}
+div {
+    display: inline-block;
+}
+#slidePreviewDiv {
+    width: 600px;
+    height: 400px;
+    border: solid;
+    position: relative;
+}
+
+fieldset, legend{
+	text-align: center;
+	background-color: white;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 3px;
+	margin-top: 7px;
+	position: relative;
+	border: solid 2px #FF5722;
+	border-radius: 20px;
+	color: #009688;
+	font-weight: bold;
+	font-family: Roboto;
+	padding-left: 3px;
+	padding-right: 3px;
+}
+
+button{
+	cursor: pointer;
+	text-align: center;
+	background-color: white;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 10px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	position: relative;
+	border: solid 1.8px #FF5722;
+	border-radius: 5px;
+	color: #009688;
+	width: 6.5em;
+}
+
+button.hover:enabled{
+	background-color: #FF5722;
+	color: #FFFFFF
+}
+
+/* Tooltip CSS from w3 schools example */
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 200px;
+    background-color: #FF5722;
+    color: white;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+ 
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}

@@ -168,7 +168,7 @@ public class CrudDao {
      * @param lectureID the ID of the lecture that the page corresponds to.
      * @return an array of Entities retrieved from the database.
      */
-    public Entity[] getEntities(int pageID, int lectureID) {
+    public Entity[] getEntities(String pageID, String lectureID) {
         // Create a query to select every row from the entity table.
         String query = String.format("select * from ENTITY where PAGEID = %s "
                 + "and LECTUREID = %s", pageID, lectureID);
@@ -235,7 +235,7 @@ public class CrudDao {
      * @param lectureID the ID of the lecture to retrieve the pages for.
      * @return an array of all pages retrieved from the database.
      */
-    public Page[] getPages(int lectureID) {
+    public Page[] getPages(String lectureID) {
         // Create a query to select all of the pages corresponding to the 
         // specified lecture.
         String query = String.format("select * from PAGE where LECTUREID = %s"
@@ -358,7 +358,7 @@ public class CrudDao {
             Statement statement = connection.createStatement();
             
             // Execute the query.
-            statement.executeQuery(query);
+            statement.execute(query);
         
         // Print any errors.
         } catch (SQLException e) {
