@@ -4,47 +4,49 @@
 var currentLecture;             // current lecture being edited
 var currentSlide;               // current slide being edited
 var currentEntity;              // current entity being edited
-var entityList;                 // list of entities for the current slide
-var slideList;                  // list of slides for this lecture
-var awaitingResponse = false;   // true when waiting for the server to respond to an upload
+var entityList = [];            // list of entities for the current slide
+var slideList = [];             // list of slides for this lecture
+var uploadInProgress = false;   // true when uploading to the server
+var downloadInProgress = false; // true when getting content from the server
 var idPlaceHolder = "fakeID";   // used with fakeIDCount to generate ids for preview elements of new entities or slides
 var fakeIDCount = 0;            // used to identify entities or slides without unique ids assigned by the server
+var slideOverride = false;      // determines if moving a slide to a sequence should delete the slide already in that sequence
 
 ////////////////////////////////////////////
 // Commonly Referenced Elements           //
 ////////////////////////////////////////////
-var slidePreviewDiv;               // div containing the slide preview
-var entitiesDiv;            // div containing a list of entities on the current slide
-var ContentInputDiv;        // div containing the content input for an entity
-var entityProperties;       // div containing the editable properties of the currently selected entity
-var xInput;                 // input for the currently selected entity's horizontal position on the slide
-var yInput;                 // input for the currently selected entity's vertical position on the slide
-var zInput;                 // input for the currently selected entity's z-index based draw order
-var hInput;                 // input for the currently selected entity's height
-var wInput;                 // input for the currently selected entity's width
-var typeInput;              // input for the currentyl selected entity's type
+var slidePreviewDiv;            // div containing the slide preview
+var entitiesDiv;                // div containing a list of entities on the current slide
+var ContentInputDiv;            // div containing the content input for an entity
+var entityProperties;           // div containing the editable properties of the currently selected entity
+var xInput;                     // input for the currently selected entity's horizontal position on the slide
+var yInput;                     // input for the currently selected entity's vertical position on the slide
+var zInput;                     // input for the currently selected entity's z-index based draw order
+var hInput;                     // input for the currently selected entity's height
+var wInput;                     // input for the currently selected entity's width
+var typeInput;                  // input for the currentyl selected entity's type
 
 ///////////////////////////////////////////////////////////
 // constructors for creating new lecture/slide/entities  //
 ///////////////////////////////////////////////////////////
 function Entity(me) {
-        this.lectureID = me ? me.lectureID : currentLecture.id;
-        this.slideID = me ? me.PageID : currentSlide.id;
-        this.type = me ? me.entityType : "textbox";
-        this.id = me ? me.entityID : idPlaceHolder + fakeIDCount++;
-        this.x = me ? me.entityX : 0;
-        this.y = me ? me.entityY : 0;
-        this.z = me ? me.entityZ : 0;
-        this.anim = me ? me.entityAnimation : "none";
-        this.height = me ? me.entityHeight : 0;
-        this.width = me ? me.entityWidth   : 0;
-        this.content = me ? me.entityContent : "";
-        this.status = me ? "unchanged" : "added";
-        this.changed = me ? false : true;
+    this.lectureID = me ? me.lectureID : currentLecture.id;
+    this.slideID = me ? me.PageID : currentSlide.id;
+    this.type = me ? me.entityType : "textbox";
+    this.id = me ? me.entityID : idPlaceHolder + fakeIDCount++;
+    this.x = me ? me.entityX : 0;
+    this.y = me ? me.entityY : 0;
+    this.z = me ? me.entityZ : 0;
+    this.anim = me ? me.entityAnimation : "none";
+    this.height = me ? me.entityHeight : 0;
+    this.width = me ? me.entityWidth   : 0;
+    this.content = me ? me.entityContent : "";
+    this.status = me ? "unchanged" : "added";
+    this.changed = me ? false : true;
 }
 
 function Lecture(ml) {
-    this.id = ml ? ml.lectureID : "";
+    this.id = ml ? ml.lectureID : idPlaceHolder + fakeIDCount++;
     this.lectureTitle = ml ? ml.lectureTitle : "Lecture Title";
     this.courseTitle = ml ? ml.courseTitle : "Course Title";
     this.instructor = ml ? ml.instructor : "Instructor Name";
@@ -78,11 +80,11 @@ function ModelEntity(e) {
     this.entityHeight = e.height;
 }
 
-function modelSlide(s) {
+function ModelSlide(s) {
     this.lectureID = s.lectureID;
     this.pageID = s.pageID;
     this.pageSequence = s.seq;
-    this.pageAudioURL = s.aduio;
+    this.pageAudioURL = s.audio;
 }
 
 function ModelLecture(l) {
@@ -140,6 +142,8 @@ window.onload = function() {
 ////////////////////////////////////////////
 // function to save the current slide to the server:
 function saveToServer() {
+    //indicate that a save is in progress
+    uploadInProgress = true;
     // define the action for the post
     if (curentSlide.status == "added")
         action = "newPage";
@@ -147,64 +151,152 @@ function saveToServer() {
         action = "deletePage";
     else action = "updatePage";
     
-    // create a list of newly added entities and a list of changed entities:
-    var added = [];
-    var changed = [];
-    var deleted = [];
+    // create lists of newly added, changed, and deleted entities
+    var addedEntities = [];
+    var changedEntities = [];
+    var deletedEntities = [];
     for (var i = 0; i < entityList.length; ++i) {
         if (entityList[i].status == "added")
-            added.push(new ModelEntity(entityList[i]));
+            addedEntities.push(new ModelEntity(entityList[i]));
         else if (entityList[i].status == "deleted")
-            deleted.push(new ModelEntity(entityList[i]));
+            deletedEntities.push(new ModelEntity(entityList[i]));
         else if (entityList[i].changed)
-            changed.push(new ModelEntity(entityList[i]));
+            changedEntities.push(new ModelEntity(entityList[i]));
     }
     
-    // indicated if the slide was modified, created, or left unchanged
-    if (curentSlide.status == "added")
-        action = "newPage";
-    else if (currentSlide.status == "deleted")
-        action = "deletePage";
-    else action = "updatePage";
+    // create lists of newly added, changed, and deleted slides
+    var addedSlides = [];
+    var changedSlides = [];
+    var deletedSlides = [];
+    for (var i = 0; i < slideList.length; ++i) {
+        if (slideList[i].status == "added")
+            addedSlides.push(slideList[i]);
+        else if (slideList[i].status == "deleted")
+            deletedSlides.push(slideList[i]);
+        else if (slideList[i].changed)
+            changedSlides.push(slideList[i]);
+    }
     
-    // indicate that we are waiting for the response
-    awaitingResponse = true;
     // create and send the message
     $.post("/ShowAndTell/Controller", {
-        "action" : action,
-        "workingPage" : new ModelSlide(currentSlide),
-        "newEntities" : added,
-        "changedEntities" : changed,
-        "deletedEntities" : deleted}, processSaveResponse);
+        "action" : "updateLecture",
+        "lecture" : JSON.stringify(new ModelLecture(currentLecture)),
+        "newEntities" : JSON.stringify(addedEntities),
+        "changedEntities" : JSON.stringify(changedEntities),
+        "deletedEntities" : JSON.stringify(deletedEntities),
+        "newPages" : JSON.stringify(addedPages),
+        "updatedPages" : JSON.stringify(updatedPages),
+        "deletedPages" : JSON.stringify(deletedPages)}, processSaveResponse);
     // set a timeout for 10s to alert user and reset awaitingResponse in case the server could not be reached/does not respond
     setTimeout(function() {
-        alert("Connection Timeout: unable to upload to server");
-        awaitingResponse = false;
+        if (uploadInProgress)
+            alert("Connection Timeout: unable to connect to server");
+        uploadInProgress = false;
     }, 10000);
+    
+    
+}
+
+function getEntities() {
+    //todo
+    console.log("getEntities() has not yet been implemented");
 }
 
 function processSaveResponse(response) {
     var resp = JSON.parse(response);
-    // make sure the save was successful
-    if (resp.saveResponse != "success") {
-        alert("Could not upload changes to server");
-        awaitingResponse = false;
-        return;
+    
+    // reset the slideList
+    slideList = [];
+    for (var i; i < resp.pages.length; ++i) {
+           slideList.push(new slide(resp.pages[i]));
+    } 
+    // get the first slide in sequence if the current slide was deleted
+    if (currentSlide.status == "deleted") {
+        var low = slideList[i];
+        for (var i = 0; i < slideList.length; ++i)
+            if (slideList[i].seq < low.seq)
+                low = slideList[i];
+        currentSlide = low;
     }
-    
-    // reset the entityList, currentSlide, and currentEntity
-    currentSlide = new slide(resp.pageResponse);
-    entityList = [];
-    for (var i = 0; i < resp.entityResonse.length; ++i)
-        entityList.push(new Entity(resp.entityResponse[i]));
-    currentEntity = entityList[0];
-    
+    // get an updated list of the entities for this slide:
+    getEntities();
     // update ui elements
     regenSlidePreview();
     updateEntitiesDiv();
     updatePropertyDiv();
-    
+    // done uploading
+    uploadInProgress = false;
 }
+
+function processGetPagesResponse(response) {
+    //todo
+    console.log("processGetPagesResponse() has not been implemented yet");
+}
+
+function processGetEntitiesResponse(response) {
+    //todo
+    console.log("processGetEntitiesResponse() has not been implemented yet");
+}
+
+////////////////////////////////////////////
+// Functions to modify slides             //
+////////////////////////////////////////////
+
+// function to change the sequence of a slide to the given sequence
+function setSlideSeq() {
+    if (uploadInProgress || downloadInProgress)
+        return;
+    // get the new sequence
+    var seq = $("#sequenceInput").val();
+    // find the slide in the list at the sequece (if one exists)
+    var swapSlide = false;
+    for (var i = 0; i < slideList.length; ++i)
+        if (slideList[i].seq == seq)
+            swapSlide = slideList[i];
+    // swap the old slide if it exists
+    if (swapSlide) {
+        swapSlide.seq = currentSlide.seq;
+        swapSlide.changed = true;
+    }
+    // set the new seq for the current slide
+    currentSlide.seq = seq;
+    currentSlide.changed;
+}
+
+// function to change the audio URL of a slide
+function setSlideAudioURL() {
+    if (uploadInProgress || downloadInProgress)
+        return;
+    // get the new audio url
+    var aurl = $("#audioURLInput").val();
+    // set the url
+    currentSlide.audio = aurl;
+    currentSlide.changed = true;
+}
+
+// function to delete a slide
+function deleteSlide() {
+    if (uploadInProgress || downloadInProgress)
+        return;
+    // ask the user if they are sure
+    if (window.confirm("Deleting this slide will also delete all entities on it and cause any pending changes to be saved to the server. Continue?")) {
+        // set the slide as deleted:
+        currentSlide.status = "deleted";
+        // set the entities of this page to deleted:
+        for (var i = 0; i < entityList.length; ++i) {
+            if (entityList[i].status != "added") // if the entity isn't new, delete it
+                entityList[i].status = "deleted";
+            else { // otherwise set the entity to unchanged so it is ignored by the update
+                entityList[i].status = "unchanged";
+                entityList[i].changed = false;
+            }
+        }
+        // save the current state and request another slide to view:
+        saveToServer();
+    }
+}
+
+
 
 
 ////////////////////////////////////////////
@@ -213,7 +305,7 @@ function processSaveResponse(response) {
 
 // function to create a new entity:
 function newEntity() {
-    if (awaitingResponse)
+    if (uploadInProgress || downloadInProgress)
         return;
     // Reset the properties values:
     xInput.val = 0;
@@ -233,7 +325,7 @@ function newEntity() {
 
 // function to move an entity:
 function moveEntity() {
-    if (awaitingResponse)
+    if (uploadInProgress || downloadInProgress)
         return;
     // get the x y and z values:
     var x = xInput.val;
@@ -256,7 +348,7 @@ function moveEntity() {
 
 // function to change the size of an entity:
 function resizeEntity() {
-    if (awaitingResponse)
+    if (uploadInProgress || downloadInProgress)
         return;
     if (currentEntity) {
         // get the new width and height:
@@ -282,7 +374,7 @@ function resizeEntity() {
 
 // function to change the type of an entity
 function changeType() {
-    if (awaitingResponse)
+    if (uploadInProgress || downloadInProgress)
         return;
     // warn user that changing the type could discard content:
     if (window.confirm("Entity content may be discarded if type is changed. Continue?")) {
