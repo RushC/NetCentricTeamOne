@@ -42,7 +42,7 @@ public class Controller extends HttpServlet {
             HttpServletResponse response) throws ServletException, IOException {
         if (request.getRequestURI().endsWith("side.jsp")) {
             RequestDispatcher dispatcher = request.getRequestDispatcher("/views/side.jsp");
-        dispatcher.forward(request, response);
+            dispatcher.forward(request, response);
         }
         doPost(request, response);
     }
@@ -66,10 +66,13 @@ public class Controller extends HttpServlet {
             // Determine what action was specified.
             switch (action) {
                 
-                // Save an image to a file on the server.
-                case "saveImage":
-                    String urlData = request.getParameter("image");
-                    saveImage(urlData, this.getServletContext().getRealPath("/") + "image.png");
+                // Retrieve the pages for the requested lecture.
+                case "getPages":
+                    getPages(request, response);
+                    break;
+                    
+                case "getEntities":
+                    getEntities(request, response);
                     break;
                     
                 // Create a new lecture and add it to the database.
@@ -123,6 +126,60 @@ public class Controller extends HttpServlet {
         
         // Delete the lecture from the database.
         lectureDB.deleteLecture(lecture.getLectureID());
+    }
+    
+    /**
+     * Retrieves the Entities requested by the client and sends the back in the
+     * response body.
+     * 
+     * @param request the HTTP request from the client to the server.
+     * @param response the HTTP response from the server to the client. 
+     */
+    private void getEntities(HttpServletRequest request,
+            HttpServletResponse response) {
+        // Retrieve the page object from the request.
+        Page page = getParameter(request, "page", Page.class);
+        
+        // Retrieve all of the entities on the page.
+        Entity[] entities = lectureDB.getEntities(page.getPageID(), page.getLectureID());
+        
+        // Convert the entites to a JSON string.
+        String entitiesJSON = new Gson().toJson(entities);
+        entitiesJSON = "{ \"entities\": " + entitiesJSON + "}";
+        
+        // Write the JSON string to the response.
+        try {
+            response.getWriter().write(entitiesJSON);
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
+    }
+    
+    /**
+     * Retrieves the pages requested by the client and sends them back in the
+     * response body.
+     * 
+     * @param request the HTTP request from the client to the server.
+     * @param response the HTTP response from the server to the client.
+     */
+    private void getPages(HttpServletRequest request,
+            HttpServletResponse response) {
+        // Retrieve the lecture object from the request.
+        Lecture lecture = getParameter(request, "lecture", Lecture.class);
+        
+        // Retrieve all of the pages in the lecture.
+        Page[] pages = lectureDB.getPages(lecture.getLectureID());
+        
+        // Convert the pages to a JSON string.
+        String pagesJSON = new Gson().toJson(pages);
+        pagesJSON = "{ \"pages\": " + pagesJSON + "}";
+        
+        // Set the JSON string as the response body.
+        try {
+            response.getWriter().write(pagesJSON);
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+        }
     }
     
     /**
@@ -233,6 +290,10 @@ public class Controller extends HttpServlet {
         if (!"image".equals(entity.getEntityType()))
             return;
         
+        // Check if the page has an image to be saved.
+        if (!"data".equals(entity.getEntityContent().substring(0, 5)))
+            return;
+        
         // Ensure a folder exists to store the image.
         String directoryPath = String.format(
                 "%sLecture%s/Page%s/",
@@ -261,6 +322,10 @@ public class Controller extends HttpServlet {
      * @param page the page object to handle the image for.
      */
     private void handleImage(Page page) {
+        // Check if the page has an image to be saved.
+        if (!"data".equals(page.getPageAudioURL().substring(0, 5)))
+            return;
+        
         // Ensure a folder exists to store the image.
         String directoryPath = String.format(
                 "%sLecture%s/",

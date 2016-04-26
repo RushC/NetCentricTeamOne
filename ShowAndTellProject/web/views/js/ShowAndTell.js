@@ -176,25 +176,33 @@ function saveToServer() {
         else if (slideList[i].changed)
             changedSlides.push(slideList[i]);
     }
-    
-    // create and send the message
-    $.post("/ShowAndTell/Controller", {
-        "action" : "updateLecture",
-        "lecture" : JSON.stringify(new ModelLecture(currentLecture)),
-        "newEntities" : JSON.stringify(addedEntities),
-        "changedEntities" : JSON.stringify(changedEntities),
-        "deletedEntities" : JSON.stringify(deletedEntities),
-        "newPages" : JSON.stringify(addedPages),
-        "updatedPages" : JSON.stringify(updatedPages),
-        "deletedPages" : JSON.stringify(deletedPages)}, processSaveResponse);
-    // set a timeout for 10s to alert user and reset awaitingResponse in case the server could not be reached/does not respond
-    setTimeout(function() {
-        if (uploadInProgress)
-            alert("Connection Timeout: unable to connect to server");
-        uploadInProgress = false;
-    }, 10000);
-    
-    
+        
+    // Create a canvas element from the previewDiv using the html2canvas library.
+    html2canvas(slidePreviewDiv, {
+       onrendered: function(canvas) {
+           console.log("Snapshot successful");
+           
+           // Set the slide's image property to the data url from the canvas.
+           currentSlide.audio = canvas.toDataURL();
+           
+           // create and send the message
+            $.post("/ShowAndTell/Controller", {
+                "action" : "updateLecture",
+                "lecture" : JSON.stringify(new ModelLecture(currentLecture)),
+                "newEntities" : JSON.stringify(addedEntities),
+                "changedEntities" : JSON.stringify(changedEntities),
+                "deletedEntities" : JSON.stringify(deletedEntities),
+                "newPages" : JSON.stringify(addedPages),
+                "updatedPages" : JSON.stringify(updatedPages),
+                "deletedPages" : JSON.stringify(deletedPages)}, processSaveResponse);
+            // set a timeout for 10s to alert user and reset awaitingResponse in case the server could not be reached/does not respond
+            setTimeout(function() {
+                if (uploadInProgress)
+                    alert("Connection Timeout: unable to connect to server");
+                uploadInProgress = false;
+            }, 10000);
+       } 
+    });    
 }
 
 function getEntities() {
@@ -584,14 +592,11 @@ function regenSlidePreview() {
  * Constructs a snapshot of the slide preview div and sets its image content to a
  * data URL for an image of the screenshot.
  *
- * @param {page} the Slide object currently diplayed in the slide preview div.
+ * @param {slide} the Slide object currently diplayed in the slide preview div.
  */
 function pageSnapshot(slide) {
-    // Retrieve the slide div.
-    var previewDiv = document.getElementById("slidePreviewDiv");
-    
     // Create a canvas element from the previewDiv using the html2canvas library.
-    html2canvas(previewDiv, {
+    html2canvas(slidePreviewDiv, {
        onrendered: function(canvas) {
            console.log("Snapshot successful");
            
