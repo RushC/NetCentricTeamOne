@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Controller;
 
 import com.google.gson.Gson;
@@ -342,7 +337,7 @@ public class Controller extends HttpServlet {
         // Save the image.
         saveImage(page.getPageAudioURL(), imagePath);
         
-        // Repace the image with the path to the image.
+        // Replace the image with the path to the image.
         page.setPageAudioURL(imagePath);
     }
     

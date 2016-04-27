@@ -10,40 +10,25 @@
         <script src="js/html2canvas.js"></script>
         <script src="js/ShowAndTell.js"></script>
         <script src="js/side.js"></script>
-        <script>
-            addEventListener("load", function () {
-                //parent.document.getElementById("sframe").contentDocument.location = "side.jsp";
-                // Add hover functionality to each button.
-                var buttons = $("button");
-                for (var i = 0; i < buttons.length; i++) {
-                    // Add the hover class when the mouse enters the button.
-                    $(buttons[i]).mouseenter(function () {
-                        $(this).stop(true, true).switchClass("", "hover", 200);
-                    });
-                    // Remove the hover class when the mouse leaves the button.
-                    $(buttons[i]).mouseleave(function () {
-                        $(this).stop(true, true).switchClass("hover", "", 200);
-                    });
-                }
-            });
-        </script>
+        <script src="js/effects.js"></script>
     </head>
     <body>
         <!-- MOVED SIDEBAR -->
         <fieldset class="sideDiv">
-            <legend> Show & Tell </legend>
-            <button id="createLecture" onclick="createLecture()">Create Lecture</button><br>
-            <label>Lecture:</label><br>
-            <select id="lecture">
+            <legend> Lectures </legend>
+            <button class="highlight" id="createLecture" onclick="createLecture()">Create Lecture</button>
+            <label>Lecture:</label>
+            <div class="dropdown" id="lecture">
+                <h3>Select a lecture</h3>
                 <%
                     Lecture[] lectures = new CrudDao().getLectures();
                     for (Lecture lecture : lectures) {
                 %>
-                <option value="<%=lecture.getLectureID()%>"><%=lecture.getCourseTitle() + ": " + lecture.getLectureTitle()%></option>
+                <ul class="highlight" value="<%=lecture.getLectureID()%>"><%=lecture.getCourseTitle() + ": " + lecture.getLectureTitle()%></ul>
                 <%
                     }
                 %>
-            </select>
+            </div><br>
             <!-- Edit button
             <button id="editLecture" onclick="editLecture()">Edit Lecture</button> -->          
             <%
@@ -69,10 +54,10 @@
                 <fieldset class="externalFieldset">
                     <legend>Slide Preview</legend>
                     <form id="slideNav">
-                        <button onclick="prev()">Previous</button>
-                        <button onclick="next()">Next</button>
+                        <button class="highlight" onclick="prev()">Previous</button>
+                        <button class="highlight" onclick="next()">Next</button>
                         <input type="number" name="slideNum">
-                        <button onclick="goToSlide()">Jump to Slide</button>
+                        <button class="highlight" onclick="goToSlide()">Jump to Slide</button>
                     </form>
                     <div id="slidePreviewDiv"></div>
                 </fieldset>
@@ -127,12 +112,12 @@
                         <label>Slide Audio URL</label>
                         <input type="url" id="audioURLInput" onchange="setSlideAudioURL()">
                         <br>
-                        <button onclick="deleteSlide()" id="slideDeleteButton">Delete</button>
-                        <button onclick="showNewSlideOptions()" id="slideCreateButton">Add New Slide</button>
+                        <button class="highlight" onclick="deleteSlide()" id="slideDeleteButton">Delete</button>
+                        <button class="highlight" onclick="showNewSlideOptions()" id="slideCreateButton">Add New Slide</button>
                     </form>
                 </fieldset>
             </div>
         </div>
-        <button onclick="pageSnapshot(new Slide())" >DO IT</button>
+        <button class="highlight" onclick="pageSnapshot(new Slide())" >DO IT</button>
     </body>
 </html>
