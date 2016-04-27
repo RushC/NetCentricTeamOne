@@ -120,7 +120,7 @@ window.onload = function() {
         "Missing Element hInput" : hInput,
         "Missing Element wInput" : wInput,
         "Missing Element typeInput" : typeInput
-    }
+    };
     for (var e in badElements) {
         if (!badElements[e][0])
             console.log(e + "!");
@@ -145,7 +145,7 @@ function saveToServer() {
     //indicate that a save is in progress
     uploadInProgress = true;
     // define the action for the post
-    if (curentSlide.status == "added")
+    if (currentSlide.status == "added")
         action = "newPage";
     else if (currentSlide.status == "deleted")
         action = "deletePage";
@@ -192,9 +192,9 @@ function saveToServer() {
                 "newEntities" : JSON.stringify(addedEntities),
                 "changedEntities" : JSON.stringify(changedEntities),
                 "deletedEntities" : JSON.stringify(deletedEntities),
-                "newPages" : JSON.stringify(addedPages),
-                "updatedPages" : JSON.stringify(updatedPages),
-                "deletedPages" : JSON.stringify(deletedPages)}, processSaveResponse);
+                "newPages" : JSON.stringify(addedSlides),
+                "updatedPages" : JSON.stringify(changedSlides),
+                "deletedPages" : JSON.stringify(deletedSlides)}, processSaveResponse);
             // set a timeout for 10s to alert user and reset awaitingResponse in case the server could not be reached/does not respond
             setTimeout(function() {
                 if (uploadInProgress)
@@ -386,46 +386,22 @@ function changeType() {
         return;
     // warn user that changing the type could discard content:
     if (window.confirm("Entity content may be discarded if type is changed. Continue?")) {
-        // if changing to an image
-        if(typeInput[0].value == "image") {
-            // hide the content div:
-            ContentInputDiv.hide("slow");
-            // clear the content div:
-            ContentInputDiv.empty();
-            // add a button to upload a file:
-//            var loadButton = $("<button>Upload Image");
-//            loadButton[0].onclick = function() {
-//                
-//            }
-            var fileButton = $('<input type="file">');
-            var image = $('<img>');
-            image.hide(0);
-            fileButton[0].onchange = function () {
-                var reader = new FileReader();
-                var file = $("input[type=file]")[0].files[0];
-                if (file) {
-                    reader.onloadend = function() {
-                        image[0].src = reader.result;
-                        //currentEntity.content = reader.result;
-                        image[0].width = 25;
-                        image[0].height = 25;
-                        image[0].src = reader.result;
-                        
-                        // Post it to the server.
-                        $.post("http://localhost:8080/ShowAndTellProject/Controller", {
-                            image: JSON.stringify(reader.result),
-                            action: "saveImage"
-                        })
-                    };
-                    
-                    reader.readAsDataURL(file);
-                }
-            };
-            ContentInputDiv.append(fileButton);
-            ContentInputDiv.append(image);
-            ContentInputDiv.show("slow");
-            
+        // set the type for the entity
+        currentEntity.type = typInput[0].value;
+        // set the content as appropriate:
+        switch(currentEntity.type) {
+            case "image" :
+                currentEntity.content = "";
+                break;
+            case "textbox" :
+                currentEntity.content = "Enter text here. HTML may also be used for formatting";
+                break;
+            case "bulletlist" :
+                currentEntity.content = "Enter text here. Each new line is an entry in the list";
+            default : break;
         }
+        //update the property div
+        updatePropertyDiv();
     }
 }
 
@@ -442,6 +418,7 @@ function updatePropertyDiv() {
         yInput.val(currentEntity.y);
         zInput.val(currentEntity.z);
         // fill the content div with the appropriate elements based on the entity type:
+        ContentInputDiv.hide("slow");
         ContentInputDiv.empty();
         switch(currentEntity.type) {
             case "image" : // create an image preview and a image loader if the entity is an image
@@ -458,17 +435,17 @@ function updatePropertyDiv() {
                         reader.onloadend = function() {
                             image[0].src = reader.result;
                             currentEntity.content = reader.result;
-                            image[0].width = 25;
-                            image[0].height = 25;
+                            image[0].width = 50;
+                            image[0].height = 50;
                             image[0].src = reader.result;
                         };
 
                         reader.readAsDataURL(file);
                     }
                 };
+                
                 ContentInputDiv.append(fileButton);
                 ContentInputDiv.append(image);
-                ContentInputDiv.show();
                 break;
                 
             // create a basic text box if the input is a text box or list:
@@ -480,8 +457,10 @@ function updatePropertyDiv() {
                 else
                     typeInput[0].selectedIndex = 2;
                 var textContent = $('<textarea id="textContent"></textarea>');
-                textContent[0].width = currentEntity.width;
-                textContent[0].height = currentEntity.height;
+                textContent[0].style.overflow = "auto";
+                textContent[0].style.resize = "none";
+                textContent[0].width = 400;
+                textContent[0].height = 70;
                 textContent[0].innerHTML = currentEntity.content;
                 ContentInputDiv.append(textContent);
                 textContent.onChange = updateEntityPreviewContent;
@@ -490,12 +469,14 @@ function updatePropertyDiv() {
                 Console.log("Bad Entity Type" + currentEntity.type);
                 break;
         }
-        updateEntityPreviewContent();
+        ContentInputDiv.show("slow");
     // otherwise reset all values to default:
     } else {
         xInput.val(0);
         yInput.val(0);
         zInput.val(0);
+        ContentInputDiv.hide("slow");
+        ContentInputDiv.empty();
     }
 }
 
