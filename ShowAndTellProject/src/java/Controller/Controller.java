@@ -45,7 +45,8 @@ public class Controller extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException {
-        imagePath = getServletContext().getRealPath("/") + "images/";
+        // Construct the image path in case it is needed.
+        imagePath = getServletContext().getRealPath("/") + "views/images/";
         
         // Retrieve the action of the request.
         String action = request.getParameter("action");
@@ -140,7 +141,6 @@ public class Controller extends HttpServlet {
         
         // Convert the entites to a JSON string.
         String entitiesJSON = new Gson().toJson(entities);
-        entitiesJSON = "{ \"entities\": " + entitiesJSON + "}";
         
         // Write the JSON string to the response.
         try {
@@ -162,12 +162,21 @@ public class Controller extends HttpServlet {
         // Retrieve the lecture object from the request.
         Lecture lecture = getParameter(request, "lecture", Lecture.class);
         
+        // Ensure the lecture has a valid ID.
+        if (lecture.getLectureID() == null) {
+            System.err.println("Null ID");
+            return;
+        }
+        
         // Retrieve all of the pages in the lecture.
         Page[] pages = lectureDB.getPages(lecture.getLectureID());
         
+        System.out.println(pages.length);
+        
         // Convert the pages to a JSON string.
         String pagesJSON = new Gson().toJson(pages);
-        pagesJSON = "{ \"pages\": " + pagesJSON + "}";
+        
+        System.out.println(pagesJSON);
         
         // Set the JSON string as the response body.
         try {
@@ -266,6 +275,8 @@ public class Controller extends HttpServlet {
         // Retrieve the JSON parameter.
         String json = request.getParameter(paramName);
         
+        System.out.println(json);
+        
         // Convert the JSON string into a Lecture object.
         Object param = new Gson().fromJson(json, type);
         
@@ -318,27 +329,27 @@ public class Controller extends HttpServlet {
      */
     private void handleImage(Page page) {
         // Check if the page has an image to be saved.
-        if (!"data".equals(page.getPageAudioURL().substring(0, 5)))
+        if (!"data".equals(page.getPageAudioURL().substring(0, 4)))
             return;
         
         // Ensure a folder exists to store the image.
         String directoryPath = String.format(
-                "%sLecture%s/",
-                imagePath,
+                "Lecture%s/",
                 page.getLectureID()
         );
-        File directory = new File(directoryPath);
+        File directory = new File(imagePath + directoryPath);
         if (!directory.exists())
             directory.mkdir();
         
         // Create a path for the image.
-        String imagePath = directoryPath + (directory.listFiles().length + 1) + ".png";
+        String imagePath = "" + (directory.listFiles().length + 1) + ".png";
         
         // Save the image.
-        saveImage(page.getPageAudioURL(), imagePath);
+        saveImage(page.getPageAudioURL(), 
+                this.imagePath + directoryPath + imagePath);
         
         // Replace the image with the path to the image.
-        page.setPageAudioURL(imagePath);
+        page.setPageAudioURL("/views/images/" + directoryPath + imagePath);
     }
     
     /**
@@ -367,7 +378,7 @@ public class Controller extends HttpServlet {
                         
             // Save the image to a file.
             ImageIO.write(image, "png", imageFile);
-            
+                        
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }

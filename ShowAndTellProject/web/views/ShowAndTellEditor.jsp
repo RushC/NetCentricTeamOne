@@ -18,7 +18,7 @@
             <legend> Lectures </legend>
             <button class="highlight" id="createLecture" onclick="createLecture()">Create Lecture</button>
             <label>Lecture:</label>
-            <div class="dropdown" id="lecture">
+            <div class="dropdown" id="lecture" onchange="getLecture()">
                 <h3>Select a lecture</h3>
                 <%
                     Lecture[] lectures = new CrudDao().getLectures();
@@ -47,7 +47,12 @@
             %>
         </fieldset><br>
         <!-- END OF SIDEBAR -->
-
+        <div>
+            <fieldset>
+                <legend>Pages</legend>
+                <div id="pageDiv"></div>
+            </fieldset>
+        </div>
         <div id="lectureProperties"></div>
         <div id="wtfCSS">
             <div id="previewDiv">

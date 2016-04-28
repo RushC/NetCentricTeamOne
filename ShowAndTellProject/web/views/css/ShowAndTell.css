@@ -20,6 +20,19 @@
     width: auto;
 }
 
+img {
+    width: 100px;
+    height: 100px;
+    display: block;
+    cursor: pointer;
+}
+
+img.hover {
+    border-color: #FF5722;
+    border-width: 10px;
+    border-style: solid;
+}
+
 #entityProperties {
     width: 45%;
 }

@@ -210,6 +210,55 @@ function getEntities() {
     console.log("getEntities() has not yet been implemented");
 }
 
+/**
+ * Retrieves all of the pages in the currently selected lecture by sending a
+ * POST request to the server.
+ */
+function getLecture() {
+    // Retrieve the lecture ID from the lecture dropbox.
+    var lectureID = $(".dropdownHeader")[0].value;
+    console.log(lectureID);
+    
+    // Create a new Lecture object with the Lecture ID.
+    var lecture = new Lecture();
+    lecture.id = lectureID;
+    
+    // Create a model lecture from the lecture object.
+    var modelLecture = new ModelLecture(lecture);
+    
+    // Send a post request to retrieve the pages from the database.
+    $.post("http://localhost:8080/ShowAndTellProject/Controller", {
+        action: "getPages",
+        lecture: JSON.stringify(modelLecture)
+        
+    // Define the callback for the request.
+    }).done(function(response) {
+        // The response should simply be the array of pages retrieved from the
+        // request.
+        var pages = response;
+        
+        // Reinitialize the page list as an empty array.
+        slideList = [];
+        
+        // Iterate through all of the pages received from the response.
+        for (var i = 0; i < pages.length; i++) {
+            // Each page is equivalent to a ModelSlide object. The slideList is
+            // a list of regular Slide objects. Convert the page to a Slide
+            // object by passing it to the Slide constructor.
+            var slide = new Slide(pages[i]);
+            
+            // Add the slide to the list.
+            slideList.push(slide);
+        }
+        
+        // For debugging.
+        console.log(slideList);
+        
+        // Display the slides in the slides div.
+        displaySlides();
+    });
+}
+
 function processSaveResponse(response) {
     var resp = JSON.parse(response);
     
@@ -567,6 +616,32 @@ function updateEntitiesDiv() {
 function regenSlidePreview() {
     //todo
     console.log("regenSlidePreview() has not been implemented yet!");
+}
+
+/**
+ * Displays the list of slides in the slides div element.
+ */
+function displaySlides() {
+    // Retrieve the the slides div element.
+    var $pageDiv = $("#pageDiv");
+    
+    // Clear the page div.
+    while ($pageDiv[0].firstChild)
+        $pageDiv[0].removeChild($pageDiv[0].firstChild);
+    
+    // Iterate through all of the slides in the slidesList.
+    for (var i = 0; i < slideList.length; i++) {
+        var slide = slideList[i];
+        
+        // Create a new image element to represent the slide.
+        var img = document.createElement("IMG");
+        img.src = "/ShowAndTellProject/" + slide.audio;
+        img.classList.add("highlight");
+        img.id = "slideThumbnail";
+        
+        // Add the image to the slides div.
+        $pageDiv.append(img);
+    }
 }
 
 /**

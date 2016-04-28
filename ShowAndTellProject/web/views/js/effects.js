@@ -19,7 +19,10 @@
  *                      class .dropdownList. To get the selected value at any
  *                      time, retrieve the value attribute from the h3 element.
  *                      Wheneve the dropdown list is opened, the h3 element
- *                      and the list div will gain the class .dropdownOpen.
+ *                      and the list div will gain the class .dropdownOpen. When
+ *                      a dropdownOption is clicked, the dropdownHeader's value
+ *                      and innerHTML will be set to that of clicked option and
+ *                      the dropdown element's onchange handler will be called.
  */
 
 addEventListener("load", function() {
@@ -79,7 +82,7 @@ function dropdownClass() {
                 
                 // Set the value and text of the header.
                 dropdownHeader.innerHTML = this.innerHTML + " \u25BC";
-                dropdownHeader.value = this.attributes['value'];
+                dropdownHeader.value = this.getAttribute('value');
                 
                 // Slide the dropdown list up.
                 var $dropdownList = $(this.parentElement);
@@ -88,6 +91,9 @@ function dropdownClass() {
                 // Remove the dropdownOpen class from the dropdown list and header.
                 $(dropdownHeader).removeClass("dropdownOpen", 200);
                 $dropdownList.removeClass("dropdownOpen", 200);
+                
+                // Trigger a change event on the dropdown.
+                $(dropdownHeader.parentElement).trigger("change");
             });
         });
         
