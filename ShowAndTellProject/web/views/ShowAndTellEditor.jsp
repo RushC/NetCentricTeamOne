@@ -16,19 +16,24 @@
         <!-- MOVED SIDEBAR -->
         <fieldset class="sideDiv">
             <legend> Lectures </legend>
-            <button class="highlight" id="createLecture" onclick="createLecture()">Create Lecture</button>
-            <label>Lecture:</label>
-            <div class="dropdown" id="lecture" onchange="getLecture()">
-                <h3>Select a lecture</h3>
-                <%
-                    Lecture[] lectures = new CrudDao().getLectures();
-                    for (Lecture lecture : lectures) {
-                %>
-                <ul class="highlight" value="<%=lecture.getLectureID()%>"><%=lecture.getCourseTitle() + ": " + lecture.getLectureTitle()%></ul>
-                <%
-                    }
-                %>
-            </div><br>
+            <div id="lectureSelection">
+                <div class="dropdown" id="lecture" onchange="getLecture()">
+                    <h3>Select a lecture</h3>
+                    <%
+                        Lecture[] lectures = new CrudDao().getLectures();
+                        for (Lecture lecture : lectures) {
+                    %>
+                    <ul class="highlight" value="<%=lecture.getLectureID()%>"><%=lecture.getCourseTitle() + ": " + lecture.getLectureTitle()%></ul>
+                    <%
+                        }
+                    %>
+                </div>
+                <button class="Add Image highlight" onclick="createLecture()"></button>
+                <button class="Delete Image highlight"></button><br>    
+            </div>
+            <textarea class="lectureInput" rows="1" cols="10" id="courseTitle" placeholder="Course Title"></textarea>
+            <textarea class="lectureInput" rows="1" cols="10" id="lectureTitle" placeholder="Lecture Title"></textarea>
+            <textarea class="lectureInput" rows="1" cols="10" id="instructor" placeholder="Instructor"></textarea>
             <!-- Edit button
             <button id="editLecture" onclick="editLecture()">Edit Lecture</button> -->          
             <%
@@ -84,7 +89,7 @@
                                 <ul class="highlight" value="Grow">Grow</ul>
                             </div><br><br>
                             <label>Entity Content</label>
-                            <div id="contentEditDiv"><textarea id="TESTID" placeholder="Enter text here. HTML can be used to style the display"></textarea></div>
+                            <div id="contentEditDiv"><textarea rows="5" cols="20" class="lectureInput" id="TESTID" placeholder="Enter text here. HTML can be used to style the display"></textarea></div>
                         </div>
                     </div>
                 </fieldset>

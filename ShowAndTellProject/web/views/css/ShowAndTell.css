@@ -1,6 +1,40 @@
+textarea {
+    display: inline;
+    width:80%;
+}
+
+#lectureSelection {
+    vertical-align: middle;
+}
+
+#lecture {
+    margin-top: auto;
+    margin-bottom: 10px;
+}
+
+.lectureInput, input[type="number"] {
+    clear: both;
+    width:20%;
+    height: auto;
+    background: none;
+    border-radius: 5px;
+    border-color: #FF5722;
+    border-style: solid;
+    color: #009688;
+}
+
+::selection {
+    background: #FF5722;
+    color: white;
+}
+
+.lectureInput:focus {
+    outline: none;
+}
+
 button.Image.highlight {
     border-radius: 50%;
-    border-color: #FF5722;
+    border-color: C;
     border-width: 2px;
     background-size: contain;
     width: 50px;
@@ -158,6 +192,11 @@ button{
     color: #FFFFFF
 }
 
+#lecture.dropdown {
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
 .dropdown {
     display: inline-block;
 }
@@ -205,5 +244,10 @@ button{
 .dropdownHeader.dropdownOpen {
     background-color: #FF5722;
     color: white;
+}
+
+textarea.lectureInput#TESTID {
+    width: auto;
+    height: auto;
 }
 
