@@ -35,13 +35,13 @@
                 if (lectures.length > 0) {
             %>
             <!-- <button id="deleteLecture" onclick="deleteLecture()">Delete Lecture</button><br> -->
-
+<!--
             <label>Course:</label><br>
             <textarea cols="10" id="courseTitle"><%=lectures[0].getCourseTitle()%></textarea>
             <label>Lecture:</label><br>
             <textarea cols="10" id="lectureTitle"><%=lectures[0].getLectureTitle()%></textarea>
             <label>Instructor:</label>
-            <textarea cols="10" id="instructor"><%=lectures[0].getInstructor()%></textarea>
+            <textarea cols="10" id="instructor"><%=lectures[0].getInstructor()%></textarea>-->
             <%
                 }
             %>

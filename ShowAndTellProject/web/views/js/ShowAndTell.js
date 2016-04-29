@@ -98,7 +98,7 @@ function ModelLecture(l) {
 // Script Initialization                  //
 ////////////////////////////////////////////
 window.onload = function() {
-    slidePreviewDiv = $("#slidePreviewDiv");
+    slidePreviewDiv = $("#previewDiv");
     entitiesDiv = $("#entitiesDiv");
     ContentInputDiv = $("#entityContent");
     entityProperties = $("#entityProperties");
@@ -631,6 +631,9 @@ function displaySlides() {
         
         // Create a new image element to represent the slide.
         var img = document.createElement("IMG");
+        img.onload = function() {
+            $(this).hide().slideToggle();
+        };
         img.src = "/ShowAndTellProject/" + slide.audio;
         img.id = "slideThumbnail";
         

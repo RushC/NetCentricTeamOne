@@ -74,6 +74,7 @@ function highlightClass() {
 function dropdownClass() {
     // Retrieve all of the dropdown elements.
     var $dropdown = $('.dropdown');
+    $dropdown.css({'z-index': '999'});
     
     // Handle each dropdown element.
     $dropdown.each(function(index, element) {  
@@ -82,6 +83,7 @@ function dropdownClass() {
         listDiv.classList.add('dropdownList');
         element.appendChild(listDiv);
         listDiv.style.position = "absolute";
+        listDiv.style.zIndex = "999";
         
         // Retrieve each ul element in the div.
         $dropdownOption = $("ul", element);
