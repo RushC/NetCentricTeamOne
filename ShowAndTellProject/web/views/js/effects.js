@@ -31,6 +31,26 @@ addEventListener("load", function() {
 });
 
 /**
+ * Adds the functionality of the highlight class to the specified element.
+ * 
+ * @param {HTMLElement} element the element to add highlight functionality to.
+ */
+function highlight(element) {
+    // Add the highlight class to the element.
+    element.classList.add("highlight")
+    
+    // Add the hover class when the mouse enters each element.
+    element.addEventListener("mouseenter", function() {
+       $(this).stop(true, true).switchClass("", "hover", 200, "linear"); 
+    });
+    
+    // Remove the hover class when the mouse exits each element.
+    element.addEventListener("mouseleave", function() {
+        $(this).stop(true, true).switchClass("hover", "", 200, "linear"); 
+    });
+}
+
+/**
  * Sets up the behavior for .highlight elements.
  */
 function highlightClass() {

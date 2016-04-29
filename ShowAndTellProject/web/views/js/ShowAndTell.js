@@ -2,7 +2,7 @@
 // General Global variables               //
 ////////////////////////////////////////////
 var currentLecture;             // current lecture being edited
-var currentSlide;               // current slide being edited
+var currentPage;               // current slide being edited
 var currentEntity;              // current entity being edited
 var entityList = [];            // list of entities for the current slide
 var slideList = [];             // list of slides for this lecture
@@ -31,7 +31,7 @@ var typeInput;                  // input for the currentyl selected entity's typ
 ///////////////////////////////////////////////////////////
 function Entity(me) {
     this.lectureID = me ? me.lectureID : currentLecture.id;
-    this.slideID = me ? me.PageID : currentSlide.id;
+    this.slideID = me ? me.PageID : currentPage.id;
     this.type = me ? me.entityType : "textbox";
     this.id = me ? me.entityID : idPlaceHolder + fakeIDCount++;
     this.x = me ? me.entityX : 0;
@@ -129,7 +129,7 @@ window.onload = function() {
     // set the current entity, current slide, and current lecture for testing purposes:
     currentLecture = new Lecture();
     currentLecture.id = "fakeLectureID";
-    currentSlide = new Slide();
+    currentPage = new Slide();
     currentEntity = new Entity();
     
     updatePropertyDiv();
@@ -145,9 +145,9 @@ function saveToServer() {
     //indicate that a save is in progress
     uploadInProgress = true;
     // define the action for the post
-    if (currentSlide.status == "added")
+    if (currentPage.status == "added")
         action = "newPage";
-    else if (currentSlide.status == "deleted")
+    else if (currentPage.status == "deleted")
         action = "deletePage";
     else action = "updatePage";
     
@@ -183,7 +183,7 @@ function saveToServer() {
            console.log("Snapshot successful");
            
            // Set the slide's image property to the data url from the canvas.
-           currentSlide.audio = canvas.toDataURL();
+           currentPage.audio = canvas.toDataURL();
            
            // create and send the message
             $.post("/ShowAndTell/Controller", {
@@ -206,8 +206,7 @@ function saveToServer() {
 }
 
 function getEntities() {
-    //todo
-    console.log("getEntities() has not yet been implemented");
+    
 }
 
 /**
@@ -268,12 +267,12 @@ function processSaveResponse(response) {
            slideList.push(new slide(resp.pages[i]));
     } 
     // get the first slide in sequence if the current slide was deleted
-    if (currentSlide.status == "deleted") {
+    if (currentPage.status == "deleted") {
         var low = slideList[i];
         for (var i = 0; i < slideList.length; ++i)
             if (slideList[i].seq < low.seq)
                 low = slideList[i];
-        currentSlide = low;
+        currentPage = low;
     }
     // get an updated list of the entities for this slide:
     getEntities();
@@ -312,12 +311,12 @@ function setSlideSeq() {
             swapSlide = slideList[i];
     // swap the old slide if it exists
     if (swapSlide) {
-        swapSlide.seq = currentSlide.seq;
+        swapSlide.seq = currentPage.seq;
         swapSlide.changed = true;
     }
     // set the new seq for the current slide
-    currentSlide.seq = seq;
-    currentSlide.changed;
+    currentPage.seq = seq;
+    currentPage.changed;
 }
 
 // function to change the audio URL of a slide
@@ -327,8 +326,8 @@ function setSlideAudioURL() {
     // get the new audio url
     var aurl = $("#audioURLInput").val();
     // set the url
-    currentSlide.audio = aurl;
-    currentSlide.changed = true;
+    currentPage.audio = aurl;
+    currentPage.changed = true;
 }
 
 // function to delete a slide
@@ -338,7 +337,7 @@ function deleteSlide() {
     // ask the user if they are sure
     if (window.confirm("Deleting this slide will also delete all entities on it and cause any pending changes to be saved to the server. Continue?")) {
         // set the slide as deleted:
-        currentSlide.status = "deleted";
+        currentPage.status = "deleted";
         // set the entities of this page to deleted:
         for (var i = 0; i < entityList.length; ++i) {
             if (entityList[i].status != "added") // if the entity isn't new, delete it
@@ -352,9 +351,6 @@ function deleteSlide() {
         saveToServer();
     }
 }
-
-
-
 
 ////////////////////////////////////////////
 // Functions to modify entities           //
@@ -636,8 +632,10 @@ function displaySlides() {
         // Create a new image element to represent the slide.
         var img = document.createElement("IMG");
         img.src = "/ShowAndTellProject/" + slide.audio;
-        img.classList.add("highlight");
         img.id = "slideThumbnail";
+        
+        // Add highlight functionality to the image element.
+        highlight(img);
         
         // Add the image to the slides div.
         $pageDiv.append(img);
