@@ -47,82 +47,45 @@
             %>
         </fieldset><br>
         <!-- END OF SIDEBAR -->
-        <div>
-            <fieldset>
-                <legend>Pages</legend>
-                <div id="pageDiv"></div>
-            </fieldset>
-        </div>
-        <div id="lectureProperties"></div>
-        <div id="wtfCSS">
-            <div id="previewDiv">
-                <fieldset class="externalFieldset">
-                    <legend>Slide Preview</legend>
-                    <form id="slideNav">
-                        <button class="highlight" onclick="prev()">Previous</button>
-                        <button class="highlight" onclick="next()">Next</button>
-                        <input type="number" name="slideNum">
-                        <button class="highlight" onclick="goToSlide()">Jump to Slide</button>
-                    </form>
-                    <div id="slidePreviewDiv"></div>
+        <div id="middleDiv">
+            <div id="outerPageDiv">
+                <fieldset>
+                    <legend>Pages</legend>
+                    <div id="pageDiv">TEST</div>
                 </fieldset>
             </div>
-            <div id="entityProperties">
-                <fieldset class="externalFieldset">
-                    <legend>Entity Properties</legend>
-                    <form>
-                        <fieldset class="internalFieldset">
-                            <legend class="internalLegend">Type</legend>
-                            <select id="typeInput" onchange="changeType()">
-                                <option value="default" selected disabled>Select A Type</option>
-                                <option value="textbox">Text Box</option>
-                                <option value="bulletlist">Bulletted List</option>
-                                <option value="image">Image</option>
-                            </select>
-                        </fieldset>
-
-                        <fieldset class="internalFieldset">
-                            <legend class="internalLegend">Location</legend>
-                            <label>X Position:</label>
-                            <input type="number" id="xInput" onchange="moveEntity()">
-                            <label>Y Position:</label>
-                            <input type="number" id="yInput" onchange="moveEntity()">
-                            <label>Z index:</label>
-                            <input type="number" id="zInput" onchange="moveEntity()">
-                        </fieldset>
-                        <fieldset class="internalFieldset">
-                            <legend  class="internalLegend">Size</legend>
-                            <label>Width:</label>
-                            <input type="number" id="wInput" onchange="resizeEntity()" min="1">
-                            <label>Height:</label>
-                            <input type="number" id="hInput" onchange="resizeEntity()" min="1">
-                        </fieldset>
-
-                        <fieldset class="internalFieldset">
-                            <legend class="internalLegend">Content</legend>
-                            <div id="entityContent"></div>
-                        </fieldset>
-                    </form>
+            <div id="outerPreviewDiv">
+                <fieldset>
+                    <legend>Preview</legend>
+                    <div id="previewDiv">TEST</div>
+                </fieldset>
+            </div>
+            <div id="outerEntityDiv">
+                <fieldset>
+                <legend>Entities</legend>
+                    <div id="EntityDiv">TEST</div>
                 </fieldset>
             </div>
         </div>
-        <div id="entitiesDiv"></div>
-        <div id="slideDiv">
-            <div id="slideOptionsDiv">
-                <fieldset class="externalFieldset">
-                    <legend id="slideOptionsLegend">Slide Options</legend>
-                    <form>
-                        <label>Slide Sequence</label>
-                        <input type="number" id="sequenceInput" onchange="setSlideSeq()" min="0">
-                        <label>Slide Audio URL</label>
-                        <input type="url" id="audioURLInput" onchange="setSlideAudioURL()">
-                        <br>
-                        <button class="highlight" onclick="deleteSlide()" id="slideDeleteButton">Delete</button>
-                        <button class="highlight" onclick="showNewSlideOptions()" id="slideCreateButton">Add New Slide</button>
-                    </form>
-                </fieldset>
+        <br>
+        <fieldset>
+            <legend>Entity Properties</legend>
+            <div id="entityPropertiesDiv">
+                <label>Z-Index</label>
+                <input type="number" min="0" value="0" onchange="updateZIndex()">
+                <label>Animation</label>
+                <div class="dropdown" id="animations" onchange="updateAnimation()">
+                    <h3 value="None">None</h3>
+                    <ul class="highlight" value="None">None</ul>
+                    <ul class="highlight" value="Fade">Fade</ul>
+                    <ul class="highlight" value="Slide">Slide</ul>
+                    <ul class="highlight" value="Slide">Stretch</ul>
+                    <ul class="highlight" value="Shrink">Shrink</ul>
+                    <ul class="highlight" value="Grow">Grow</ul>
+                </div>
+                <div id="contentEditDiv"></div>
             </div>
-        </div>
+        </fieldset>
         <button class="highlight" onclick="pageSnapshot(new Slide())" >DO IT</button>
     </body>
 </html>
