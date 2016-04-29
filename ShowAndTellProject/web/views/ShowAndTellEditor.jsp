@@ -61,13 +61,33 @@
                 </fieldset>
             </div>
             <div id="outerEntityDiv">
-                <fieldset>
-                <legend>Entities</legend>
-                    <div id="EntityDiv">TEST</div>
+                <fieldset id="oEDivFieldSet1">
+                    <legend>Entities</legend>
+                    <div id="entityDiv">
+                        <button class="highlight" id="newTextEntityButton" onclick="newTextEntity()">New Text Entity</button><br>
+                        <button class="highlight" id="newListEntityButton" onclick="newListEntity()">New List Entity</button><br>
+                        <button class="highlight" id="newImageEntityButton" onclick="newImageEntity()">New Image Entity</button>
+                        <div id="entityPropertiesDiv">
+                            <label>Z-Index</label>
+                            <input type="number" min="0" value="0" onchange="updateZIndex()">
+                            <br><br>
+                            <label>Animation</label>
+                            <div class="dropdown" id="animations" onchange="updateAnimation()">
+                                <h3 value="None">None</h3>
+                                <ul class="highlight" value="None">None</ul>
+                                <ul class="highlight" value="Fade">Fade</ul>
+                                <ul class="highlight" value="Slide">Slide</ul>
+                                <ul class="highlight" value="Slide">Stretch</ul>
+                                <ul class="highlight" value="Shrink">Shrink</ul>
+                                <ul class="highlight" value="Grow">Grow</ul>
+                            </div><br><br>
+                            <label>Entity Content</label>
+                            <div id="contentEditDiv"><textarea id="TESTID" placeholder="Enter text here. HTML can be used to style the display"></textarea></div>
+                        </div>
+                    </div>
                 </fieldset>
-            </div>
         </div>
-        <br>
+        <br><!--
         <fieldset>
             <legend>Entity Properties</legend>
             <div id="entityPropertiesDiv">
@@ -82,10 +102,10 @@
                     <ul class="highlight" value="Slide">Stretch</ul>
                     <ul class="highlight" value="Shrink">Shrink</ul>
                     <ul class="highlight" value="Grow">Grow</ul>
-                </div>
-                <div id="contentEditDiv"></div>
+                </div><br>
+                <div id="contentEditDiv"><input type="textBox"></div>
             </div>
-        </fieldset>
+        </fieldset> --><br><br><br><br><br><br>
         <button class="highlight" onclick="pageSnapshot(new Slide())" >DO IT</button>
     </body>
 </html>
