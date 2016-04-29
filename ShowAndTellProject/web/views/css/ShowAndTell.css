@@ -1,3 +1,42 @@
+button.Image.highlight {
+    border-radius: 50%;
+    border-color: #FF5722;
+    border-width: 2px;
+    background-size: contain;
+    width: 50px;
+    height: 50px;
+}
+
+button.Image.highlight:focus {
+    outline: none;
+}
+
+button.Image.highlight.hover:active {
+    background-color: #009688;
+    border-color: #009688;
+}
+
+button.Image.highlight.hover {
+    background-color: #FF5722;
+    border-color: transparent;
+}
+
+button.Add {
+    background-image: url(../images/Add.png);
+}
+
+button.Add.hover {
+    background-image: url(../images/Add_Hover.png);
+}
+
+button.Delete {
+    background-image: url(../images/Trash.png);
+}
+
+button.Delete.hover {
+    background-image: url(../images/Trash_Hover.png);
+}
+
 #middleDiv{
     display : block;
     float : left;
@@ -59,6 +98,11 @@ textarea {
     width : 100%;
     height: 95%;
     overflow: auto;
+}
+
+#middleDiv > div > fieldset > div#pageDiv {
+    height: 80%;
+    margin-bottom: 10px;
 }
 
 #pageDiv > img {

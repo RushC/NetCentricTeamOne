@@ -2,7 +2,7 @@
 // General Global variables               //
 ////////////////////////////////////////////
 var currentLecture;             // current lecture being edited
-var currentPage;               // current slide being edited
+var currentPage;                // current slide being edited
 var currentEntity;              // current entity being edited
 var entityList = [];            // list of entities for the current slide
 var slideList = [];             // list of slides for this lecture
@@ -206,7 +206,59 @@ function saveToServer() {
 }
 
 function getEntities() {
+    // Create a new model Slide from the current slide.
+    var modelPage = new ModelSlide(currentPage);
+    console.log(modelPage);
     
+    // Send a post request to retrieve the entitied from the database.
+    $.post("/ShowAndTellProject/Controller", {
+        action: "getEntities",
+        page: JSON.stringify(modelPage)
+        
+    // Define the callback for the request.
+    }).done(function(response) {
+        // The response should simply be the array of entities retrieved from
+        // the request.
+        var entities = response;
+        
+        // Reinitialize the entity list as an empty array.
+        entities = [];
+        
+        // Iterate through all of the pages received from the response.
+        for (var i = 0; i < entities.length; i++) {
+            // Each entity is equivalent to a ModelEntity object. The entityList 
+            // is a list of regular Slide objects. Convert the page to a Slide
+            // object by passing it to the Slide constructor.
+            var entity = new Entity(entities[i]);
+            
+            // Add the slide to the list.
+            entityList.push(entity);
+            
+            // Set the entity as the current entity.
+            currentEntity = entity;
+            
+            // Update the preview with entity.
+            updateEnityPreviewContent();
+        }
+        
+        // For debugging.
+        console.log(entityList);
+        
+        // Set the download as finished.
+        downloadInProgress = false;
+    });
+        
+    // Specify that a download is in progress.
+    downloadInProgress = true;
+    
+    // Set a timeout for the request.
+    setTimeout(function() {
+        // Check if the download is still in progress.
+        if (downloadInProgress)
+            // Raise an alert.
+            alert("Error connecting to the server. Please try again later.");
+        downloadInProgress = false;
+    }, 10000);
 }
 
 /**
@@ -226,7 +278,7 @@ function getLecture() {
     var modelLecture = new ModelLecture(lecture);
     
     // Send a post request to retrieve the pages from the database.
-    $.post("http://localhost:8080/ShowAndTellProject/Controller", {
+    $.post("/ShowAndTellProject/Controller", {
         action: "getPages",
         lecture: JSON.stringify(modelLecture)
         
@@ -255,7 +307,22 @@ function getLecture() {
         
         // Display the slides in the slides div.
         displaySlides();
+        
+        // Set the download as finished.
+        downloadInProgress = false;
     });
+    
+    // Specify that a download is in progress.
+    downloadInProgress = true;
+    
+    // Set a timeout for the request.
+    setTimeout(function() {
+        // Check if the download is still in progress.
+        if (downloadInProgress)
+            // Raise an alert.
+            alert("Error connecting to the server. Please try again later.");
+        downloadInProgress = false;
+    }, 10000);
 }
 
 function processSaveResponse(response) {
@@ -641,7 +708,7 @@ function displaySlides() {
         highlight(img);
         
         // Add the image to the slides div.
-        $pageDiv.append(img);
+        $pageDiv.append(img);        
     }
 }
 

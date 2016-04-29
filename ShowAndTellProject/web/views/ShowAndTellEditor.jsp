@@ -52,6 +52,8 @@
                 <fieldset>
                     <legend>Pages</legend>
                     <div id="pageDiv">TEST</div>
+                    <button class="Add Image highlight"></button>
+                    <button class="Delete Image highlight"></button>
                 </fieldset>
             </div>
             <div id="outerPreviewDiv">
