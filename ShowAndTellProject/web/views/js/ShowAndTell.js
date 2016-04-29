@@ -2,36 +2,36 @@
 // General Global variables               //
 ////////////////////////////////////////////
 var currentLecture;             // current lecture being edited
-var currentPage;                // current slide being edited
+var currentPage;                // current page being edited
 var currentEntity;              // current entity being edited
-var entityList = [];            // list of entities for the current slide
-var slideList = [];             // list of slides for this lecture
+var entityList = [];            // list of entities for the current page
+var pageList = [];             // list of pages for this lecture
 var uploadInProgress = false;   // true when uploading to the server
 var downloadInProgress = false; // true when getting content from the server
-var idPlaceHolder = "fakeID";   // used with fakeIDCount to generate ids for preview elements of new entities or slides
-var fakeIDCount = 0;            // used to identify entities or slides without unique ids assigned by the server
-var slideOverride = false;      // determines if moving a slide to a sequence should delete the slide already in that sequence
+var idPlaceHolder = "fakeID";   // used with fakeIDCount to generate ids for preview elements of new entities or pages
+var fakeIDCount = 0;            // used to identify entities or pages without unique ids assigned by the server
+var pageOverride = false;      // determines if moving a page to a sequence should delete the page already in that sequence
 
 ////////////////////////////////////////////
 // Commonly Referenced Elements           //
 ////////////////////////////////////////////
-var slidePreviewDiv;            // div containing the slide preview
-var entitiesDiv;                // div containing a list of entities on the current slide
+var pagePreviewDiv;            // div containing the page preview
+var entityDiv;                // div containing a list of entities on the current page
 var ContentInputDiv;            // div containing the content input for an entity
-var entityProperties;           // div containing the editable properties of the currently selected entity
-var xInput;                     // input for the currently selected entity's horizontal position on the slide
-var yInput;                     // input for the currently selected entity's vertical position on the slide
+var propertiesDiv;           // div containing the editable properties of the currently selected entity
+//var xInput;                     // input for the currently selected entity's horizontal position on the page
+//var yInput;                     // input for the currently selected entity's vertical position on the page
 var zInput;                     // input for the currently selected entity's z-index based draw order
-var hInput;                     // input for the currently selected entity's height
-var wInput;                     // input for the currently selected entity's width
-var typeInput;                  // input for the currentyl selected entity's type
+//var hInput;                     // input for the currently selected entity's height
+//var wInput;                     // input for the currently selected entity's width
+//var typeInput;                  // input for the currentyl selected entity's type
 
 ///////////////////////////////////////////////////////////
-// constructors for creating new lecture/slide/entities  //
+// constructors for creating new lecture/page/entities  //
 ///////////////////////////////////////////////////////////
 function Entity(me) {
     this.lectureID = me ? me.lectureID : currentLecture.id;
-    this.slideID = me ? me.PageID : currentPage.id;
+    this.pageID = me ? me.PageID : currentPage.id;
     this.type = me ? me.entityType : "textbox";
     this.id = me ? me.entityID : idPlaceHolder + fakeIDCount++;
     this.x = me ? me.entityX : 0;
@@ -53,12 +53,12 @@ function Lecture(ml) {
     this.status = ml ? "unchanged" : "added";
 }
 
-function Slide(ms) {
-    this.id = ms ? ms.pageID : idPlaceHolder + fakeIDCount++;
-    this.lectureID = ms ? ms.lectureID : currentLecture.id;
-    this.seq = ms ? ms.pageSequence : "1";//slideCount;
-    this.audio = ms ? ms.pageAudioURL : "";
-    this.status = ms ? "unchanged" : "added";
+function Page(mp) {
+    this.id = mp ? mp.pageID : idPlaceHolder + fakeIDCount++;
+    this.lectureID = mp ? mp.lectureID : currentLecture.id;
+    this.seq = mp ? mp.pageSequence : "1";//pageCount;
+    this.audio = mp ? mp.pageAudioURL : "";
+    this.status = mp ? "unchanged" : "added";
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -68,7 +68,7 @@ function Slide(ms) {
 ////////////////////////////////////////////////////////////////////////////////////////////
 function ModelEntity(e) {
     this.lectureID = e.lectureID;
-    this.pageID = e.slideID;
+    this.pageID = e.pageID;
     this.entityID = e.id;
     this.entityType = e.type;
     this.entityX = e.x;
@@ -80,7 +80,7 @@ function ModelEntity(e) {
     this.entityHeight = e.height;
 }
 
-function ModelSlide(s) {
+function ModelPage(s) {
     this.lectureID = s.lectureID;
     this.pageID = s.pageID;
     this.pageSequence = s.seq;
@@ -98,38 +98,38 @@ function ModelLecture(l) {
 // Script Initialization                  //
 ////////////////////////////////////////////
 window.onload = function() {
-    slidePreviewDiv = $("#previewDiv");
-    entitiesDiv = $("#entitiesDiv");
-    ContentInputDiv = $("#entityContent");
-    entityProperties = $("#entityProperties");
-    xInput = $("#xInput");
-    yInput = $("#yInput");
+    pagePreviewDiv = $("#previewDiv");
+    entityDiv = $("#entityDiv");
+    ContentInputDiv = $("#contentEditDiv");
+    propertiesDiv = $("#entityPropertiesDiv");
+    //xInput = $("#xInput");
+    //yInput = $("#yInput");
     zInput = $("#zInput");
-    hInput = $("#hInput");
-    wInput = $("#wInput");
-    typeInput = $("#typeInput");
+    //hInput = $("#hInput");
+    //wInput = $("#wInput");
+    //typeInput = $("#typeInput");
     // check to make sure the element variables are non null
     var badElements = {
-        "Missing Element slidePreviewDiv" : slidePreviewDiv,
-        "Missing Element entitiesDiv" : entitiesDiv,
+        "Missing Element pagePreviewDiv" : pagePreviewDiv,
+        "Missing Element entityDiv" : entityDiv,
         "Missing Element ContentInputDiv" : ContentInputDiv,
-        "Missing Element entityProperties" : entityProperties,
-        "Missing Element xInput" : xInput,
-        "Missing Element yInput" : yInput,
+        "Missing Element propertiesDiv" : propertiesDiv,
+        //"Missing Element xInput" : xInput,
+        //"Missing Element yInput" : yInput,
         "Missing Element zInput" : zInput,
-        "Missing Element hInput" : hInput,
-        "Missing Element wInput" : wInput,
-        "Missing Element typeInput" : typeInput
+        //"Missing Element hInput" : hInput,
+        //"Missing Element wInput" : wInput,
+        //"Missing Element typeInput" : typeInput
     };
     for (var e in badElements) {
         if (!badElements[e][0])
             console.log(e + "!");
     }
     
-    // set the current entity, current slide, and current lecture for testing purposes:
+    // set the current entity, current page, and current lecture for testing purposes:
     currentLecture = new Lecture();
     currentLecture.id = "fakeLectureID";
-    currentPage = new Slide();
+    currentPage = new Page();
     currentEntity = new Entity();
     
     updatePropertyDiv();
@@ -140,7 +140,7 @@ window.onload = function() {
 ////////////////////////////////////////////
 // Functions to communicate with server   //
 ////////////////////////////////////////////
-// function to save the current slide to the server:
+// function to save the current page to the server:
 function saveToServer() {
     //indicate that a save is in progress
     uploadInProgress = true;
@@ -164,25 +164,25 @@ function saveToServer() {
             changedEntities.push(new ModelEntity(entityList[i]));
     }
     
-    // create lists of newly added, changed, and deleted slides
-    var addedSlides = [];
-    var changedSlides = [];
-    var deletedSlides = [];
-    for (var i = 0; i < slideList.length; ++i) {
-        if (slideList[i].status == "added")
-            addedSlides.push(slideList[i]);
-        else if (slideList[i].status == "deleted")
-            deletedSlides.push(slideList[i]);
-        else if (slideList[i].changed)
-            changedSlides.push(slideList[i]);
+    // create lists of newly added, changed, and deleted pages
+    var addedPages = [];
+    var changedPages = [];
+    var deletedPages = [];
+    for (var i = 0; i < pageList.length; ++i) {
+        if (pageList[i].status == "added")
+            addedPages.push(pageList[i]);
+        else if (pageList[i].status == "deleted")
+            deletedPages.push(pageList[i]);
+        else if (pageList[i].changed)
+            changedPages.push(pageList[i]);
     }
         
     // Create a canvas element from the previewDiv using the html2canvas library.
-    html2canvas(slidePreviewDiv, {
+    html2canvas(pagePreviewDiv, {
        onrendered: function(canvas) {
            console.log("Snapshot successful");
            
-           // Set the slide's image property to the data url from the canvas.
+           // Set the page's image property to the data url from the canvas.
            currentPage.audio = canvas.toDataURL();
            
            // create and send the message
@@ -192,9 +192,9 @@ function saveToServer() {
                 "newEntities" : JSON.stringify(addedEntities),
                 "changedEntities" : JSON.stringify(changedEntities),
                 "deletedEntities" : JSON.stringify(deletedEntities),
-                "newPages" : JSON.stringify(addedSlides),
-                "updatedPages" : JSON.stringify(changedSlides),
-                "deletedPages" : JSON.stringify(deletedSlides)}, processSaveResponse);
+                "newPages" : JSON.stringify(addedPages),
+                "updatedPages" : JSON.stringify(changedPages),
+                "deletedPages" : JSON.stringify(deletedPages)}, processSaveResponse);
             // set a timeout for 10s to alert user and reset awaitingResponse in case the server could not be reached/does not respond
             setTimeout(function() {
                 if (uploadInProgress)
@@ -206,8 +206,8 @@ function saveToServer() {
 }
 
 function getEntities() {
-    // Create a new model Slide from the current slide.
-    var modelPage = new ModelSlide(currentPage);
+    // Create a new model Page from the current page.
+    var modelPage = new ModelPage(currentPage);
     console.log(modelPage);
     
     // Send a post request to retrieve the entitied from the database.
@@ -227,11 +227,11 @@ function getEntities() {
         // Iterate through all of the pages received from the response.
         for (var i = 0; i < entities.length; i++) {
             // Each entity is equivalent to a ModelEntity object. The entityList 
-            // is a list of regular Slide objects. Convert the page to a Slide
-            // object by passing it to the Slide constructor.
+            // is a list of regular Page objects. Convert the page to a Page
+            // object by passing it to the Page constructor.
             var entity = new Entity(entities[i]);
             
-            // Add the slide to the list.
+            // Add the page to the list.
             entityList.push(entity);
             
             // Set the entity as the current entity.
@@ -289,24 +289,24 @@ function getLecture() {
         var pages = response;
         
         // Reinitialize the page list as an empty array.
-        slideList = [];
+        pageList = [];
         
         // Iterate through all of the pages received from the response.
         for (var i = 0; i < pages.length; i++) {
-            // Each page is equivalent to a ModelSlide object. The slideList is
-            // a list of regular Slide objects. Convert the page to a Slide
-            // object by passing it to the Slide constructor.
-            var slide = new Slide(pages[i]);
+            // Each page is equivalent to a ModelPage object. The pageList is
+            // a list of regular Page objects. Convert the page to a Page
+            // object by passing it to the Page constructor.
+            var page = new Page(pages[i]);
             
-            // Add the slide to the list.
-            slideList.push(slide);
+            // Add the page to the list.
+            pageList.push(page);
         }
         
         // For debugging.
-        console.log(slideList);
+        console.log(pageList);
         
-        // Display the slides in the slides div.
-        displaySlides();
+        // Display the pages in the pages div.
+        displayPages();
         
         // Set the download as finished.
         downloadInProgress = false;
@@ -328,23 +328,23 @@ function getLecture() {
 function processSaveResponse(response) {
     var resp = JSON.parse(response);
     
-    // reset the slideList
-    slideList = [];
+    // reset the pageList
+    pageList = [];
     for (var i; i < resp.pages.length; ++i) {
-           slideList.push(new slide(resp.pages[i]));
+           pageList.push(new page(resp.pages[i]));
     } 
-    // get the first slide in sequence if the current slide was deleted
+    // get the first page in sequence if the current page was deleted
     if (currentPage.status == "deleted") {
-        var low = slideList[i];
-        for (var i = 0; i < slideList.length; ++i)
-            if (slideList[i].seq < low.seq)
-                low = slideList[i];
+        var low = pageList[i];
+        for (var i = 0; i < pageList.length; ++i)
+            if (pageList[i].seq < low.seq)
+                low = pageList[i];
         currentPage = low;
     }
-    // get an updated list of the entities for this slide:
+    // get an updated list of the entities for this page:
     getEntities();
     // update ui elements
-    regenSlidePreview();
+    regenPagePreview();
     updateEntitiesDiv();
     updatePropertyDiv();
     // done uploading
@@ -362,32 +362,32 @@ function processGetEntitiesResponse(response) {
 }
 
 ////////////////////////////////////////////
-// Functions to modify slides             //
+// Functions to modify pages             //
 ////////////////////////////////////////////
 
-// function to change the sequence of a slide to the given sequence
-function setSlideSeq() {
+// function to change the sequence of a page to the given sequence
+function setPageSeq() {
     if (uploadInProgress || downloadInProgress)
         return;
     // get the new sequence
     var seq = $("#sequenceInput").val();
-    // find the slide in the list at the sequece (if one exists)
-    var swapSlide = false;
-    for (var i = 0; i < slideList.length; ++i)
-        if (slideList[i].seq == seq)
-            swapSlide = slideList[i];
-    // swap the old slide if it exists
-    if (swapSlide) {
-        swapSlide.seq = currentPage.seq;
-        swapSlide.changed = true;
+    // find the page in the list at the sequece (if one exists)
+    var swapPage = false;
+    for (var i = 0; i < pageList.length; ++i)
+        if (pageList[i].seq == seq)
+            swapPage = pageList[i];
+    // swap the old page if it exists
+    if (swapPage) {
+        swapPage.seq = currentPage.seq;
+        swapPage.changed = true;
     }
-    // set the new seq for the current slide
+    // set the new seq for the current page
     currentPage.seq = seq;
     currentPage.changed;
 }
 
-// function to change the audio URL of a slide
-function setSlideAudioURL() {
+// function to change the audio URL of a page
+function setPageAudioURL() {
     if (uploadInProgress || downloadInProgress)
         return;
     // get the new audio url
@@ -397,13 +397,13 @@ function setSlideAudioURL() {
     currentPage.changed = true;
 }
 
-// function to delete a slide
-function deleteSlide() {
+// function to delete a page
+function deletePage() {
     if (uploadInProgress || downloadInProgress)
         return;
     // ask the user if they are sure
-    if (window.confirm("Deleting this slide will also delete all entities on it and cause any pending changes to be saved to the server. Continue?")) {
-        // set the slide as deleted:
+    if (window.confirm("Deleting this page will also delete all entities on it and cause any pending changes to be saved to the server. Continue?")) {
+        // set the page as deleted:
         currentPage.status = "deleted";
         // set the entities of this page to deleted:
         for (var i = 0; i < entityList.length; ++i) {
@@ -414,7 +414,7 @@ function deleteSlide() {
                 entityList[i].changed = false;
             }
         }
-        // save the current state and request another slide to view:
+        // save the current state and request another page to view:
         saveToServer();
     }
 }
@@ -434,7 +434,7 @@ function newEntity() {
     typeInput[0].selectedIndex = 0;
     ContentInputDiv.empty();
     // make sure the properties div is showing
-    entityProperties.show();
+    propertiesDiv.show();
     // create a new entitiy:
     currentEntity = new Entity();
     // add the entity to the list:
@@ -592,7 +592,7 @@ function updatePropertyDiv() {
     }
 }
 
-// function to update the current entity's representation on the slide preview
+// function to update the current entity's representation on the page preview
 function updateEntityPreviewContent() {
     if (currentEntity) {
         //first get the element
@@ -600,8 +600,8 @@ function updateEntityPreviewContent() {
         // create the element if it doesn't exist:
         if (!element[0]) {
             element = $('<div id="' + currentEntity.id +'"></div>');
-            // add the element to the slide div preview
-            slidePreviewDiv.append(element);
+            // add the element to the page div preview
+            pagePreviewDiv.append(element);
             // set the css for the element
             element[0].top = currentEntity.y;
             element[0].left = currentEntity.x;
@@ -675,66 +675,66 @@ function updateEntitiesDiv() {
     console.log("updateEntitesDiv() has not been implemented yet!");
 }
 
-// function to regenerate the slide preview without recreating elements that already exist
-function regenSlidePreview() {
+// function to regenerate the page preview without recreating elements that already exist
+function regenPagePreview() {
     //todo
-    console.log("regenSlidePreview() has not been implemented yet!");
+    console.log("regenPagePreview() has not been implemented yet!");
 }
 
 /**
- * Displays the list of slides in the slides div element.
+ * Displays the list of pages in the pages div element.
  */
-function displaySlides() {
-    // Retrieve the the slides div element.
+function displayPages() {
+    // Retrieve the the pages div element.
     var $pageDiv = $("#pageDiv");
     
     // Clear the page div.
     while ($pageDiv[0].firstChild)
         $pageDiv[0].removeChild($pageDiv[0].firstChild);
     
-    // Iterate through all of the slides in the slidesList.
-    for (var i = 0; i < slideList.length; i++) {
-        var slide = slideList[i];
+    // Iterate through all of the pages in the pagesList.
+    for (var i = 0; i < pageList.length; i++) {
+        var page = pageList[i];
         
-        // Create a new image element to represent the slide.
+        // Create a new image element to represent the page.
         var img = document.createElement("IMG");
         img.onload = function() {
-            $(this).hide().slideToggle();
+            $(this).hide().pageToggle();
         };
-        img.src = "/ShowAndTellProject/" + slide.audio;
-        img.id = "slideThumbnail";
+        img.src = "/ShowAndTellProject/" + page.audio;
+        img.id = "pageThumbnail";
         
         // Add highlight functionality to the image element.
         highlight(img);
         
-        // Add the image to the slides div.
+        // Add the image to the pages div.
         $pageDiv.append(img);        
     }
 }
 
 /**
- * Constructs a snapshot of the slide preview div and sets its image content to a
+ * Constructs a snapshot of the page preview div and sets its image content to a
  * data URL for an image of the screenshot.
  *
- * @param {slide} the Slide object currently diplayed in the slide preview div.
+ * @param {page} the Page object currently diplayed in the page preview div.
  */
-function pageSnapshot(slide) {
+function pageSnapshot(page) {
     // Create a canvas element from the previewDiv using the html2canvas library.
-    html2canvas(slidePreviewDiv, {
+    html2canvas(pagePreviewDiv, {
        onrendered: function(canvas) {
            console.log("Snapshot successful");
            
-           // Set the slide's image property to the data url from the canvas.
-           slide.audio = canvas.toDataURL();
-           slide.lectureID = "10";
+           // Set the page's image property to the data url from the canvas.
+           page.audio = canvas.toDataURL();
+           page.lectureID = "10";
            
-           // Sends a new post request for the new slide.
+           // Sends a new post request for the new page.
            var lecture = new Lecture();
            lecture.courseTitle = "Course";
            lecture.instructor = "Instructor";
            lecture.lectureTitle = "Lecture";
            lecture.id = "10";
-           var newPages = [ new ModelSlide(slide) ];
+           var newPages = [ new ModelPage(page) ];
            $.post("/ShowAndTellProject/Controller", {
                 action: "updateLecture",
                 newPages: JSON.stringify(newPages),
