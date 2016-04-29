@@ -217,29 +217,6 @@ function getEntities() {
         
     // Define the callback for the request.
     }).done(function(response) {
-        // The response should simply be the array of entities retrieved from
-        // the request.
-        var entities = response;
-        
-        // Reinitialize the entity list as an empty array.
-        entities = [];
-        
-        // Iterate through all of the pages received from the response.
-        for (var i = 0; i < entities.length; i++) {
-            // Each entity is equivalent to a ModelEntity object. The entityList 
-            // is a list of regular Page objects. Convert the page to a Page
-            // object by passing it to the Page constructor.
-            var entity = new Entity(entities[i]);
-            
-            // Add the page to the list.
-            entityList.push(entity);
-            
-            // Set the entity as the current entity.
-            currentEntity = entity;
-            
-            // Update the preview with entity.
-            updateEnityPreviewContent();
-        }
         
         // For debugging.
         console.log(entityList);
@@ -277,43 +254,16 @@ function getLecture() {
     // Create a model lecture from the lecture object.
     var modelLecture = new ModelLecture(lecture);
     
+    // Specify that a download is in progress.
+    downloadInProgress = true;
+    
     // Send a post request to retrieve the pages from the database.
     $.post("/ShowAndTellProject/Controller", {
         action: "getPages",
         lecture: JSON.stringify(modelLecture)
         
     // Define the callback for the request.
-    }).done(function(response) {
-        // The response should simply be the array of pages retrieved from the
-        // request.
-        var pages = response;
-        
-        // Reinitialize the page list as an empty array.
-        pageList = [];
-        
-        // Iterate through all of the pages received from the response.
-        for (var i = 0; i < pages.length; i++) {
-            // Each page is equivalent to a ModelPage object. The pageList is
-            // a list of regular Page objects. Convert the page to a Page
-            // object by passing it to the Page constructor.
-            var page = new Page(pages[i]);
-            
-            // Add the page to the list.
-            pageList.push(page);
-        }
-        
-        // For debugging.
-        console.log(pageList);
-        
-        // Display the pages in the pages div.
-        displayPages();
-        
-        // Set the download as finished.
-        downloadInProgress = false;
-    });
-    
-    // Specify that a download is in progress.
-    downloadInProgress = true;
+    }).done(processGetPagesResponse);
     
     // Set a timeout for the request.
     setTimeout(function() {
@@ -352,13 +302,64 @@ function processSaveResponse(response) {
 }
 
 function processGetPagesResponse(response) {
-    //todo
-    console.log("processGetPagesResponse() has not been implemented yet");
+    // The response should simply be the array of pages retrieved from the
+    // request.
+    var pages = response;
+
+    // Reinitialize the page list as an empty array.
+    pageList = [];
+
+    // Iterate through all of the pages received from the response.
+    for (var i = 0; i < pages.length; i++) {
+        // Each page is equivalent to a ModelPage object. The pageList is
+        // a list of regular Page objects. Convert the page to a Page
+        // object by passing it to the Page constructor.
+        var page = new Page(pages[i]);
+
+        // Add the page to the list.
+        pageList.push(page);
+    }
+
+    // For debugging.
+    console.log(pageList);
+
+    // Display the pages in the pages div.
+    displayPages();
+
+    // Set the download as finished.
+    downloadInProgress = false;
 }
 
 function processGetEntitiesResponse(response) {
-    //todo
-    console.log("processGetEntitiesResponse() has not been implemented yet");
+    // The response should simply be the array of entities retrieved from
+    // the request.
+    var entities = response;
+
+    // Reinitialize the entity list as an empty array.
+    entities = [];
+
+    // Iterate through all of the pages received from the response.
+    for (var i = 0; i < entities.length; i++) {
+        // Each entity is equivalent to a ModelEntity object. The entityList 
+        // is a list of regular Page objects. Convert the page to a Page
+        // object by passing it to the Page constructor.
+        var entity = new Entity(entities[i]);
+
+        // Add the page to the list.
+        entityList.push(entity);
+
+        // Set the entity as the current entity.
+        currentEntity = entity;
+
+        // Update the preview with entity.
+        updateEnityPreviewContent();
+    }
+    
+    // For debugging.
+    console.log(entityList);
+
+    // Set the download as finished.
+    downloadInProgress = false;
 }
 
 ////////////////////////////////////////////

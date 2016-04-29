@@ -76,7 +76,7 @@
                         <button class="highlight" id="newImageEntityButton" onclick="newImageEntity()">New Image Entity</button>
                         <div id="entityPropertiesDiv">
                             <label>Z-Index</label>
-                            <input type="number" min="0" value="0" onchange="updateZIndex()">
+                            <input id="zInput" type="number" min="0" value="0" onchange="updateZIndex()">
                             <br><br>
                             <label>Animation</label>
                             <div class="dropdown" id="animations" onchange="updateAnimation()">
@@ -89,7 +89,7 @@
                                 <ul class="highlight" value="Grow">Grow</ul>
                             </div><br><br>
                             <label>Entity Content</label>
-                            <div id="contentEditDiv"><textarea rows="5" cols="20" class="lectureInput" id="TESTID" placeholder="Enter text here. HTML can be used to style the display"></textarea></div>
+                            <div id="contentEditDiv"><textarea rows="5" cols="20" class="lectureInput" id="textInput" placeholder="Enter text here. HTML can be used to style the display"></textarea></div>
                         </div>
                     </div>
                 </fieldset>
