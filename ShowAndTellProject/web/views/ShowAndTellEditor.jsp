@@ -10,25 +10,24 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
         <script src="js/html2canvas.js"></script>
-        <script src="js/ShowAndTell.js"></script>
-        <script src="js/side.js"></script>
+        <!--<script src="js/ShowAndTell.js"></script>-->
         <script src="js/effects.js"></script>
+        <script src="js/ShowAndTell/Model.js"></script>
+        <script src="js/ShowAndTell/Display.js"></script>
+        <script src="js/ShowAndTell/Request.js"></script>
+        <script>
+            addEventListener("load", function() {
+                loadLectures();
+            });
+        </script>
     </head>
     <body>
         <!-- MOVED SIDEBAR -->
         <fieldset class="sideDiv">
             <legend> Lectures </legend>
             <div id="lectureSelection">
-                <div class="dropdown" id="lecture" onchange="getLecture()">
+                <div class="dropdown" id="lectureDropdown" onchange="setLecture()">
                     <h3>Select a lecture</h3>
-                    <%
-                        Lecture[] lectures = new CrudDao().getLectures();
-                        for (Lecture lecture : lectures) {
-                    %>
-                    <ul class="highlight" value="<%=lecture.getLectureID()%>"><%=lecture.getCourseTitle() + ": " + lecture.getLectureTitle()%></ul>
-                    <%
-                        }
-                    %>
                 </div>
                 <button class="Add Image highlight" onclick="createLecture()"></button>
                 <button class="Delete Image highlight"></button><br>    
@@ -36,22 +35,6 @@
             <textarea class="lectureInput" rows="1" cols="10" id="courseTitle" placeholder="Course Title"></textarea>
             <textarea class="lectureInput" rows="1" cols="10" id="lectureTitle" placeholder="Lecture Title"></textarea>
             <textarea class="lectureInput" rows="1" cols="10" id="instructor" placeholder="Instructor"></textarea>
-            <!-- Edit button
-            <button id="editLecture" onclick="editLecture()">Edit Lecture</button> -->          
-            <%
-                if (lectures.length > 0) {
-            %>
-            <!-- <button id="deleteLecture" onclick="deleteLecture()">Delete Lecture</button><br> -->
-<!--
-            <label>Course:</label><br>
-            <textarea cols="10" id="courseTitle"><%=lectures[0].getCourseTitle()%></textarea>
-            <label>Lecture:</label><br>
-            <textarea cols="10" id="lectureTitle"><%=lectures[0].getLectureTitle()%></textarea>
-            <label>Instructor:</label>
-            <textarea cols="10" id="instructor"><%=lectures[0].getInstructor()%></textarea>-->
-            <%
-                }
-            %>
         </fieldset><br>
         <!-- END OF SIDEBAR -->
         <div id="middleDiv">

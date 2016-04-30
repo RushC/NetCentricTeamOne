@@ -135,29 +135,60 @@ public class CrudDao {
      * @param lectureID the ID of the lecture to delete in the database.
      */
     public void deleteLecture(String lectureID) {
-        // Create a query to delete the lecture with the specified ID.
-        String query = String.format(
+        // Create queries to delete all pages and entities with the specified
+        // ID's.
+        String[] queries = {
+            String.format(
+                "delete from ENTITY "
+                        + "where LECTUREID=%s",
+                lectureID
+            ),
+            String.format(
+                "delete from PAGE "
+                        + "where LECTUREID=%s",
+                lectureID
+            ),
+            String.format(
                 "delete from LECTURE "
                         + "where LECTUREID=%s",
                 lectureID
-        );
+            )
+        };
         
-        // Execute the query.
-        query(query);
+        // Execute the queries.
+        for (String query : queries)
+            query(query);
     }
     
+    /**
+     * Deletes the specified Page in the database.
+     * 
+     * @param lectureID the lectureID of the page to delete in the database.
+     * @param pageID the pageID of the page to delete in the database.
+     */
     public void deletePage(String lectureID, String pageID) {
-        // Create a query to delete the page in the database.
-        String query = String.format(
+        // Create queries to delete all pages and entities with the specified
+        // ID's.
+        String[] queries = {
+            String.format(
+                "delete from ENTITY "
+                        + "where LECTUREID=%s "
+                        + "and PAGEID=%s",
+                lectureID,
+                pageID
+            ),
+            String.format(
                 "delete from PAGE "
                         + "where LECTUREID=%s "
                         + "and PAGEID=%s",
                 lectureID,
                 pageID
-        );
+            )
+        };
         
-        // Execute the query.
-        query(query);
+        // Execute the queries.
+        for (String query : queries)
+            query(query);
     }
     
     /**
@@ -174,29 +205,57 @@ public class CrudDao {
                 + "and LECTUREID = %s", pageID, lectureID);
         
         // Retrieve the list of objects for the query.
-        List<Entity> entities = getResultsFromQuery(query, (results) -> {
-            try {
-                // Create a new Lecture object with the information from the row.
-                Entity entity = new Entity();
-                entity.setEntityID("" + results.getInt("ENTITYID"));
-                entity.setPageID("" + results.getInt("PAGEID"));
-                entity.setLectureID("" + results.getInt("LECTUREID"));
-                entity.setEntityType(results.getString("ENTITYTYPE"));
-                entity.setEntityContent(results.getString("ENTITYCONTENT"));
-                entity.setEntityAnimation(results.getString("ENTITYANIMATION"));
-                entity.setEntityX("" + results.getInt("ENTITYX"));
-                entity.setEntityY("" + results.getInt("ENTITYY"));
-                entity.setEntityZ("" + results.getInt("ENTITYZ"));
-                entity.setEntityWidth("" + results.getInt("ENTITYWIDTH"));
-                entity.setEntityHeight("" + results.getInt("ENTITYHEIGHT"));
-                return entity;
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                return null;
-            }
-        });
+        List<Entity> entities = getResultsFromQuery(query, this::toEntity);
         
         return entities.toArray(new Entity[0]);
+    }
+    
+    /**
+     * Retrieves the Entity object with the specified ID in the database.
+     * 
+     * @param entityID the entityID of the Entity
+     * @param pageID the pageID of the Entity
+     * @param lectureID the lectureID of the Entity
+     * @return the Entity object from the database with the specified ID.
+     */
+    public Entity getEntity(String entityID, String pageID, String lectureID) {
+        // Create a query to find the entity in the database.
+        String query = String.format(
+                "select * from ENTITY "
+                        + "where ENTITYID = %s "
+                        + "and PAGEID = %s "
+                        + "and LECTUREID = %s",
+                entityID,
+                pageID,
+                lectureID
+        );
+        
+        // Retrieve the list of objects for the query.
+        List<Entity> entities = getResultsFromQuery(query, this::toEntity);
+        
+        // Return the first (and hopefully only) result.
+        return entities.get(0);
+    }
+    
+    /**
+     * Retrieves the Lecture object with the specified ID in the database.
+     * 
+     * @param lectureID the lectureID of the Lecture
+     * @return the Lecture object from the database with the specified ID.
+     */
+    public Lecture getLecture(String lectureID) {
+        // Create a query to find the entity in the database.
+        String query = String.format(
+                "select * from LECTURE "
+                        + "where LECTUREID = %s",
+                lectureID
+        );
+        
+        // Retrieve the list of objects for the query.
+        List<Lecture> lectures = getResultsFromQuery(query, this::toLecture);
+        
+        // Return the first (and hopefully only) result.
+        return lectures.get(0);
     }
     
     /**
@@ -210,23 +269,34 @@ public class CrudDao {
         String query = "select * from LECTURE order by LECTURETITLE";
         
         // Retrieve the list of objects for the query.
-        List<Lecture> lectures = getResultsFromQuery(query, (results) -> {
-            try {
-                // Create a new Lecture object with the information from the row.
-                Lecture lecture = new Lecture();
-                lecture.setLectureID("" + results.getInt("LECTUREID"));
-                lecture.setLectureTitle(results.getString("LECTURETITLE"));
-                lecture.setCourseTitle(results.getString("COURSETITLE"));
-                lecture.setInstructor(results.getString("INSTRUCTOR"));
-                return lecture;
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                return null;
-            }
-        });
+        List<Lecture> lectures = getResultsFromQuery(query, this::toLecture);
                 
         // Return the lectures.
         return lectures.toArray(new Lecture[0]);
+    }
+    
+    /**
+     * Retrieves the Page object with the specified ID in the database.
+     * 
+     * @param pageID the pageID of the Page
+     * @param lectureID the lectureID of the Page
+     * @return the Page object from the database with the specified ID.
+     */
+    public Page getPage(String pageID, String lectureID) {
+        // Create a query to find the entity in the database.
+        String query = String.format(
+                "select * from PAGE "
+                        + "where PAGEID = %s "
+                        + "and LECTUREID = %s",
+                pageID,
+                lectureID
+        );
+        
+        // Retrieve the list of objects for the query.
+        List<Page> pages = getResultsFromQuery(query, this::toPage);
+        
+        // Return the first (and hopefully only) result.
+        return pages.get(0);
     }
     
     /**
@@ -243,19 +313,7 @@ public class CrudDao {
                 lectureID);
         
         // Retrieve the list of objects from the query.
-        List<Page> pages = getResultsFromQuery(query, (results) -> {
-            try {
-                Page page = new Page();
-                page.setPageID("" + results.getInt("PAGEID"));
-                page.setLectureID("" + results.getInt("LECTUREID"));
-                page.setPageSequence("" + results.getInt("PAGESEQUENCE"));
-                page.setPageAudioURL(results.getString("PAGEAUDIOURL"));
-                return page;
-            } catch (SQLException e) {
-                System.err.println(e.getMessage());
-                return null;
-            }
-        });
+        List<Page> pages = getResultsFromQuery(query, this::toPage);
         
         // Return the pages.
         return pages.toArray(new Page[0]);
@@ -364,6 +422,75 @@ public class CrudDao {
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             System.err.println("Messed up query: " + query);
+        }
+    }
+    
+    /**
+     * Utility function for retrieving an Entity object from a ResultSet.
+     * 
+     * @param results a ResultSet object.
+     * @return an Entity object from the ResultSet.
+     */
+    public Entity toEntity(ResultSet results) {
+        try {
+            // Create a new Lecture object with the information from the row.
+            Entity entity = new Entity();
+            entity.setEntityID("" + results.getInt("ENTITYID"));
+            entity.setPageID("" + results.getInt("PAGEID"));
+            entity.setLectureID("" + results.getInt("LECTUREID"));
+            entity.setEntityType(results.getString("ENTITYTYPE"));
+            entity.setEntityContent(results.getString("ENTITYCONTENT"));
+            entity.setEntityAnimation(results.getString("ENTITYANIMATION"));
+            entity.setEntityX("" + results.getInt("ENTITYX"));
+            entity.setEntityY("" + results.getInt("ENTITYY"));
+            entity.setEntityZ("" + results.getInt("ENTITYZ"));
+            entity.setEntityWidth("" + results.getInt("ENTITYWIDTH"));
+            entity.setEntityHeight("" + results.getInt("ENTITYHEIGHT"));
+            return entity;
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            return null;
+        }
+    }
+    
+    /**
+    * Utility function for retrieving a Lecture object from a ResultSet.
+    * 
+    * @param results a ResultSet object.
+    * @return a Lecture object from the ResultSet.
+    */
+    public Lecture toLecture(ResultSet results) {
+        try {
+            // Create a new Lecture object with the information from the row.
+            Lecture lecture = new Lecture();
+            lecture.setLectureID("" + results.getInt("LECTUREID"));
+            lecture.setLectureTitle(results.getString("LECTURETITLE"));
+            lecture.setCourseTitle(results.getString("COURSETITLE"));
+            lecture.setInstructor(results.getString("INSTRUCTOR"));
+            return lecture;
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            return null;
+        }
+    }
+    
+    /**
+    * Utility function for retrieving a Page object from a ResultSet.
+    * 
+    * @param results a ResultSet object.
+    * @return a Page object from the ResultSet.
+    */
+    public Page toPage(ResultSet results) {
+        try {
+            Page page = new Page();
+            page.setPageID("" + results.getInt("PAGEID"));
+            page.setLectureID("" + results.getInt("LECTUREID"));
+            page.setPageSequence("" + results.getInt("PAGESEQUENCE"));
+            page.setPageAudioURL(results.getString("PAGEAUDIOURL"));
+            return page;
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            return null;
         }
     }
     

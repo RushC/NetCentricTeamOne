@@ -19,17 +19,142 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author njt5112
+ * @author njt5112, Caleb Rush
  */
 public class Controller extends HttpServlet {
     //public static final String NAME_HEADER = "LECTURE_NAME"   ; // header value for the name of a lecture
     //public static final String ID_HEADER   = "LECTURE_ID"      ; // header value for the id of a lecture
-    private CrudDao lectureDB = new CrudDao();
+    private final CrudDao lectureDB = new CrudDao();
+    private final Gson gson = new Gson();
     // The path for the images folder where all of the images are stored.
     private String imagePath;
     
-    public Controller() {
+    /**
+     * Adds a page based on the parameters found in the specified request.
+     * 
+     * @param request the request object containing the parameters.
+     */
+    private void addEntity(HttpServletRequest request, 
+            HttpServletResponse response) {
+        // Retrieve the parameters from the request.
+        Entity entity = getParameter(request, "entity", Entity.class);
         
+        // Handle any images for the entity.
+        handleImage(entity);
+        
+        // Insert the entity into the database.
+        lectureDB.addEntity(entity);
+        
+        // Retrieve the entity back from the database.
+        entity = lectureDB.getEntity(entity.getEntityID(), entity.getPageID(), 
+                entity.getLectureID());
+        
+        // Convert the entity to a JSON string.
+        String entityJSON = gson.toJson(entity);
+        
+        // Write the entity as the response body.
+        writeResponse(response, entityJSON);
+    }
+    
+    /**
+     * Adds a lecture based on the parameters found in the specified request.
+     * 
+     * @param request the request object containing the parameters.
+     */
+    private void addLecture(HttpServletRequest request, 
+            HttpServletResponse response) {
+        // Retrieve the parameters from the request.
+        Lecture lecture = getParameter(request, "lecture", Lecture.class);
+        
+        // Insert the lecture into the database.
+        lectureDB.addLecture(lecture);
+        
+        // Retrieve the lecture back from the database.
+        lecture = lectureDB.getLecture(lecture.getLectureID());
+        
+        // Convert the lecture to a JSON string.
+        String lectureJSON = gson.toJson(lecture);
+        
+        // Write the lecture as the response body.
+        writeResponse(response, lectureJSON);
+    }
+    
+    /**
+     * Adds a page based on the parameters found in the specified request.
+     * 
+     * @param request the request object containing the parameters.
+     */
+    private void addPage(HttpServletRequest request, 
+            HttpServletResponse response) {
+        // Retrieve the parameters from the request.
+        Page page = getParameter(request, "page", Page.class);
+        
+        // Handle any images for the page.
+        handleImage(page);
+        
+        // Insert the page into the database.
+        lectureDB.addPage(page);
+        
+        // Retrieve the page back from the database.
+        page = lectureDB.getPage(page.getPageID(), page.getLectureID());
+        
+        // Convert the page to a JSON string.
+        String pageJSON = gson.toJson(page);
+        
+        // Write the page as the response body.
+        writeResponse(response, pageJSON);
+    }
+    
+    /**
+     * Deletes the entity based on the parameters found in the specified
+     * request.
+     * 
+     * @param request the request object containing the parameters.
+     */
+    private void deleteEntity(HttpServletRequest request, 
+            HttpServletResponse response) {
+        // Retrieve the parameter from the request.
+        Entity entity = getParameter(request, "entity", Entity.class);
+        
+        // Delete the entity from the database.
+        lectureDB.deleteEntity(entity.getEntityID(), entity.getPageID(), 
+                entity.getLectureID());
+        
+        response.setStatus(200);
+    }
+    
+    /**
+     * Deletes the lecture based on the parameters found in the specified
+     * request.
+     * 
+     * @param request the request object containing the parameters.
+     */
+    private void deleteLecture(HttpServletRequest request, 
+            HttpServletResponse response) {
+        // Retrieve the parameter from the request.
+        Lecture lecture = getParameter(request, "lecture", Lecture.class);
+        
+        // Delete the lecture from the database.
+        lectureDB.deleteLecture(lecture.getLectureID());
+        
+        response.setStatus(200);
+    }
+    
+    /**
+     * Deletes the page based on the parameters found in the specified
+     * request.
+     * 
+     * @param request the request object containing the parameters.
+     */
+    private void deletePage(HttpServletRequest request, 
+            HttpServletResponse response) {
+        // Retrieve the parameter from the request.
+        Page page = getParameter(request, "page", Page.class);
+        
+        // Delete the lecture from the database.
+        lectureDB.deletePage(page.getLectureID(), page.getPageID());
+        
+        response.setStatus(200);
     }
     
     @Override
@@ -62,23 +187,54 @@ public class Controller extends HttpServlet {
             // Determine what action was specified.
             switch (action) {
                 
+                // Add an entity to the database.
+                case "addEntity":
+                    addEntity(request, response);
+                    break;
+                    
+                // Add a lecture to the database.
+                case "addLecture":
+                    addLecture(request, response);
+                    break;
+                    
+                // Add a page to the database.
+                case "addPage":
+                    addPage(request, response);
+                    break;
+                
+                // Delete the requested entity from the database.
+                case "deleteEntity":
+                    deleteEntity(request, response);
+                    break;
+                    
+                // Delete the requested lecture from the database.
+                case "deleteLecture":
+                    deleteLecture(request, response);
+                    break;
+                    
+                // Delete the requested page from the database.
+                case "deletePage":
+                    deletePage(request, response);
+                    break;
+                    
+                // Retrieve the entities for the requested page.
+                case "getEntities":
+                    getEntities(request, response);
+                    break;
+                    
+                // Retrieve the lectures from the database.
+                case "getLectures":
+                    getLectures(request, response);
+                    break;   
+                
                 // Retrieve the pages for the requested lecture.
                 case "getPages":
                     getPages(request, response);
                     break;
                     
-                case "getEntities":
-                    getEntities(request, response);
-                    break;
-                    
-                // Create a new lecture and add it to the database.
-                case "newLecture": 
-                    addLecture(request);
-                    break;
-                    
-                // Delete an existing lecture from the database.
-                case "deleteLecture": 
-                    deleteLecture(request);
+                // Update an exisiting entity in the database.
+                case "updateEntity":
+                    updateEntity(request, response);
                     break;
                                         
                 // Update an exisiting lecture in the database.
@@ -86,42 +242,16 @@ public class Controller extends HttpServlet {
                     updateLecture(request, response);
                     break;
                     
+                // Update an exisiting page in the database.
+                case "updatePage":
+                    updatePage(request, response);
+                    break;
+                    
                 // Any other action is a bad request.
                 default:
                     response.sendError(400);
-                    return;
             }
-            
-            // Tell the client that the action was completed successfully.
-            response.setStatus(200);
         }
-    }
-    
-    /**
-     * Adds a lecture based on the parameters found in the specified request.
-     * 
-     * @param request the request object containing the parameters.
-     */
-    private void addLecture(HttpServletRequest request) {
-        // Retrieve the parameters from the request.
-        Lecture lectures = getParameter(request, "lecture", Lecture.class);
-        
-        // Insert the lecture into the database.
-        lectureDB.addLecture(lectures);
-    }
-    
-    /**
-     * Deletes the lecture based on the parameters found in the specified
-     * request.
-     * 
-     * @param request the request object containing the parameters.
-     */
-    private void deleteLecture(HttpServletRequest request) {
-        // Retrieve the parameter from the request.
-        Lecture lecture = getParameter(request, "lecture", Lecture.class);
-        
-        // Delete the lecture from the database.
-        lectureDB.deleteLecture(lecture.getLectureID());
     }
     
     /**
@@ -140,14 +270,28 @@ public class Controller extends HttpServlet {
         Entity[] entities = lectureDB.getEntities(page.getPageID(), page.getLectureID());
         
         // Convert the entites to a JSON string.
-        String entitiesJSON = new Gson().toJson(entities);
+        String entitiesJSON = gson.toJson(entities);
         
         // Write the JSON string to the response.
-        try {
-            response.getWriter().write(entitiesJSON);
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
+        writeResponse(response, entitiesJSON);
+    }
+    
+    /**
+     * Retrieves the Lectures from the database.
+     * 
+     * @param request the HTTP request from the client to the server.
+     * @param response the HTTP response from the server to the client.
+     */
+    private void getLectures(HttpServletRequest request,
+            HttpServletResponse response) {
+        // Retrieve all of the Lecture objects from the database.
+        Lecture[] lectures = lectureDB.getLectures();
+        
+        // Convert the lectures to a JSON string.
+        String lecturesJSON = gson.toJson(lectures);
+        
+        // Write the JSON string to the response.
+        writeResponse(response, lecturesJSON);
     }
     
     /**
@@ -174,91 +318,12 @@ public class Controller extends HttpServlet {
         System.out.println(pages.length);
         
         // Convert the pages to a JSON string.
-        String pagesJSON = new Gson().toJson(pages);
+        String pagesJSON = gson.toJson(pages);
         
         System.out.println(pagesJSON);
         
         // Set the JSON string as the response body.
-        try {
-            response.getWriter().write(pagesJSON);
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
-    }
-    
-    /**
-     * Updates the lectures based on the parameters found in the specified
-     * request and sends a response.
-     * 
-     * @param request the request object containing the parameters.
-     * @param response the response object to send the response through.
-     */
-    private void updateLecture(HttpServletRequest request, 
-            HttpServletResponse response) {
-        // Retrieve all of the parameters from the request.
-        Entity[] deletedEntities = getParameter(request, "deletedEntities", Entity[].class);
-        Entity[] newEntities = getParameter(request, "newEntities", Entity[].class);
-        Entity[] updatedEntities = getParameter(request, "updatedEntities", Entity[].class);
-        Page[] deletedPages = getParameter(request, "deletedPages", Page[].class);
-        Page[] newPages = getParameter(request, "newPages", Page[].class);
-        Page[] updatedPages = getParameter(request, "updatedPages", Page[].class);
-        Lecture lecture = getParameter(request, "lecture", Lecture.class);
-        
-        // Handle images.
-        for (Page page : newPages)
-            handleImage(page);
-        for (Page page : updatedPages)
-            handleImage(page);
-        for (Entity entity : newEntities)
-            handleImage(entity);
-        for (Entity entity : updatedEntities)
-            handleImage(entity);
-        
-        // Perform all of the deletions.
-        for (Entity entity : deletedEntities)
-            lectureDB.deleteEntity(
-                    entity.getEntityID(), 
-                    entity.getPageID(), 
-                    entity.getLectureID()
-            );
-        for (Page page : deletedPages)
-            lectureDB.deletePage(
-                    page.getLectureID(), 
-                    page.getPageID()
-            );
-        
-        // Perform all of the updates.
-        for (Entity entity : updatedEntities)
-            lectureDB.updateEntity(entity);
-        for (Page page : updatedPages)
-            lectureDB.updatePage(page);
-        lectureDB.updateLecture(lecture);
-        
-        // Perform all of the additions.
-        for (Page page : newPages)
-            lectureDB.addPage(page);
-        for (Entity entity : newEntities)
-            lectureDB.addEntity(entity);
-        
-        // Create a JSON strings for the return objects.
-        Gson gson = new Gson();
-        Page[] pages = lectureDB.getPages(lecture.getLectureID());
-        String pagesJSON = gson.toJson(pages);
-        String lectureJSON = gson.toJson(lecture);
-        
-        // Create the full JSON string for the final return object.
-        String json = String.format(
-                "{ \"pages\": %s, \"lecture\": %s }", 
-                pagesJSON,
-                lectureJSON
-        );
-        
-        // Write the object to the response.
-        try {
-            response.getWriter().write(json);
-        } catch (IOException e) {
-            System.err.println(e.getMessage());
-        }
+        writeResponse(response, pagesJSON);
     }
     
     /**
@@ -275,7 +340,7 @@ public class Controller extends HttpServlet {
         // Retrieve the JSON parameter.
         String json = request.getParameter(paramName);
         
-        System.out.println(json);
+        System.out.println("Param " + paramName + ": " + json);
         
         // Convert the JSON string into a Lecture object.
         Object param = new Gson().fromJson(json, type);
@@ -297,7 +362,9 @@ public class Controller extends HttpServlet {
             return;
         
         // Check if the page has an image to be saved.
-        if (!"data".equals(entity.getEntityContent().substring(0, 5)))
+        if (entity.getEntityContent() == null
+                || entity.getEntityContent().length() < 4
+                || !"data".equals(entity.getEntityContent().substring(0, 4)))
             return;
         
         // Ensure a folder exists to store the image.
@@ -329,7 +396,9 @@ public class Controller extends HttpServlet {
      */
     private void handleImage(Page page) {
         // Check if the page has an image to be saved.
-        if (!"data".equals(page.getPageAudioURL().substring(0, 4)))
+        if (page.getPageAudioURL() == null
+                || page.getPageAudioURL().length() < 4
+                || !"data".equals(page.getPageAudioURL().substring(0, 4)))
             return;
         
         // Ensure a folder exists to store the image.
@@ -350,6 +419,160 @@ public class Controller extends HttpServlet {
         
         // Replace the image with the path to the image.
         page.setPageAudioURL("/views/images/" + directoryPath + imagePath);
+    }
+    
+    /**
+     * Updates the entity found in the request object.
+     * 
+     * @param request the HttpServletRequest object.
+     * @param response the HttpServletResponse object.
+     */
+    private void updateEntity(HttpServletRequest request, 
+            HttpServletResponse response) {
+        // Retrieve the page object from the request.
+        Entity entity = getParameter(request, "entity", Entity.class);
+        
+        // Handle any images in the page.
+        handleImage(entity);
+        
+        // Update the page in the database.
+        lectureDB.updateEntity(entity);
+        
+        // Reload the page from the database.
+        entity = lectureDB.getEntity(entity.getEntityID(), entity.getPageID(), 
+                entity.getLectureID());
+        
+        // Convert the page to a JSON string.
+        String entityJSON = gson.toJson(entity);
+        
+        // Write the json as the response.
+        writeResponse(response, entityJSON);
+    }
+    
+    /**
+     * Updates the lecture found in the request object.
+     * 
+     * @param request the HttpServletRequest object.
+     * @param response the HttpServletResponse object.
+     */
+    private void updateLecture(HttpServletRequest request, 
+            HttpServletResponse response) {
+        // Retrieve the page object from the request.
+        Lecture lecture = getParameter(request, "entity", Lecture.class);
+               
+        // Update the page in the database.
+        lectureDB.updateLecture(lecture);
+        
+        // Reload the page from the database.
+        lecture = lectureDB.getLecture(lecture.getLectureID());
+        
+        // Convert the page to a JSON string.
+        String lectureJSON = gson.toJson(lecture);
+        
+        // Write the json as the response.
+        writeResponse(response, lectureJSON);
+    }
+    
+//    /**
+//     * Updates the lectures based on the parameters found in the specified
+//     * request and sends a response.
+//     * 
+//     * @param request the request object containing the parameters.
+//     * @param response the response object to send the response through.
+//     */
+//    private void updateLecture(HttpServletRequest request, 
+//            HttpServletResponse response) {
+//        // Retrieve all of the parameters from the request.
+//        Entity[] deletedEntities = getParameter(request, "deletedEntities", Entity[].class);
+//        Entity[] newEntities = getParameter(request, "newEntities", Entity[].class);
+//        Entity[] updatedEntities = getParameter(request, "updatedEntities", Entity[].class);
+//        Page[] deletedPages = getParameter(request, "deletedPages", Page[].class);
+//        Page[] newPages = getParameter(request, "newPages", Page[].class);
+//        Page[] updatedPages = getParameter(request, "updatedPages", Page[].class);
+//        Lecture lecture = getParameter(request, "lecture", Lecture.class);
+//        
+//        // Handle images.
+//        for (Page page : newPages)
+//            handleImage(page);
+//        for (Page page : updatedPages)
+//            handleImage(page);
+//        for (Entity entity : newEntities)
+//            handleImage(entity);
+//        for (Entity entity : updatedEntities)
+//            handleImage(entity);
+//        
+//        // Perform all of the deletions.
+//        for (Entity entity : deletedEntities)
+//            lectureDB.deleteEntity(
+//                    entity.getEntityID(), 
+//                    entity.getPageID(), 
+//                    entity.getLectureID()
+//            );
+//        for (Page page : deletedPages)
+//            lectureDB.deletePage(
+//                    page.getLectureID(), 
+//                    page.getPageID()
+//            );
+//        
+//        // Perform all of the updates.
+//        for (Entity entity : updatedEntities)
+//            lectureDB.updateEntity(entity);
+//        for (Page page : updatedPages)
+//            lectureDB.updatePage(page);
+//        lectureDB.updateLecture(lecture);
+//        
+//        // Perform all of the additions.
+//        for (Page page : newPages)
+//            lectureDB.addPage(page);
+//        for (Entity entity : newEntities)
+//            lectureDB.addEntity(entity);
+//        
+//        // Create a JSON strings for the return objects.
+//        Gson gson = new Gson();
+//        Page[] pages = lectureDB.getPages(lecture.getLectureID());
+//        String pagesJSON = gson.toJson(pages);
+//        String lectureJSON = gson.toJson(lecture);
+//        
+//        // Create the full JSON string for the final return object.
+//        String json = String.format(
+//                "{ \"pages\": %s, \"lecture\": %s }", 
+//                pagesJSON,
+//                lectureJSON
+//        );
+//        
+//        // Write the object to the response.
+//        try {
+//            response.getWriter().write(json);
+//        } catch (IOException e) {
+//            System.err.println(e.getMessage());
+//        }
+//    }
+    
+    /**
+     * Updates the lecture found in the request object.
+     * 
+     * @param request the HttpServletRequest object.
+     * @param response the HttpServletResponse object.
+     */
+    private void updatePage(HttpServletRequest request, 
+            HttpServletResponse response) {
+        // Retrieve the page object from the request.
+        Page page = getParameter(request, "page", Page.class);
+        
+        // Handle any images in the page.
+        handleImage(page);
+        
+        // Update the page in the database.
+        lectureDB.updatePage(page);
+        
+        // Reload the page from the database.
+        page = lectureDB.getPage(page.getPageID(), page.getLectureID());
+        
+        // Convert the page to a JSON string.
+        String pageJSON = gson.toJson(page);
+        
+        // Write the json as the response.
+        writeResponse(response, pageJSON);
     }
     
     /**
@@ -381,6 +604,24 @@ public class Controller extends HttpServlet {
                         
         } catch (IOException e) {
             System.err.println(e.getMessage());
+        }
+    }
+    
+    /**
+     * Writes a JSON string as the body of the specified response and sets
+     * the status code appropriately.
+     * 
+     * @param response the HttpServletResponse object.
+     * @param json the JSON string to be written as the response body.
+     */
+    private void writeResponse(HttpServletResponse response, String json) {
+        try {
+            System.out.println("Writing Response: " + json);
+            response.getWriter().write(json);
+            response.setStatus(200);
+        } catch (IOException e) {
+            System.err.println("Error writing response: " + e.getMessage());
+            response.setStatus(500);
         }
     }
 }

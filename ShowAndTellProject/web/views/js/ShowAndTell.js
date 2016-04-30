@@ -753,17 +753,28 @@ function pageSnapshot(page) {
        onrendered: function(canvas) {
            console.log("Snapshot successful");
            
+<<<<<<< Updated upstream
            // Set the page's image property to the data url from the canvas.
            page.audio = canvas.toDataURL();
            page.lectureID = "10";
+=======
+           // Set the slide's image property to the data url from the canvas.
+           slide.audio = canvas.toDataURL();
+           slide.lectureID = "1";
+>>>>>>> Stashed changes
            
            // Sends a new post request for the new page.
            var lecture = new Lecture();
            lecture.courseTitle = "Course";
            lecture.instructor = "Instructor";
            lecture.lectureTitle = "Lecture";
+<<<<<<< Updated upstream
            lecture.id = "10";
            var newPages = [ new ModelPage(page) ];
+=======
+           lecture.id = "1";
+           var newPages = [ new ModelSlide(slide) ];
+>>>>>>> Stashed changes
            $.post("/ShowAndTellProject/Controller", {
                 action: "updateLecture",
                 newPages: JSON.stringify(newPages),

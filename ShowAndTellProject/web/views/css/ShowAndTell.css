@@ -155,6 +155,10 @@ textarea {
     background-color: rgba(0,150,136,0.2);
 }
 
+#pageDiv > img.select.selected {
+    background-color: #009688;
+}
+
 legend {
     padding-left : 4px;
     padding-right : 4px;
