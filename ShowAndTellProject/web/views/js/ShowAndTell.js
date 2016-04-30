@@ -5,26 +5,27 @@ var currentLecture;             // current lecture being edited
 var currentPage;                // current page being edited
 var currentEntity;              // current entity being edited
 var entityList = [];            // list of entities for the current page
-var pageList = [];             // list of pages for this lecture
+var pageList = [];              // list of pages for this lecture
 var uploadInProgress = false;   // true when uploading to the server
 var downloadInProgress = false; // true when getting content from the server
 var idPlaceHolder = "fakeID";   // used with fakeIDCount to generate ids for preview elements of new entities or pages
 var fakeIDCount = 0;            // used to identify entities or pages without unique ids assigned by the server
-var pageOverride = false;      // determines if moving a page to a sequence should delete the page already in that sequence
+var pageOverride = false;       // determines if moving a page to a sequence should delete the page already in that sequence
+var shouldDeselect = false;     // indicates if completing a full click on a container should deselect it (as opposed to non deselecting it after moving/resizing)
 
 ////////////////////////////////////////////
 // Commonly Referenced Elements           //
 ////////////////////////////////////////////
-var pagePreviewDiv;            // div containing the page preview
-var entityDiv;                // div containing a list of entities on the current page
+var pagePreviewDiv;             // div containing the page preview
+var entityDiv;                  // div containing a list of entities on the current page
 var ContentInputDiv;            // div containing the content input for an entity
-var propertiesDiv;           // div containing the editable properties of the currently selected entity
-//var xInput;                     // input for the currently selected entity's horizontal position on the page
-//var yInput;                     // input for the currently selected entity's vertical position on the page
+var propertiesDiv;              // div containing the editable properties of the currently selected entity
+//var xInput;                   // input for the currently selected entity's horizontal position on the page
+//var yInput;                   // input for the currently selected entity's vertical position on the page
 var zInput;                     // input for the currently selected entity's z-index based draw order
-//var hInput;                     // input for the currently selected entity's height
-//var wInput;                     // input for the currently selected entity's width
-//var typeInput;                  // input for the currentyl selected entity's type
+//var hInput;                   // input for the currently selected entity's height
+//var wInput;                   // input for the currently selected entity's width
+//var typeInput;                // input for the currentyl selected entity's type
 
 ///////////////////////////////////////////////////////////
 // constructors for creating new lecture/page/entities  //
@@ -34,12 +35,12 @@ function Entity(me) {
     this.pageID = me ? me.PageID : currentPage.id;
     this.type = me ? me.entityType : "textbox";
     this.id = me ? me.entityID : idPlaceHolder + fakeIDCount++;
-    this.x = me ? me.entityX : 0;
-    this.y = me ? me.entityY : 0;
+    this.x = me ? me.entityX : 0; // LEAVE THIS AT 50
+    this.y = me ? me.entityY : 0; // BECAUSE CSS
     this.z = me ? me.entityZ : 0;
     this.anim = me ? me.entityAnimation : "none";
-    this.height = me ? me.entityHeight : 0;
-    this.width = me ? me.entityWidth   : 0;
+    this.height = me ? me.entityHeight : 50;
+    this.width = me ? me.entityWidth   : 50;
     this.content = me ? me.entityContent : "";
     this.status = me ? "unchanged" : "added";
     this.changed = me ? false : true;
@@ -93,7 +94,6 @@ function ModelLecture(l) {
     this.courseTitle = l.courseTitle;
     this.instructor = l.instructor;
 }
-
 ////////////////////////////////////////////
 // Script Initialization                  //
 ////////////////////////////////////////////
@@ -131,7 +131,14 @@ window.onload = function() {
     currentLecture.id = "fakeLectureID";
     currentPage = new Page();
     currentEntity = new Entity();
-    
+    currentEntity.content = "Entity ONE";
+    entityList.push(currentEntity);
+    createEntityPreview();
+    updateEntityPreviewContent();
+    currentEntity = new Entity();
+    currentEntity.content = "Entity TWO";
+    entityList.push(currentEntity);
+    createEntityPreview();
     updatePropertyDiv();
     updateEntityPreviewContent();
 };
@@ -202,7 +209,7 @@ function saveToServer() {
                 uploadInProgress = false;
             }, 10000);
        } 
-    });    
+    });
 }
 
 function getEntities() {
@@ -363,7 +370,7 @@ function processGetEntitiesResponse(response) {
 }
 
 ////////////////////////////////////////////
-// Functions to modify pages             //
+// Functions to modify pages              //
 ////////////////////////////////////////////
 
 // function to change the sequence of a page to the given sequence
@@ -425,45 +432,130 @@ function deletePage() {
 ////////////////////////////////////////////
 
 // function to create a new entity:
-function newEntity() {
+function newEntity(type) {
     if (uploadInProgress || downloadInProgress)
         return;
-    // Reset the properties values:
-    xInput.val = 0;
-    yInput.val = 0;
-    zInput.val = 0;
-    typeInput[0].selectedIndex = 0;
-    ContentInputDiv.empty();
-    // make sure the properties div is showing
-    propertiesDiv.show();
     // create a new entitiy:
     currentEntity = new Entity();
+    // add it to the list
+    entityList.push(currentEntity);
+    // set the type to text
+    currentEntity.type = type;
     // add the entity to the list:
     entityList.push(currentEntity);
-    
-    
+    // update the property div
+    updatePropertyDiv();
+    // create a new entity container
+    createEntityPreview(currentEntity);
+    // update the preview
+    updateEntityPreviewContent();
+}
+
+// function to create a draggable/resizable preview container for the currentEntity
+function createEntityPreview() {
+    // delete any elements with the id if they exist
+    $("#" + currentEntity.id).remove();
+    // create the container div
+    var container = $('<div class="entityContainerSelected" id=' + currentEntity.id + '><div></div></div>');
+    container.css({
+       width : currentEntity.width,
+       height : currentEntity.height,
+       overflow : "hidden",
+       position : "absolute"
+    });
+    container[0].offsetTop = currentEntity.y;
+    container[0].offsetLeft = currentEntity.x;
+    // add resize functionality
+    container.resizable({
+        containment : $("#outerPreviewDiv > fieldset"),
+        minWidth : 50,
+        minHeight : 50,
+        stop : function(event, ui) {
+            shouldDeselect = false;
+            console.log("sized");
+            resizeEntity();
+        }
+    });
+    // add drag functionality
+    container.draggable({
+        containment: $("#outerPreviewDiv > fieldset"),
+        stop: function(event, ui) { 
+            shouldDeselect = false;
+            console.log("moved");
+            moveEntity(); 
+        }
+    });
+    // apply deselection on mouse release if needed
+    container.click(function(event, ui){
+        console.log(shouldDeselect);
+        if (shouldDeselect)
+            deselectEntityContainer($(this));
+    });
+    // apply selection on mouse press
+    container.mousedown(function(event, ui) {
+        // indicate this container should be deselected if it was already selected
+        if ($(this).hasClass("entityContainerSelected"))
+            shouldDeselect =true;
+        else
+            shouldDeselect = false;
+        // deselect any selected containers
+        deselectEntityContainer($(".entityContainerSelected.ui-resizable"));
+        // select this container
+        selectEntityContainer($(this));
+        // set this container to as the current currentEntity if it wasn't already set
+        if (currentEntity.id != this.id) {
+            // indicate that this currentEntity shouldn't be deselected on mouse release
+            currentEntity = false;
+            // find the currentEntity with the id of the element and set it to the current currentEntity
+            for (var i = 0; i < entityList.length; ++i)
+                if (entityList[i].id == this.id)
+                    entity = entityList[i];
+            // delete the element if there is no corresponding currentEntity
+            if (!currentEntity)
+                $(this).remove();
+            updatePropertyDiv();
+            updateEntityPreviewContent();
+        }
+    });
+    // add the div to the preview
+    pagePreviewDiv.append(container);
+    // return the container
+    return container;
+}
+
+// function to enable entity preview container selection and the
+// resizable features that go with it
+function selectEntityContainer(container) {
+    // enable resizing
+    container.resizable("enable");
+    // show resizing handle
+    container.find(".ui-resizable-handle").show();
+    // turn on selection border
+    container.addClass("entityContainerSelected");
+}
+
+// function to disable entity preview container selection and the
+// resizable features that go with it
+function deselectEntityContainer(container) {
+    // disable resizing
+    container.resizable("disable");
+    // hide resizing handle
+    container.find(".ui-resizable-handle").hide();
+    // turn off selection border
+    container.removeClass("entityContainerSelected");
 }
 
 // function to move an entity:
 function moveEntity() {
     if (uploadInProgress || downloadInProgress)
         return;
-    // get the x y and z values:
-    var x = xInput.val;
-    var y = yInput.val;
-    var z = zInput.val;
+    // get element representing the current entity
+    var element = $("#" + currentEntity.id);
+    // set the location of the entity as the location of the entity
+    currentEntity.x = element[0].offsetLeft;
+    currentEntity.y = element[0].offsetTop;
     
-    // get the entity's preview div
-    var preview = $("#" + currentEntity.id);
-    $("#"+currentEntity.id).animate({top: y, left: x, "z-index": z});
-    console.log($("#"+currentEntity.id));
-    console.log("AND:");
-    console.log($("#"+currentEntity.id)[0]);
-    // update the entity object:
-    currentEntity.x = x;
-    currentEntity.y = y;
-    currentEntity.z = z;
-    
+    // set the current entity as changed
     currentEntity.changed = true;
 }
 
@@ -471,51 +563,12 @@ function moveEntity() {
 function resizeEntity() {
     if (uploadInProgress || downloadInProgress)
         return;
-    if (currentEntity) {
-        // get the new width and height:
-        var width = wInput.val();
-        var height = hInput.val();
-        
-        //only make changes if the width/height was actully changed:
-        if (width != currentEntity.width || height != currentEntity.height) {
-            // change the entity:
-            currentEntity.width = width;
-            currentEntity.height = height;
-            currentEntity.changed = true;
-            // change the entity's element as appropriate:
-            switch(currentEntity.type) {
-                case "textbox" :
-                    $("#"+currentEntity.id).children().css({
-                        rows: height, cols: width});
-            }
-        }
-    }
-}
-
-
-// function to change the type of an entity
-function changeType() {
-    if (uploadInProgress || downloadInProgress)
-        return;
-    // warn user that changing the type could discard content:
-    if (window.confirm("Entity content may be discarded if type is changed. Continue?")) {
-        // set the type for the entity
-        currentEntity.type = typInput[0].value;
-        // set the content as appropriate:
-        switch(currentEntity.type) {
-            case "image" :
-                currentEntity.content = "";
-                break;
-            case "textbox" :
-                currentEntity.content = "Enter text here. HTML may also be used for formatting";
-                break;
-            case "bulletlist" :
-                currentEntity.content = "Enter text here. Each new line is an entry in the list";
-            default : break;
-        }
-        //update the property div
-        updatePropertyDiv();
-    }
+    // get the preview container for the entity
+    var container = $("#" + currentEntity.id);
+    // set the entities width and height to those of the container
+    console.log("TEST");
+    currentEntity.width = container.width();
+    currentEntity.height = container.height();
 }
 
 
@@ -527,20 +580,20 @@ function changeType() {
 function updatePropertyDiv() {
     if (currentEntity) { //if the current entity is defined
         // Set all the properties equal to those of the entity:
-        xInput.val(currentEntity.x);
-        yInput.val(currentEntity.y);
+        //xInput.val(currentEntity.x);
+        //yInput.val(currentEntity.y);
         zInput.val(currentEntity.z);
+        //animationInput.val = currentEntity.anim;
         // fill the content div with the appropriate elements based on the entity type:
-        ContentInputDiv.hide("slow");
         ContentInputDiv.empty();
         switch(currentEntity.type) {
             case "image" : // create an image preview and a image loader if the entity is an image
                 // set the type input first:
-                typeInput[0].selectedIndex = 3;
+                //typeInput[0].selectedIndex = 3;
                 // create and add the components for the content div:
                 var fileButton = $('<input type="file">');
                 var image = $('<img>');
-                image.hide(0);
+                image.hide();
                 fileButton[0].onchange = function () {
                     var reader = new FileReader();
                     var file = $("input[type=file]")[0].files[0];
@@ -550,9 +603,7 @@ function updatePropertyDiv() {
                             currentEntity.content = reader.result;
                             image[0].width = 50;
                             image[0].height = 50;
-                            image[0].src = reader.result;
                         };
-
                         reader.readAsDataURL(file);
                     }
                 };
@@ -565,30 +616,27 @@ function updatePropertyDiv() {
             case "textbox" :
             case "bulletlist" :
                 // set the type input selector first:
-                if(currentEntity.type == "textbox")
-                    typeInput[0].selectedIndex = 1;
-                else
-                    typeInput[0].selectedIndex = 2;
-                var textContent = $('<textarea id="textContent"></textarea>');
-                textContent[0].style.overflow = "auto";
-                textContent[0].style.resize = "none";
-                textContent[0].width = 400;
-                textContent[0].height = 70;
-                textContent[0].innerHTML = currentEntity.content;
+//                if(currentEntity.type == "textbox")
+//                    typeInput[0].selectedIndex = 1;
+//                else
+//                    typeInput[0].selectedIndex = 2;
+                var textContent = $('<textarea rows="5" cols="20" class="lectureInput" id="textInput" placeholder="Enter text here. HTML can be used to style the display"></textarea>');
+                textContent.text(currentEntity.content);
+                textContent.change(function(event, ui) {
+                    console.log($(this).val());
+                    currentEntity.content = $(this).val();
+                    updateEntityPreviewContent();
+                });
                 ContentInputDiv.append(textContent);
-                textContent.onChange = updateEntityPreviewContent;
                 break;
             default :
-                Console.log("Bad Entity Type" + currentEntity.type);
+                console.log("Bad Entity Type" + currentEntity.type);
                 break;
         }
-        ContentInputDiv.show("slow");
     // otherwise reset all values to default:
     } else {
-        xInput.val(0);
-        yInput.val(0);
         zInput.val(0);
-        ContentInputDiv.hide("slow");
+        ContentInputDiv.hide();
         ContentInputDiv.empty();
     }
 }
@@ -596,90 +644,70 @@ function updatePropertyDiv() {
 // function to update the current entity's representation on the page preview
 function updateEntityPreviewContent() {
     if (currentEntity) {
-        //first get the element
-        var element = $("#" + currentEntity.id);
-        // create the element if it doesn't exist:
-        if (!element[0]) {
-            element = $('<div id="' + currentEntity.id +'"></div>');
-            // add the element to the page div preview
-            pagePreviewDiv.append(element);
-            // set the css for the element
-            element[0].top = currentEntity.y;
-            element[0].left = currentEntity.x;
-            element[0]["z-index"] = currentEntity.z;
-            element[0].size = "auto";
-            element[0].position = "absolute";
-//            element.animate({position: "absolute",
-//                left: currentEntity.x,
-//                top: currentEntity.y,
-//                "z-index": currentEntity.z,
-//                size:  "auto"});
-            
-        }
+        // first get the contentContainer for the entity's preview
+        var contentContainer = $("#" + currentEntity.id + " > div");
+        // create the contentContainer if it doesn't exist:
+        if (!contentContainer[0])
+            contentContainer = createEntityPreview(currentEntity);
+        
         // add/update the appropriate contents
         switch(currentEntity.type) {
             case "image" :
-                // get the element for the entity:
-                var image = element.children("img");
-                //empty the div and create a new image element if one doesn't exist"
+                // get the image element in the contentContainer
+                var image = $("#"+currentEntity.id + " > img");
+                //empty the contentContainer and create a new image contentContainer if one doesn't exist"
                 if(!image[0]) {
                     image = $("<img>");
-                    element.empty();
-                    elememt.append(image);
+                    contentContainer.empty();
+                    contentContainer.append(image);
                 }
-                // set the image's width, height, and source:
-                image.width = currentEntity.width;
-                image.height = currentEntity.height;
+                // set the image's source
                 image.src = currentEntity.content;
                 break;
             case "textbox" :
-                //get the element for the entity:
-                var box = element.children("textarea");
-                //empty the div and create a new textarea if one doesn't exist:
-                if (!box[0]) {
-                    box = $('<textarea></textarea>');
-                    box[0].wrap = true;
-                    box[0].readOnly = true;
-                    box[0].resize = "none";
-                    element.empty();
-                    element.append(box);
-                }
-                // set the content of the text area to that of the 
-                box.val(currentEntity.content);
-                box[0].rows = currentEntity.width;
-                box[0].cols = currentEntity.height;
+                // clear the current content of the contentContainer
+                contentContainer.empty();
+                // slice the content along line breaks so <br> tags are not needed
+                var lines = currentEntity.content.split(/(\r\n)|(^\r\n)/gm);
+                // add each entry to the contentContainer seperated by line breaks
+                for (var i = 0; i < lines.length; ++i)
+                    contentContainer.append("" + lines[i] + "<br>");
                 break;
             case "bulletlist" :
-                // get the element for the entitiy:
-                var list = element.children("ul");
+                // get the contentContainer for the entitiy:
+                var list = contentContainer.children("ul");
                 // empty the div and create a new list if one does'nt exist:
                 if(!list[0]) {
-                    element.empty();
+                    contentContainer.empty();
                     var list = $("<ul><ul>");
-                    element.append(list);
+                    contentContainer.append(list);
                 }
                 // empty the list:
                 list.empty();
                 // slice the content along line breaks to get the list entries:
-                var entries = currentEntity.content.split(/(\r\n|\n|\r)/gm);
+                var entries = currentEntity.content.split(/(\r\n|^\r\n)/gm);
                 // add each entry to the list:
                 for (var i = 0; i < entries.length; ++i)
-                    var entry = $("<li>"+entries[i]+"</li>");
+                    $("<li>"+entries[i]+"</li>").appendTo(list);
         }
     }
 }
 
-
-// function to update the entity list div
-function updateEntitiesDiv() {
-    //todo
-    console.log("updateEntitesDiv() has not been implemented yet!");
-}
-
-// function to regenerate the page preview without recreating elements that already exist
-function regenPagePreview() {
-    //todo
-    console.log("regenPagePreview() has not been implemented yet!");
+// function to generate a preview for each entity in entityList
+function updatePagePreview() {
+    // clear whatever was in the page preview
+    pagePreviewDiv.empty();
+    // for each entity in the entity list
+    for (var i = 0; i < entityList.length; ++i) {
+        // set this entity as current
+        currentEntity = entityList[i];
+        // update the preview for this entity (will create the preview for it)
+        createEntityPreview();
+        updateEntityPreviewContent();
+    }
+    // after the last entity has been added, update the properties panel
+    updatePropertyDiv(true);
+        
 }
 
 /**

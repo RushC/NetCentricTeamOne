@@ -4,6 +4,8 @@
 <html>
     <head>
         <link rel="stylesheet" href="css/ShowAndTell.css" />
+         <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/themes/base/jquery-ui.css"/>
+        <!--<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">-->
         <!-- jQuery and jQueryUI used for animations. -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
@@ -64,16 +66,16 @@
             <div id="outerPreviewDiv">
                 <fieldset>
                     <legend>Preview</legend>
-                    <div id="previewDiv">TEST</div>
+                    <div id="previewDiv" class="previewContainer"></div>
                 </fieldset>
             </div>
             <div id="outerEntityDiv">
                 <fieldset id="oEDivFieldSet1">
                     <legend>Entities</legend>
                     <div id="entityDiv">
-                        <button class="highlight" id="newTextEntityButton" onclick="newTextEntity()">New Text Entity</button><br>
-                        <button class="highlight" id="newListEntityButton" onclick="newListEntity()">New List Entity</button><br>
-                        <button class="highlight" id="newImageEntityButton" onclick="newImageEntity()">New Image Entity</button>
+                        <button class="highlight" id="newTextEntityButton" onclick="newEntity('textbox')">New Text Entity</button><br>
+                        <button class="highlight" id="newListEntityButton" onclick="newEntity('bulletlist')">New List Entity</button><br>
+                        <button class="highlight" id="newImageEntityButton" onclick="newEntity('image')">New Image Entity</button>
                         <div id="entityPropertiesDiv">
                             <label>Z-Index</label>
                             <input id="zInput" type="number" min="0" value="0" onchange="updateZIndex()">
@@ -89,7 +91,7 @@
                                 <ul class="highlight" value="Grow">Grow</ul>
                             </div><br><br>
                             <label>Entity Content</label>
-                            <div id="contentEditDiv"><textarea rows="5" cols="20" class="lectureInput" id="textInput" placeholder="Enter text here. HTML can be used to style the display"></textarea></div>
+                            <div id="contentEditDiv"></div>
                         </div>
                     </div>
                 </fieldset>
