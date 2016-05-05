@@ -98,7 +98,6 @@
                 </div><br>
                 <div id="contentEditDiv"><input type="textBox"></div>
             </div>
-        </fieldset> --><br><br><br><br><br><br>
-        <button class="highlight" onclick="pageSnapshot(new Slide())" >DO IT</button>
+        </fieldset> -->
     </body>
 </html>
