@@ -82,81 +82,96 @@ function newEntity(type) {
     updateEntityPreviewContent();
 }
 
-// function to create a draggable/resizable preview container for the currentEntity
-function createEntityPreview() {
-    // delete any elements with the id if they exist
-    $("#" + currentEntity.id).remove();
-    // create the container div
-    var container = $('<div class="entityContainerSelected" id=' + currentEntity.id + '><div></div></div>');
-    container.css({
-       width : currentEntity.width,
-       height : currentEntity.height,
-       overflow : "hidden",
-       position : "absolute"
-    });
-    container[0].offsetTop = currentEntity.entityY;
-    container[0].offsetLeft = currentEntity.entityX;
-    // add resize functionality
-    container.resizable({
-        containment : $("#outerPreviewDiv > fieldset"),
-        minWidth : 50,
-        minHeight : 50,
-        stop : function(event, ui) {
-            shouldDeselect = false;
-            console.log("sized");
-            resizeEntity();
-        }
-    });
-    // add drag functionality
-    container.draggable({
-        containment: $("#outerPreviewDiv > fieldset"),
-        stop: function(event, ui) { 
-            shouldDeselect = false;
-            console.log("moved");
-            moveEntity(); 
-        }
-    });
-    // apply deselection on mouse release if needed
-    container.click(function(event, ui){
-        console.log(shouldDeselect);
-        if (shouldDeselect)
-            deselectEntityContainer($(this));
-    });
-    // apply selection on mouse press
-    container.mousedown(function(event, ui) {
-        // indicate this container should be deselected if it was already selected
-        if ($(this).hasClass("entityContainerSelected"))
-            shouldDeselect =true;
-        else
-            shouldDeselect = false;
-        // deselect any selected containers
-        deselectEntityContainer($(".entityContainerSelected.ui-resizable"));
-        // select this container
-        selectEntityContainer($(this));
-        // set this container to as the current currentEntity if it wasn't already set
-        if (currentEntity.entityID != this.entityID) {
-            // indicate that this currentEntity shouldn't be deselected on mouse release
-            currentEntity = false;
-            // find the currentEntity with the id of the element and set it to the current currentEntity
-            for (var i = 0; i < entities.length; ++i)
-                if (entities[i].id == this.id)
-                    entity = entities[i];
-            // delete the element if there is no corresponding currentEntity
-            if (!currentEntity)
-                $(this).remove();
-            updatePropertyDiv();
-            updateEntityPreviewContent();
-        }
-    });
-    // add the div to the preview
-    $('#previewDiv').append(container);
-    // return the container
-    return container;
-}
+//// function to create a draggable/resizable preview container for the currentEntity
+//function createEntityPreview() {
+//    // delete any elements with the id if they exist
+//    $("#" + currentEntity.id).remove();
+//    // create the container div
+//    var container = $('<div class="entityContainerSelected" id=' + currentEntity.id + '><div></div></div>');
+//    container.css({
+//       width : currentEntity.width,
+//       height : currentEntity.height,
+//       overflow : "hidden",
+//       position : "absolute"
+//    });
+//    container[0].offsetTop = currentEntity.entityY;
+//    container[0].offsetLeft = currentEntity.entityX;
+//    // add some classes to describe its role and enable functionality
+//    
+//    // add resize functionality
+//    container.resizable({
+//        containment : $("#outerPreviewDiv > fieldset"),
+//        start : function(event, ui) {
+//            // make sure this div represents the selected entity
+//            // (shouldn't be a problem, but included for sake of robustness)
+//            if (currentEntity.entityID != this.id) {
+//                // find the current entity 
+//            }
+//        }, 
+//    // add resize functionality
+//    container.resizable({
+//        containment : $("#outerPreviewDiv > fieldset"),
+//        minWidth : 50,
+//        minHeight : 50,
+//        stop : function(event, ui) {
+//            shouldDeselect = false;
+//            console.log("sized");
+//            resizeEntity();
+//        }
+//    });
+//    // add drag functionality
+//    container.draggable({
+//        containment: $("#outerPreviewDiv > fieldset"),
+//        stop: function(event, ui) { 
+//            shouldDeselect = false;
+//            console.log("moved");
+//            moveEntity(); 
+//        }
+//    });
+//    // apply deselection on mouse release if needed
+//    container.click(function(event, ui){
+//        console.log(shouldDeselect);
+//        if (shouldDeselect)
+//            deselectEntityContainer($(this));
+//    });
+//    // apply selection on mouse press
+//    container.mousedown(function(event, ui) {
+//        // indicate this container should be deselected if it was already selected
+//        if ($(this).hasClass("entityContainerSelected"))
+//            shouldDeselect =true;
+//        else
+//            shouldDeselect = false;
+//        // deselect any selected containers
+//        deselectEntityContainer($(".entityContainerSelected.ui-resizable"));
+//        // select this container
+//        selectEntityContainer($(this));
+//        // set this container to as the current currentEntity if it wasn't already set
+//        if (currentEntity.entityID != this.entityID) {
+//            // indicate that this currentEntity shouldn't be deselected on mouse release
+//            currentEntity = false;
+//            // find the currentEntity with the id of the element and set it to the current currentEntity
+//            for (var i = 0; i < entities.length; ++i)
+//                if (entities[i].id == this.id)
+//                    entity = entities[i];
+//            // delete the element if there is no corresponding currentEntity
+//            if (!currentEntity)
+//                $(this).remove();
+//            updatePropertyDiv();
+//            updateEntityPreviewContent();
+//        }
+//    });
+//    // add the div to the preview
+//    $('#previewDiv').append(container);
+//    // return the container
+//    return container;
+//}
 
 // function to enable entity preview container selection and the
 // resizable features that go with it
-function selectEntityContainer(container) {
+function selectEntity(entity, container) {
+    // set the entity as the currentEntity and update the properties display
+    currentEntity = entity;
+    update
     // enable resizing
     container.resizable("enable");
     // show resizing handle
@@ -167,7 +182,7 @@ function selectEntityContainer(container) {
 
 // function to disable entity preview container selection and the
 // resizable features that go with it
-function deselectEntityContainer(container) {
+function deselectEntity(entity) {
     // disable resizing
     container.resizable("disable");
     // hide resizing handle
@@ -190,16 +205,20 @@ function moveEntity() {
     currentEntity.changed = true;
 }
 
-// function to change the size of an entity:
-function resizeEntity() {
-//    if (uploadInProgress || downloadInProgress)
-//        return;
-    // get the preview container for the entity
-    var container = $("#" + currentEntity.entityID);
-    // set the entities width and height to those of the container
-    console.log("TEST");
-    currentEntity.width = container.width();
-    currentEntity.height = container.height();
+/**
+ * Resizes the specified or currently selected entity to the given
+ * width and height
+ * 
+ * @param {Number|String} width - new width of entity
+ * @param {Number|String} height - new height of entity
+ * @param {Entity} entity   - entity to modify or null to modify currentEntity
+ */
+function resizeEntity(width, height, entity) {
+    // use the current entity if none was given
+    entity = entity || currentEntity;
+    // set the size of the entity
+    entity.entityWidth = width;
+    entity.entityHeight = height;
 }
 
 // function to update the current entity's representation on the page preview

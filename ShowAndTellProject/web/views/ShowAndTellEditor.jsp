@@ -65,7 +65,7 @@
                             <input id="zInput" type="number" min="0" value="0" onchange="updateZIndex()">
                             <br><br>
                             <label>Animation</label>
-                            <div class="dropdown" id="animations" onchange="updateAnimation()">
+                            <div class="dropdown" id="animInput" onchange="updateAnimation()">
                                 <h3 value="None">None</h3>
                                 <ul class="highlight" value="None">None</ul>
                                 <ul class="highlight" value="Fade">Fade</ul>

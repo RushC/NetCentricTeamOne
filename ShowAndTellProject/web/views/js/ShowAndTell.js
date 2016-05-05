@@ -434,13 +434,14 @@ function deletePage() {
 // function to create a new entity:
 function newEntity(type) {
     if (uploadInProgress || downloadInProgress)
-        return;
+        console.log("TEST");
     // create a new entitiy:
     currentEntity = new Entity();
+    console.log(currentEntity);
     // add it to the list
     entityList.push(currentEntity);
     // set the type to text
-    currentEntity.type = type;
+    currentEntity.type = "textbox";
     // add the entity to the list:
     entityList.push(currentEntity);
     // update the property div
@@ -448,7 +449,7 @@ function newEntity(type) {
     // create a new entity container
     createEntityPreview(currentEntity);
     // update the preview
-    updateEntityPreviewContent();
+    //updateEntityPreviewContent();
 }
 
 // function to create a draggable/resizable preview container for the currentEntity
@@ -456,24 +457,32 @@ function createEntityPreview() {
     // delete any elements with the id if they exist
     $("#" + currentEntity.id).remove();
     // create the container div
-    var container = $('<div class="entityContainerSelected" id=' + currentEntity.id + '><div></div></div>');
+    var container = $('<div id=' + currentEntity.id + '><div></div></div>');
     container.css({
-       width : currentEntity.width,
-       height : currentEntity.height,
+       width : 50,//currentEntity.width,
+       height : 50,//currentEntity.height,
        overflow : "hidden",
-       position : "absolute"
+       position : "absolute",
+       backgroundColor : "red"
     });
     container[0].offsetTop = currentEntity.y;
     container[0].offsetLeft = currentEntity.x;
+    // add some classes describing its type
     // add resize functionality
     container.resizable({
         containment : $("#outerPreviewDiv > fieldset"),
-        minWidth : 50,
-        minHeight : 50,
+        start : function(event, ui) {
+          // make sure this div represents the selected entity
+          // (shouldn't be a problem, but included for sake of robustness)
+          if (currentEntity.entityID != this.id) {
+              // find the current entity 
+          }
+        },
         stop : function(event, ui) {
             shouldDeselect = false;
             console.log("sized");
-            resizeEntity();
+            // find the entity represented by this 
+            resizeEntity($(this).width(), $(this).height(), );
         }
     });
     // add drag functionality
@@ -486,37 +495,37 @@ function createEntityPreview() {
         }
     });
     // apply deselection on mouse release if needed
-    container.click(function(event, ui){
-        console.log(shouldDeselect);
-        if (shouldDeselect)
-            deselectEntityContainer($(this));
-    });
-    // apply selection on mouse press
-    container.mousedown(function(event, ui) {
-        // indicate this container should be deselected if it was already selected
-        if ($(this).hasClass("entityContainerSelected"))
-            shouldDeselect =true;
-        else
-            shouldDeselect = false;
-        // deselect any selected containers
-        deselectEntityContainer($(".entityContainerSelected.ui-resizable"));
-        // select this container
-        selectEntityContainer($(this));
-        // set this container to as the current currentEntity if it wasn't already set
-        if (currentEntity.id != this.id) {
-            // indicate that this currentEntity shouldn't be deselected on mouse release
-            currentEntity = false;
-            // find the currentEntity with the id of the element and set it to the current currentEntity
-            for (var i = 0; i < entityList.length; ++i)
-                if (entityList[i].id == this.id)
-                    entity = entityList[i];
-            // delete the element if there is no corresponding currentEntity
-            if (!currentEntity)
-                $(this).remove();
-            updatePropertyDiv();
-            updateEntityPreviewContent();
-        }
-    });
+//    container.click(function(event, ui){
+//        console.log(shouldDeselect);
+//        if (shouldDeselect)
+//            deselectEntityContainer($(this));
+//    });
+//    // apply selection on mouse press
+//    container.mousedown(function(event, ui) {
+//        // indicate this container should be deselected if it was already selected
+//        if ($(this).hasClass("entityContainerSelected"))
+//            shouldDeselect =true;
+//        else
+//            shouldDeselect = false;
+//        // deselect any selected containers
+//        deselectEntityContainer($(".entityContainerSelected.ui-resizable"));
+//        // select this container
+//        selectEntityContainer($(this));
+//        // set this container to as the current currentEntity if it wasn't already set
+//        if (currentEntity.id != this.id) {
+//            // indicate that this currentEntity shouldn't be deselected on mouse release
+//            currentEntity = false;
+//            // find the currentEntity with the id of the element and set it to the current currentEntity
+//            for (var i = 0; i < entityList.length; ++i)
+//                if (entityList[i].id == this.id)
+//                    entity = entityList[i];
+//            // delete the element if there is no corresponding currentEntity
+//            if (!currentEntity)
+//                $(this).remove();
+//            updatePropertyDiv();
+//            updateEntityPreviewContent();
+//        }
+//    });
     // add the div to the preview
     pagePreviewDiv.append(container);
     // return the container
