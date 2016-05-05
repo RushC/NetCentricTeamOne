@@ -66,6 +66,51 @@ function displayLectures() {
 }
 
 /**
+ * Displays the specified page.
+ * 
+ * @param {Page} page the Page object to display. If this is not specified,
+ *               the current page will be used.
+ */
+function displayPage(page) {
+    // Use the currentPage by default.
+    page = page || currentPage;
+            
+    // Create an image element to represent the page.
+    var img = document.createElement('img');
+    img.class = "pageThumbnail";
+    img.id = page.pageID;
+
+    // Load the page's image.
+    img.onload = function() {
+        // Animate the image in.
+        $(this).hide().slideDown();
+    };
+    img.src = "/ShowAndTellProject/" + page.pageAudioURL;
+
+    // Add highlight and select styling to the image.
+    highlight(img);
+    select(img);
+
+    // Add an event listener to listen for when the img is selected.
+    img.onselect = (function() {
+        // Use a closure to save the page at this iteration.
+        var p = page;
+        return function() {
+            // Set the currentSlide.
+            currentPage = p;
+
+            // Load the new entities.
+            loadEntities();
+
+            console.log(currentPage);
+        };
+    })();
+
+    // Add the image to the page div.
+    $('#pageDiv').append(img);
+}
+
+/**
  * Displays all of the pages in the page div.
  */
 function displayPages() {
@@ -76,43 +121,8 @@ function displayPages() {
     $pageDiv.empty();
     
     // Iterate through all of the page objects.
-    for (var i = 0; i < pages.length; i++) {
-        var page = pages[i];
-        
-        // Create an image element to represent the page.
-        var img = document.createElement('img');
-        img.class = "pageThumbnail";
-        img.id = page.pageID;
-        
-        // Load the page's image.
-        img.onload = function() {
-            // Animate the image in.
-            $(this).hide().slideDown();
-        };
-        img.src = "/ShowAndTellProject/" + page.pageAudioURL;
-        
-        // Add highlight and select styling to the image.
-        highlight(img);
-        select(img);
-        
-        // Add an event listener to listen for when the img is selected.
-        img.onselect = (function() {
-            // Use a closure to save the index at this iteration.
-            var index = i;
-            return function() {
-                // Set the currentSlide.
-                currentPage = pages[index];
-
-                // Load the new entities.
-                loadEntities();
-
-                console.log(currentPage);
-            };
-        })();
-        
-        // Add the image to the page div.
-        $pageDiv.append(img);
-    }
+    for (var i = 0; i < pages.length; i++)
+        displayPage(pages[i]);
 }
 
 /**

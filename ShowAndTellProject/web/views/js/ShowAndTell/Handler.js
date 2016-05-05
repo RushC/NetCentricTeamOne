@@ -39,4 +39,21 @@ function createPage() {
     addPage(new Page());
 }
 
+/**
+ * Called when a lecture textarea loses its focus.
+ */
+function modifyLecture() {
+    // Ensure a lecture is currently selected.
+    if (!currentLecture)
+        return;
+    
+    // Set the current lecture's values.
+    currentLecture.courseTitle = $('#courseTitle')[0].value;
+    currentLecture.lectureTitle = $('#lectureTitle')[0].value;
+    currentLecture.instructor = $('#instructor')[0].value;
+    
+    // Save the current lecture.
+    saveLecture();
+}
+
 

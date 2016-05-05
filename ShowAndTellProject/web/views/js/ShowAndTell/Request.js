@@ -14,6 +14,12 @@ var serverURL = "/ShowAndTellProject/Controller";
  *                          page.
  */
 function addEntity(entity) {
+    // Ensure a page is selected.
+    if (!currentEntity) {
+        alert("You must select a page to add an entity to.");
+        return;
+    }
+    
     // Set the lecture and page number of the entity.
     entity.lectureID = currentPage.lectureID;
     entity.pageID = currentPage.pageID;
@@ -68,6 +74,12 @@ function addLecture(lecture) {
  * @param {Page} page - a Page object to save.
  */
 function addPage(page) {
+    // Ensure a lecture is selected.
+    if (!currentLecture) {
+        alert("You must select a lecture to add a page to.");
+        return;
+    }
+    
     page.lectureID = currentLecture.lectureID;
     
     // Create a canvas element from the previewDiv using the html2canvas library.
@@ -92,8 +104,8 @@ function addPage(page) {
                 pages.push(response);
                 currentPage = response;
 
-                // Display the entity.
-                displayPages();
+                // Display the new page.
+                displayPage();
             });
         }
     });
@@ -103,6 +115,12 @@ function addPage(page) {
  * Deletes the currently selected entity.
  */
 function deleteEntity() {
+    // Ensure an entity is selected.
+    if (!currentEntity) {
+        alert("Please select an entity first, then delete it.")
+        return;
+    }
+    
     // Send a POST request to the server.
     $.post(serverURL, {
         action: "deleteEntity",
@@ -121,6 +139,12 @@ function deleteEntity() {
  * Deletes the currently selected lecture.
  */
 function deleteLecture() {
+    // Ensure a lecture is selected.
+    if (!currentLecture) {
+        alert("Please select a lecture first, then delete it.");
+        return;
+    }
+    
     // Send a POST request to the server.
     $.post(serverURL, {
         action: "deleteLecture",
@@ -138,6 +162,12 @@ function deleteLecture() {
  * Deletes the currently selected page.
  */
 function deletePage() {
+    // Ensure a page is selected.
+    if (!currentPage) {
+        alert("Please select a page first, then delete it.");
+        return;
+    }
+    
     // Send a POST request to the server.
     $.post(serverURL, {
         action: "deletePage",
@@ -221,8 +251,12 @@ function loadPages() {
  * object.
  */
 function saveEntity() {
+    // Ensure there is a selected Entity.
+    if (!currentEntity)
+        return;
+    
     // Send a POST request to the server.
-    $.post({
+    $.post(serverURL, {
         action: "updateEntity",
         entity: JSON.stringify(currentEntity)
         
@@ -243,8 +277,12 @@ function saveEntity() {
  * Sends a POST request to the server to save the currently selected lecture object.
  */
 function saveLecture() {
+    // Ensure there is a selected lecture to save.
+    if (!currentLecture)
+        return;
+    
     // Send a POST request to the server.
-    $.post({
+    $.post(serverURL, {
         action: "updateLecture",
         entity: JSON.stringify(currentLecture)
         
@@ -257,7 +295,7 @@ function saveLecture() {
         currentLecture = response;
         
         // Display the current lecture.
-        displayLecture();
+        displayLectures();
     });
 }
 
@@ -265,6 +303,10 @@ function saveLecture() {
  * Sends a POST request to the server to save the currently selected Page object.
  */
 function savePage() {
+    // Ensure there is a selected page to save.
+    if (!currentPage)
+        return;
+    
     // Create a canvas element from the previewDiv using the html2canvas library.
     html2canvas($('#previewDiv')[0], {
        onrendered: function(canvas) {
@@ -274,7 +316,7 @@ function savePage() {
             currentPage.pageAudioURL = canvas.toDataURL();
             
             // Send a POST request to the server.
-            $.post({
+            $.post(serverURL, {
                 action: "updatePage",
                 entity: JSON.stringify(currentPage)
 

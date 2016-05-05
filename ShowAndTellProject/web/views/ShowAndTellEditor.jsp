@@ -33,9 +33,9 @@
                 <button class="Add Image highlight" onclick="createLecture()"></button>
                 <button class="Delete Image highlight" onclick="deleteLecture()"></button><br>    
             </div>
-            <textarea class="lectureInput" rows="1" cols="10" id="courseTitle" placeholder="Course Title"></textarea>
-            <textarea class="lectureInput" rows="1" cols="10" id="lectureTitle" placeholder="Lecture Title"></textarea>
-            <textarea class="lectureInput" rows="1" cols="10" id="instructor" placeholder="Instructor"></textarea>
+            <textarea class="lectureInput" rows="1" cols="10" id="courseTitle" placeholder="Course Title" onfocusout="modifyLecture()"></textarea>
+            <textarea class="lectureInput" rows="1" cols="10" id="lectureTitle" placeholder="Lecture Title" onfocusout="modifyLecture()"></textarea>
+            <textarea class="lectureInput" rows="1" cols="10" id="instructor" placeholder="Instructor" onfocusout="modifyLecture()"></textarea>
         </fieldset><br>
         <!-- END OF SIDEBAR -->
         <div id="middleDiv">
