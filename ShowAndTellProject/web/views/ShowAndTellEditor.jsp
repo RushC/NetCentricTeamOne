@@ -15,6 +15,7 @@
         <script src="js/ShowAndTell/Model.js"></script>
         <script src="js/ShowAndTell/Display.js"></script>
         <script src="js/ShowAndTell/Request.js"></script>
+        <script src="js/ShowAndTell/Handler.js"></script>
         <script>
             addEventListener("load", function() {
                 loadLectures();
@@ -30,7 +31,7 @@
                     <h3>Select a lecture</h3>
                 </div>
                 <button class="Add Image highlight" onclick="createLecture()"></button>
-                <button class="Delete Image highlight"></button><br>    
+                <button class="Delete Image highlight" onclick="deleteLecture()"></button><br>    
             </div>
             <textarea class="lectureInput" rows="1" cols="10" id="courseTitle" placeholder="Course Title"></textarea>
             <textarea class="lectureInput" rows="1" cols="10" id="lectureTitle" placeholder="Lecture Title"></textarea>
@@ -42,8 +43,8 @@
                 <fieldset>
                     <legend>Pages</legend>
                     <div id="pageDiv">TEST</div>
-                    <button class="Add Image highlight"></button>
-                    <button class="Delete Image highlight"></button>
+                    <button class="Add Image highlight" onclick="createPage()"></button>
+                    <button class="Delete Image highlight" onclick="deletePage()"></button>
                 </fieldset>
             </div>
             <div id="outerPreviewDiv">

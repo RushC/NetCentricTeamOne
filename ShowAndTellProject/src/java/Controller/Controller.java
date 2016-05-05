@@ -43,12 +43,8 @@ public class Controller extends HttpServlet {
         handleImage(entity);
         
         // Insert the entity into the database.
-        lectureDB.addEntity(entity);
-        
-        // Retrieve the entity back from the database.
-        entity = lectureDB.getEntity(entity.getEntityID(), entity.getPageID(), 
-                entity.getLectureID());
-        
+        entity.setEntityID("" + lectureDB.addEntity(entity));
+                
         // Convert the entity to a JSON string.
         String entityJSON = gson.toJson(entity);
         
@@ -67,10 +63,7 @@ public class Controller extends HttpServlet {
         Lecture lecture = getParameter(request, "lecture", Lecture.class);
         
         // Insert the lecture into the database.
-        lectureDB.addLecture(lecture);
-        
-        // Retrieve the lecture back from the database.
-        lecture = lectureDB.getLecture(lecture.getLectureID());
+        lecture.setLectureID("" + lectureDB.addLecture(lecture));
         
         // Convert the lecture to a JSON string.
         String lectureJSON = gson.toJson(lecture);
@@ -93,10 +86,7 @@ public class Controller extends HttpServlet {
         handleImage(page);
         
         // Insert the page into the database.
-        lectureDB.addPage(page);
-        
-        // Retrieve the page back from the database.
-        page = lectureDB.getPage(page.getPageID(), page.getLectureID());
+        page.setPageID("" + lectureDB.addPage(page));
         
         // Convert the page to a JSON string.
         String pageJSON = gson.toJson(page);
@@ -429,20 +419,20 @@ public class Controller extends HttpServlet {
      */
     private void updateEntity(HttpServletRequest request, 
             HttpServletResponse response) {
-        // Retrieve the page object from the request.
+        // Retrieve the entity object from the request.
         Entity entity = getParameter(request, "entity", Entity.class);
         
         // Handle any images in the page.
         handleImage(entity);
         
-        // Update the page in the database.
+        // Update the entity in the database.
         lectureDB.updateEntity(entity);
         
-        // Reload the page from the database.
+        // Reload the entity from the database.
         entity = lectureDB.getEntity(entity.getEntityID(), entity.getPageID(), 
                 entity.getLectureID());
         
-        // Convert the page to a JSON string.
+        // Convert the entity to a JSON string.
         String entityJSON = gson.toJson(entity);
         
         // Write the json as the response.
@@ -457,16 +447,16 @@ public class Controller extends HttpServlet {
      */
     private void updateLecture(HttpServletRequest request, 
             HttpServletResponse response) {
-        // Retrieve the page object from the request.
+        // Retrieve the lecture object from the request.
         Lecture lecture = getParameter(request, "entity", Lecture.class);
                
-        // Update the page in the database.
+        // Update the lecture in the database.
         lectureDB.updateLecture(lecture);
         
-        // Reload the page from the database.
+        // Reload the lecture from the database.
         lecture = lectureDB.getLecture(lecture.getLectureID());
         
-        // Convert the page to a JSON string.
+        // Convert the lecture to a JSON string.
         String lectureJSON = gson.toJson(lecture);
         
         // Write the json as the response.

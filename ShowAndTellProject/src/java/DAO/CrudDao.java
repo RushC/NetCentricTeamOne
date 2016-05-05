@@ -42,8 +42,9 @@ public class CrudDao {
      * 
      * @param entity an Entity object whose properties should be added to the 
      *               database.
+     * @return the ID of the added Entity.
      */
-    public void addEntity(Entity entity) {
+    public int addEntity(Entity entity) {
         // Create a query to insert the entity into the database.
         String query = String.format(
                 "insert into ENTITY (PAGEID, LECTUREID, ENTITYTYPE, ENTITYX, "
@@ -63,7 +64,7 @@ public class CrudDao {
         );
         
         // Execute the query.
-        query(query);
+        return query(query, "ENTITYID")[0];
     }
     
     /**
@@ -71,8 +72,9 @@ public class CrudDao {
      * 
      * @param lecture the Lecture object whose properties should be added into
      *                the database.
+     * @return the ID of the added Lecture.
      */
-    public void addLecture(Lecture lecture) {
+    public int addLecture(Lecture lecture) {
         // Create a query to insert the lecture into the database.
         String query = String.format(
                 "insert into LECTURE (LECTURETITLE, COURSETITLE, INSTRUCTOR) "
@@ -83,7 +85,7 @@ public class CrudDao {
         );
         
         // Execute the query.
-        query(query);
+        return query(query, "LECTUREID")[0];
     }
     
     /**
@@ -91,8 +93,9 @@ public class CrudDao {
      * 
      * @param page the Page object whose properties should be added into the
      *             database.
+     * @return the ID of the added Page.
      */
-    public void addPage(Page page) {
+    public int addPage(Page page) {
         // Create a query to insert the page into the database.
         String query = String.format(
                 "insert into PAGE (LECTUREID, PAGESEQUENCE, PAGEAUDIOURL) "
@@ -103,7 +106,7 @@ public class CrudDao {
         );
         
         // Execute the query.
-        query(query);
+        return query(query, "PAGEID")[0];
     }
     
     /**
@@ -422,6 +425,42 @@ public class CrudDao {
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             System.err.println("Messed up query: " + query);
+        }
+    }
+    
+    /**
+     * Runs the specified query and returns any auto-generated keys in the
+     * specified column.
+     * 
+     * @param query a string representing a SQL query.
+     * @param idColumnName the name of the column containing an auto-generated
+     *                     key.
+     * @return an array of integers representing the keys that were
+     *         automatically generated as the result of the executed query.
+     */
+    public Integer[] query(String query, String idColumnName) {
+        try {
+            // Create a new statement for the database connection.
+            Statement statement = connection.createStatement();
+            
+            // Execute the query.
+            statement.execute(query, new String[] { idColumnName });
+            
+            // Retrieve the generated keys.
+            ArrayList<Integer> keys = new ArrayList<>();
+            ResultSet results = statement.getGeneratedKeys();
+            System.out.println("Got results");
+            while (results.next())
+                keys.add(results.getInt(1));
+            
+            // Return the keys as an array.
+            return keys.toArray(new Integer[0]);
+        
+        // Print any errors.
+        } catch (SQLException e) {
+            System.err.println(e.getMessage());
+            System.err.println("Messed up query: " + query);
+            return new Integer[0];
         }
     }
     

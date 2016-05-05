@@ -29,6 +29,15 @@
  *                      clicked.
  */
 
+addEventListener("load", function() {
+    console.log("Adding effects");
+    // Add effects for all of the already signified classes.
+    $('.dropdown').each(function(i, element) { dropdown(element); });
+    $('.highlight').each(function(i, element) { highlight(element); });
+    $('.select').each(function(i, element) { select(element); });
+});
+    
+
 /**
  * Adds the functionality of the dropdown class to the specified element.
  * 
@@ -140,5 +149,8 @@ function select(element) {
         
         // Add the selected class to the clicked element.
         $(this).switchClass('', 'selected', 200, 'linear');
+        
+        // Trigger a select event.
+        $(this).trigger("select");
     });
 }
