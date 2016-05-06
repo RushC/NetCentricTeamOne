@@ -482,7 +482,7 @@ function createEntityPreview() {
             shouldDeselect = false;
             console.log("sized");
             // find the entity represented by this 
-            resizeEntity($(this).width(), $(this).height(), );
+            //resizeEntity($(this).width(), $(this).height(), );
         }
     });
     // add drag functionality

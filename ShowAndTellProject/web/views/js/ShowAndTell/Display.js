@@ -90,7 +90,7 @@ function displayEntityProperties(entity) {
                 // get the textInput element
                 var textContent = contentEditDiv.children("#textInput");
                 // set the entityID of the element to that of the entity
-                textContent.attr("entityID", entity.entityID);
+                textContent.attr("entityID", entities.indexOf(entity));
                 // set the appropriate place holder
                 if (entity.entityType === "bulletlist")
                     textContent[0].placeholder = "Enter list items here, seperated by new lines. HTML can be used to stylize the display";
@@ -111,7 +111,7 @@ function displayEntityProperties(entity) {
                 else
                     contentEditDiv.find("#imageInputPreview").show().attr("src", entity.entityContent);
                 // set the entityID for the imageInput to that of the entity
-                contentEditDiv.find("#imageInput").attr("entityID", entity.entityID);   
+                contentEditDiv.find("#imageInput").attr("entityID", entities.indexOf(entity));   
                 // show related imageInput elements
                 contentEditDiv.children(".imageInput").show();
                 break;
@@ -141,7 +141,7 @@ function displayEntity(entity) {
     }
     
     // get the inner div where the content is inserted and create it if it doesn't exist (which shouldn't happen)
-    var contentDiv = $("#"+entity.entityID + " > div.innerContentDiv");
+    var contentDiv = $("#"+entities.indexOf(entity) + " > div.innerContentDiv");
     if (!contentDiv[0])
         contentDiv = $('<div class="innerContentDiv"></div>').appendTo(div);
     // perform the correct changes based on content type
@@ -412,7 +412,7 @@ function setCurrentEntity(entity) {
         return;
     // deselect the old currentEntity
     if (currentEntity)
-        deselectEntityContainer($("#" + currentEntity.entityID));
+        deselectEntityContainer($("#" + entities.indexOf(currentEntity)));
     // set the current entity to the new one and select it
     currentEntity = entity;
     // generate/update the properties div for the new entity
