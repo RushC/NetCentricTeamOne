@@ -166,61 +166,63 @@ function newEntity(type) {
 //    return container;
 //}
 
-// function to enable entity preview container selection and the
-// resizable features that go with it
-function selectEntity(entity, container) {
-    // set the entity as the currentEntity and update the properties display
-    currentEntity = entity;
-    update
-    // enable resizing
-    container.resizable("enable");
-    // show resizing handle
-    container.find(".ui-resizable-handle").show();
-    // turn on selection border
-    container.addClass("entityContainerSelected");
-}
-
-// function to disable entity preview container selection and the
-// resizable features that go with it
-function deselectEntity(entity) {
-    // disable resizing
-    container.resizable("disable");
-    // hide resizing handle
-    container.find(".ui-resizable-handle").hide();
-    // turn off selection border
-    container.removeClass("entityContainerSelected");
-}
-
-// function to move an entity:
-function moveEntity() {
-//    if (uploadInProgress || downloadInProgress)
-//        return;
-    // get element representing the current entity
-    var element = $("#" + currentEntity.entityID);
-    // set the location of the entity as the location of the entity
-    currentEntity.entityX = element[0].offsetLeft;
-    currentEntity.entityX = element[0].offsetTop;
-    
-    // set the current entity as changed
-    currentEntity.changed = true;
+/*
+ * Called by an entity's preview container once it is done being dragged by the user
+ * 
+ * @param {Entity} entity - the entity to modify, defaults to current entity
+ * @param {Number|String} x - the new horizontal offset measured from the left, defaults to 50
+ * @param {Number|STring} y - the new vertical offset measured from the top, defaults to 50
+ */
+function moveEntity(x, y, entity) {
+    entity = entity || currentEntity;
+    // set the location of the entity
+    currentEntity.entityX = x === undefined ? 50 : x;
+    currentEntity.entityX = y === undefined ? 50 : y;
 }
 
 /**
  * Resizes the specified or currently selected entity to the given
  * width and height
  * 
- * @param {Number|String} width - new width of entity
- * @param {Number|String} height - new height of entity
- * @param {Entity} entity   - entity to modify or null to modify currentEntity
+ * @param {Entity} entity   - entity to modify, defaults to currentEntity
+ * @param {Number|String} width - new width of entity, defaults to 50
+ * @param {Number|String} height - new height of entity, defaults to 50
  */
-function resizeEntity(width, height, entity) {
+function resizeEntity(entity, width, height) {
     // use the current entity if none was given
     entity = entity || currentEntity;
     // set the size of the entity
-    entity.entityWidth = width;
-    entity.entityHeight = height;
+    entity.entityWidth = width === undefined ? 50 : width;
+    entity.entityHeight = height === undefined ? 50 : height;
 }
 
+
+/*
+ * Called by textInput and imageInput elements when changed to update its
+ * corresponding entity's content as well as to trigger an update to the display
+ * of that entity
+ * 
+ * @param {HTMLElement} element - the element that is emitting the event
+ */
+function updateEntityContent(element) {
+    // get the entity this element corresponds to
+    var entity = false;
+    for (var i = 0; i < entities.length; i++)
+        if (entities[i].entityID === element.getAttribute("entityID"))
+            entity = entities[i];
+    // handle if there is no such entity
+    if (!entity) {
+        console.log("Cannot find entity with ID=" + element.getAttribute(("entityID")));
+        return;
+    }
+    // force the entity to be the currently selected entity if it is not
+    // (this should not occur if everything works as intended, but best to check just in case)
+    if (currentEntity.entityID !== entity.entityID) {
+        console.log("Entity other than currentEntity being modified!");
+        console.log("Swapping and deselecting currentEntity to resolve");
+        setCurrentEntity(entity);
+    }
+}
 // function to update the current entity's representation on the page preview
 function updateEntityPreviewContent() {
     if (currentEntity) {

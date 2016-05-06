@@ -75,7 +75,14 @@
                                 <ul class="highlight" value="Grow">Grow</ul>
                             </div><br><br>
                             <label>Entity Content</label>
-                            <div id="contentEditDiv"></div>
+                            <div id="contentEditDiv"><br>
+                                <textarea id="textInput" class="textEntityInput" rows="5" cols="20" onchange="updateEntityContent(this)">If you can see this then something went wrong!</textarea>
+                                <label id="imgLabel" class="imageEntityInput">
+                                    <span class="highlight">Click to Upload Image</span><br>
+                                    <img id="imageInputPreview" src="" class="imageEntityInput" height="128" width="128">
+                                    <input id="imageInput" class="imageEntityInput" type="file" onchange="updateEntityContent(this)"/>
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </fieldset>

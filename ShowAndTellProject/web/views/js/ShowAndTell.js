@@ -617,6 +617,7 @@ function updatePropertyDiv() {
                     }
                 };
                 
+                
                 ContentInputDiv.append(fileButton);
                 ContentInputDiv.append(image);
                 break;

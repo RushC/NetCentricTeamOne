@@ -84,32 +84,40 @@ function displayEntityProperties(entity) {
         switch(entity.entityType) {
             case "textbox" :
             case "text" : // same as textbox, couln't remember if text was used at some point instead
-            case "bulletlist" :
-                // create a textarea for input
-                var textContent = $('<textarea rows="5" cols="20" class="lectureInput"></textarea>');
-                textContent[0].name = entity.entityID; // set the name to the id so it can update the appropriate entity
+            case "bulletlist" :break;
+                // hide any image input elements
+                contentEditDiv.children(".imageEntityInput").hide();
+                // get the textInput element
+                var textContent = contentEditDiv.children("#textInput");
+                // set the entityID of the element to that of the entity
+                textContent.attr("entityID", entity.entityID);
+                // set the appropriate place holder
                 if (entity.entityType === "bulletlist")
                     textContent[0].placeholder = "Enter list items here, seperated by new lines. HTML can be used to stylize the display";
                 else
                     textContent[0].placeholder = "Enter text here. HTML can be used to style the display";
+                // set the text
                 textContent.text(entity.entityContent);
-                textContent.change(function(event, ui) {
-                    // get the entity this textarea represents
-                    var thisEntity = false;
-                    for (var i = 0; i < entities.length; i++)
-                        if (entities[i].entityID === this.name)
-                            thisEntity = entities[i]; 
-                    if (thisEntity){ // if this entity exists
-                        currentEntity.content = $(this).val();
-                        displayEntity(currentEntity);
-                    } else // if it doesn't, complain in console
-                        console.log("textInput cannot find entity with ID " + this.name + " to update content!");
-                });
+                // show related textInput elements
+                contentEditDiv.children(".textEntityInput").show();
                 break;
             case "image" :
             case "img"  : // similar for textbox/text...so many things to keep track of...
-                
-                
+                // hide any text input elements
+                contentEditDiv.children(".textEntityInput").hide();
+                // hide the preview if the entity has no content
+                if (entity.entityContent.length == 0)
+                    contentEditDiv.find("#imageInputPreview").hide();
+                else
+                    contentEditDiv.find("#imageInputPreview").show().attr("src", entity.entityContent);
+                // set the entityID for the imageInput to that of the entity
+                contentEditDiv.find("#imageInput").attr("entityID", entity.entityID);   
+                // show related imageInput elements
+                contentEditDiv.children(".imageInput").show();
+                break;
+            default:
+                    console.log("bad entity type: " + entity.entityType);
+                    return;
         }
     }
 }
@@ -300,7 +308,72 @@ function removePages() {
         // Remove each page.
         removePage(pages[i]);
 }
-    
+
+/**
+ * Changes the given entity container's appearance and functionality to that of
+ * a selected entity container
+ * 
+ * Does nothing if no container is passed or the selection is empty
+ * 
+ * @param {JQuerySelector} container - the div containing an entitie's preview 
+ */
+function selectEntityContainer(container) {
+    if(!container[0])
+        return;
+    // enable resizing
+    container.resizable("enable");
+    // show resizing handle
+    container.find(".ui-resizable-handle").show();
+    // turn on selection border
+    container.addClass("entityContainerSelected");
+}
+
+/**
+ * Changes the given entity container's appearance and functionality to that of
+ * an unselected entity container
+ * 
+ * Does nothing if no container is passed or the selection is empty
+ * 
+ * @param {JQuerySelector} container - the div containing an entitie's preview 
+ */
+function deselectEntityContainer(container) {
+    if(!container[0])
+        return;
+    // disable resizing
+    container.resizable("disable");
+    // hide resizing handle
+    container.find(".ui-resizable-handle").hide();
+    // turn off selection border
+    container.removeClass("entityContainerSelected");
+}
+
+/**
+ * Sets the current entity and performs the neccessary UI changes to reflect
+ * the change.
+ * 
+ * Also checks to ensure the entity is of the current page and lecture and will
+ * return false (fail) if this is not the case.
+ * 
+ * Does not check to ensure if the entity is part of the entities list.
+ * 
+ * @param {Entity} entity - the entity to be swapped in for the current
+ * @returns {bool} true if successful, false otherwise
+ */
+function setCurrentEntity(entity) {
+    // make sure entity is on right page/lecture
+    if (entity.pageID !== currentPage.pageID
+        || entity.lectureID !== currentPage.lectureID
+        || entity.lectureID !== currentLecture.lectureID)
+    return false;
+
+    // deselect the old currentEntity
+    deselectEntity($("#" + currentEntity.entityID));
+    // set the current entity to the new one and select it
+    currentEntity = entity;
+    selectEntity($("#" + entity.entityID));
+    // update the properties div for the new entity
+    displayEntityProperties();
+}
 /**
  * Sets the current lecture based on the currently selected lecture in the
  * lecture dropdown.
