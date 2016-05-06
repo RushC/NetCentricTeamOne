@@ -407,15 +407,15 @@ function deselectEntityContainer(container) {
 function setCurrentEntity(entity) {
     if (!entity)
         return;
-    // save the old current entity
-    saveEntity();
-    // deselect the old currentEntity
-    if (currentEntity)
+    // save and deselect the old currentEntity
+    if (currentEntity){
+        saveEntity();
         deselectEntityContainer($("#entity" + entities.indexOf(currentEntity)));
+    }
     // set the current entity to the new one and select it
     currentEntity = entity;
     // save the new entity
-    saveEntity();
+    //saveEntity();
     // generate/update the properties div for the new entity
     displayEntityProperties();
     // generate/update the preview for the entity

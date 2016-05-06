@@ -35,10 +35,7 @@ function addEntity(entity) {
         
         // Add the entity sent from the server to the entities list.
         entities.push(response);
-        currentEntity = response;
-        
-        // Display the entity.
-        displayEntity();
+        setCurrentEntity(response);
     });
 }
 

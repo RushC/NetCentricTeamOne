@@ -69,12 +69,10 @@ function newEntity(type) {
     // create a new entitiy:
     var entity = new Entity();
     entity.entityType = type;
-    entity.animation="None";
+    // add the entity to the lecture and update accordingly
     addEntity(entity);
     // add it to the list
     entities.push(entity);
-    // set the new entity to the current and update the ui to reflect the changes
-    setCurrentEntity(entity);
     console.log(entity);
     console.log(entities);
 }
