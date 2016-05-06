@@ -92,12 +92,12 @@ function threeregion(req, res) {
 }
 
 app.get('/WebRoster/Roster.jsp', function(req, res) {
-	res.redirect("http://localhost:8080/WebRoster/Roster.jsp");
+	res.redirect("http://" + req.hostname + ":8080/WebRoster/Roster.jsp");
 });
 
 app.get('/ShowAndTellProject', function(req, res) {
     
-	res.redirect("http://localhost:8080/ShowAndTellProject/");
+	res.redirect("http://" + req.hostname + ":8080/ShowAndTellProject/");
 });
 
 // Specify GET tools.
