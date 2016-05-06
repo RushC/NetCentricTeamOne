@@ -18,14 +18,14 @@ var pages;          // All of the Pages in the current Lecture.
  * Should be called by displayEntity
  * 
  * @param {Entity} entity
- * @returns {JquerySelection} JQuery Selection containing the created div
+ * @returns {JquerySelector} JQuerySelector containing the created div
  */
 function createPreviewContainer(entity) {
     // requires an entity to be passed, return null if non given
     if (!entity)
         return null;
     // create the div - the outer div has the ui functionality while the inner holds the entity content
-    var div = $('<div class="entityContainerSelected" id=' + entity.entityID + '><div></div></div>');
+    var div = $('<div id=' + entity.entityID + '></div>');
     // size and position the div
     div.css({
        width : entity.entityWidth,
@@ -33,10 +33,10 @@ function createPreviewContainer(entity) {
     });
     div[0].offsetTop = entity.entityY;
     div[0].offsetLeft = entity.entityX;
-    // add some classes to describe its role and enable functionality and style
+    // add some classes & attributes to describe its role and enable functionality and style
     div.addClass("entiyContainer"); // Style for all entity container divs
-    div.addClass("entityContainerSelected"); // Style and functionality for selected entity containers
-    div.addClass(entity.entityType + "EntityContainer"); // Style for representing this entity's type of content
+    div.addClass(entity.entityType + "EntityContainer"); // for defining style specific to content type
+    div.attr("entityID", entity.entityID);
     // add resizing functionality
     div.resizable({
         // contain to outer preview div instead of inner because... css
@@ -119,6 +119,9 @@ function displayEntityProperties(entity) {
                     console.log("bad entity type: " + entity.entityType);
                     return;
         }
+        // show the properties div if it was hidden
+        if (display.css("display") == "none")
+            display.show("slow");
     }
 }
 /**
@@ -130,16 +133,61 @@ function displayEntity(entity) {
     // If an entity was not passed, use the currentEntity by default.
     entity = entity || currentEntity;
     
-    // find the div for the entity
+    // find the div for the entity and create it if it doesn't exist
     var div = $("#previewDiv > #" + entity.entityID);
-    // if the 
+    if (!div[0]) {
+        createPreviewContainer(entity);
+        div = $("#previewDiv > #" + entity.entityID);
+    }
+    
+    // get the inner div where the content is inserted and create it if it doesn't exist (which shouldn't happen)
+    var contentDiv = $("#"+entity.entityID + " > div.innerContentDiv");
+    if (!contentDiv[0])
+        contentDiv = $('<div class="innerContentDiv"></div>').appendTo(div);
+    // perform the correct changes based on content type
+    switch(entity.entityType) {
+        case "textbox" :
+        case "text" :
+            // clear the old content
+            contentDiv.empty();
+            // add the new content within a <pre> element to preserve formatting
+            $("<pre></pre>").html(entity.entityContent).appendTo(contentDiv);
+            break;
+        case "bulletlist" :
+        case "list" :
+            // clear the old content
+            contentDiv.empty();
+            // seperate the contents into list items by line breaks
+            var items = entity.entityContent.split(/\r?\n/gm);
+            // add each item to the contentDiv as an entry to an unordered list
+            var list = $("<ul></ul>");
+            for (var i = 0; i < items.length; i++)
+                $("<li></li>").html(items[i]).appendTo(list);
+            // add the list to the contentDiv
+            contentDiv.append(list);
+            break;
+        case "image" :
+        case "img" :
+            // get the image element for in the preview div or create it if needed
+            var image = contentDiv.children("img");
+            if (!image[0])
+                image = $('<img width="100%" height="100%" src="">').appendTo(contentDiv);
+            // set the src of the image to the entity's content
+            image.attr("src", entity.entityContent);
+            break;
+    }
 }
 
 /**
  * Displays all of the Entities in the preview div.
  */
 function displayEntities() {
-    // TODO
+    // clear the preview div
+    $("#previewDiv").empty();
+    // dispaly each entity in the entities list
+    for (var i = 0; i < entities.length; i++) {
+        displayEntity(entities[i]);
+    }
 }
 
 /**
@@ -348,7 +396,7 @@ function deselectEntityContainer(container) {
 }
 
 /**
- * Sets the current entity and performs the neccessary UI changes to reflect
+ * Sets the current entity and performs the neccessary UI updates to reflect
  * the change.
  * 
  * Also checks to ensure the entity is of the current page and lecture and will
@@ -370,9 +418,12 @@ function setCurrentEntity(entity) {
     deselectEntity($("#" + currentEntity.entityID));
     // set the current entity to the new one and select it
     currentEntity = entity;
-    selectEntity($("#" + entity.entityID));
-    // update the properties div for the new entity
+    // generate/update the properties div for the new entity
     displayEntityProperties();
+    // generate/update the preview for the entity
+    displayEntity();
+    // select the entity's container
+    selectEntityContainer(entity);
 }
 /**
  * Sets the current lecture based on the currently selected lecture in the

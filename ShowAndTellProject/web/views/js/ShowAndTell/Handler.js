@@ -67,19 +67,11 @@ function newEntity(type) {
     }
     
     // create a new entitiy:
-    currentEntity = new Entity();
+    var entity = new Entity();
     // add it to the list
-    entities.push(currentEntity);
-    // set the type to text
-    currentEntity.entityType = type;
-    // add the entity to the list:
-    //entities.push(currentEntity);
-    // update the property div
-    //updatePropertyDiv();
-    // create a new entity container
-    createEntityPreview(currentEntity);
-    // update the preview
-    updateEntityPreviewContent();
+    entities.push(entity);
+    // set the new entity to the current and update the ui to reflect the changes
+    setCurrentEntity(entity);
 }
 
 //// function to create a draggable/resizable preview container for the currentEntity
@@ -215,64 +207,92 @@ function updateEntityContent(element) {
         console.log("Cannot find entity with ID=" + element.getAttribute(("entityID")));
         return;
     }
-    // force the entity to be the currently selected entity if it is not
-    // (this should not occur if everything works as intended, but best to check just in case)
-    if (currentEntity.entityID !== entity.entityID) {
-        console.log("Entity other than currentEntity being modified!");
-        console.log("Swapping and deselecting currentEntity to resolve");
-        setCurrentEntity(entity);
+    
+    // get the inner div where the content is inserted and create it if it doesn't exist (which shouldn't happen)
+    var contentDiv = $("#"+entity.entityID + " > div.innerContentDiv");
+    if (!contentDiv[0])
+        contentDiv = $('<div class="innerContentDiv"></div>').appendTo(element);
+    // perform the correct changes based on content type
+    switch(entity.entityType) {
+        case "textbox" :
+        case "text" :
+        case "bulletlist" :
+        case "list" :
+            entity.entityContent = $(element).val();
+            displayEntity(entity);
+            break;
+        case "image" :
+        case "img" :
+            // get the preview image element
+            var image = $("#imageInputPreview");
+            // load the image file as a dataurl and make it the content and src for the entity and imgs respectively
+            var reader = new FileReader();
+            var file = $("input[type=file]")[0].files[0];
+            if (file) {
+                reader.onloadend = function() {
+                    entity.entityContent = reader.result;
+                    image[0].src = reader.result;
+                    // update the entity preview
+                    displayEntity(entity);
+                };
+                reader.readAsDataURL(file);
+            }
+            break;
+        default:
+            console.log("bad entity type: " + entity.entityType + " in updateEntityContent for " + element);
+            break;
     }
 }
-// function to update the current entity's representation on the page preview
-function updateEntityPreviewContent() {
-    if (currentEntity) {
-        // first get the contentContainer for the entity's preview
-        var contentContainer = $("#" + currentEntity.id + " > div");
-        // create the contentContainer if it doesn't exist:
-        if (!contentContainer[0])
-            contentContainer = createEntityPreview(currentEntity);
-        
-        // add/update the appropriate contents
-        switch(currentEntity.type) {
-            case "image" :
-                // get the image element in the contentContainer
-                var image = $("#"+currentEntity.id + " > img");
-                //empty the contentContainer and create a new image contentContainer if one doesn't exist"
-                if(!image[0]) {
-                    image = $("<img>");
-                    contentContainer.empty();
-                    contentContainer.append(image);
-                }
-                // set the image's source
-                image.src = currentEntity.content;
-                break;
-            case "textbox" :
-                // clear the current content of the contentContainer
-                contentContainer.empty();
-                // slice the content along line breaks so <br> tags are not needed
-                var lines = currentEntity.content.split(/(\r\n)|(^\r\n)/gm);
-                // add each entry to the contentContainer seperated by line breaks
-                for (var i = 0; i < lines.length; ++i)
-                    contentContainer.append("" + lines[i] + "<br>");
-                break;
-            case "bulletlist" :
-                // get the contentContainer for the entitiy:
-                var list = contentContainer.children("ul");
-                // empty the div and create a new list if one does'nt exist:
-                if(!list[0]) {
-                    contentContainer.empty();
-                    var list = $("<ul><ul>");
-                    contentContainer.append(list);
-                }
-                // empty the list:
-                list.empty();
-                // slice the content along line breaks to get the list entries:
-                var entries = currentEntity.content.split(/(\r\n|^\r\n)/gm);
-                // add each entry to the list:
-                for (var i = 0; i < entries.length; ++i)
-                    $("<li>"+entries[i]+"</li>").appendTo(list);
-        }
-    }
-}
+
+//function updateEntityPreviewContent() {
+//    if (currentEntity) {
+//        // first get the contentContainer for the entity's preview
+//        var contentContainer = $("#" + currentEntity.id + " > div");
+//        // create the contentContainer if it doesn't exist:
+//        if (!contentContainer[0])
+//            contentContainer = createEntityPreview(currentEntity);
+//        
+//        // add/update the appropriate contents
+//        switch(currentEntity.type) {
+//            case "image" :
+//                // get the image element in the contentContainer
+//                var image = $("#"+currentEntity.id + " > img");
+//                //empty the contentContainer and create a new image contentContainer if one doesn't exist"
+//                if(!image[0]) {
+//                    image = $("<img>");
+//                    contentContainer.empty();
+//                    contentContainer.append(image);
+//                }
+//                // set the image's source
+//                image.src = currentEntity.content;
+//                break;
+//            case "textbox" :
+//                // clear the current content of the contentContainer
+//                contentContainer.empty();
+//                // slice the content along line breaks so <br> tags are not needed
+//                var lines = currentEntity.content.split(/(\r\n)|(^\r\n)/gm);
+//                // add each entry to the contentContainer seperated by line breaks
+//                for (var i = 0; i < lines.length; ++i)
+//                    contentContainer.append("" + lines[i] + "<br>");
+//                break;
+//            case "bulletlist" :
+//                // get the contentContainer for the entitiy:
+//                var list = contentContainer.children("ul");
+//                // empty the div and create a new list if one does'nt exist:
+//                if(!list[0]) {
+//                    contentContainer.empty();
+//                    var list = $("<ul><ul>");
+//                    contentContainer.append(list);
+//                }
+//                // empty the list:
+//                list.empty();
+//                // slice the content along line breaks to get the list entries:
+//                var entries = currentEntity.content.split(/(\r\n|^\r\n)/gm);
+//                // add each entry to the list:
+//                for (var i = 0; i < entries.length; ++i)
+//                    $("<li>"+entries[i]+"</li>").appendTo(list);
+//        }
+//    }
+//}
 
 
