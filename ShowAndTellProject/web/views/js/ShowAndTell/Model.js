@@ -8,8 +8,8 @@
  * Entity class.
  */
 function Entity() {
-    this.lectureID = currentLecture.lectureID;
-    this.pageID = currentPage.pageID;
+    this.lectureID = -1//currentLecture.lectureID;
+    this.pageID = -1//currentPage.pageID;
     this.entityID  = "hahaNo";
     this.entityType = "OH SHI-";
     this.entityX = "50"; // default to a 50x50 offset
@@ -26,7 +26,7 @@ function Entity() {
  * Page class.
  */
 function Page() {
-    this.lectureID = currentLecture.lectureID;
+    this.lectureID = -1//currentLecture.lectureID;
     this.pageID    = "some value";
     this.pageSequence = "0";
     this.pageAudioURL = "no audio here";

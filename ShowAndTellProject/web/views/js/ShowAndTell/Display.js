@@ -24,55 +24,59 @@ function createPreviewContainer(entity) {
     // requires an entity to be passed, return null if non given
     if (!entity)
         return null;
+    console.log("this function was called");
     var index = entities.indexOf(entity);
     // create the div - the outer div has the ui functionality while the inner holds the entity content
     var div = $('<div id="entity' + index + '"></div>');
     // size and position the div
-    div.css({
-       width : entity.entityWidth,
-       height : entity.entityHeight
-    });
-    div[0].offsetTop = entity.entityY;
-    div[0].offsetLeft = entity.entityX;
+    
     // add some classes & attributes to describe its role and enable functionality and style
-    div.addClass("entiyContainer"); // Style for all entity container divs
+    div.addClass("entityContainer"); // Style for all entity container divs
     div.addClass(entity.entityType + "EntityContainer"); // for defining style specific to content type
     div.attr("entityIndex", index);
     // add resizing functionality
     div.resizable({
         // contain to outer preview div instead of inner because... css
         containment : $("#outerPreviewDiv > fieldset"),
+        start : function(event, ui) {
+            // set the entity as the current entity
+            setCurrentEntity(entities[$(this).attr("entityIndex")]);
+        },
         stop : function(event, ui) {
-            // indicate that the element should not be deselected when the mouse is released
-            $(this).removeClass("shouldDeselect");
             // resize the entity  
             resizeEntity($(this).width(), $(this).height(), entities[$(this).attr("entityIndex")]);
+            //saveEntity(entities[$(this).attr("entityIndex")]);
         }
     });
     // add dragging functionality
     div.draggable({
-       stop : function(event, ui) {
-           // indicate that the element should not be deselected when the moust is released
-           $(this).removeClass("shouldDeselect");
-           // move the entity
-           moveEntity(this.offsetLeft, this.offsetTop, entities[$(this).attr("entityIndex")]);
-       }
+        start : function(event, ui) {
+            // set the entity as the current entity
+            setCurrentEntity(entities[$(this).attr("entityIndex")]);
+        },
+        stop : function(event, ui) {
+            // move the entity
+            moveEntity(this.offsetLeft, this.offsetTop, entities[$(this).attr("entityIndex")]);
+        }
     });
-    // add selection toggling
-    div.mousedown(function(event, ui) {
-       // if the entity was already selected
-       if ($(this).hasClass("entityContainerSelected"))
-           // indicate that the entity should be deselected when mouse is released
-           $(this).addClass("shouldDeselect");
-       else
+    // add selection on click
+    div.click(function(event, ui) {
        // select the entity and set it as current
        setCurrentEntity(entities[$(this).attr("entityIndex")]);
+       
     });
-    div.mouseup(function(event, ui) {
-        // deselect this entity if no other action (resizing or dragging) was performed
-        if ($(this).hasClass("shouldDeselect"))
-            deselectEntityContainer($(this));
-    });
+    // add the inner div
+    div.append('<div class="innerContentDiv"></div>');
+    // add div to the preview
+    div.appendTo($("#previewDiv"));
+    div[0].style.width = entity.entityWidth + "px";
+    div[0].style.height = entity.entityHeight + "px";
+    div[0].style.position = "absolute";
+    div[0].style.left = entity.entityX + "px";
+    div[0].style.top  = entity.entityY + "px";
+    console.log('Div styling');
+    console.log(div[0]);
+    console.log(entity);
 
 }
 
@@ -95,13 +99,14 @@ function displayEntityProperties(entity) {
     else {
         display.children("#zInput").val(entity.entityZ);
         display.children("#animInput")[0].value = entity.animation;
+        display.children("#animInput").html(entity.animation);
         // generate the contentEditDiv
         var contentEditDiv = display.children("#contentEditDiv");
-        contentEditDiv.empty();
+        //contentEditDiv.empty();
         switch(entity.entityType) {
             case "textbox" :
             case "text" : // same as textbox, couln't remember if text was used at some point instead
-            case "bulletlist" :break;
+            case "bulletlist" :
                 // hide any image input elements
                 contentEditDiv.children(".imageEntityInput").hide();
                 // get the textInput element
@@ -122,15 +127,15 @@ function displayEntityProperties(entity) {
             case "img"  : // similar for textbox/text...so many things to keep track of...
                 // hide any text input elements
                 contentEditDiv.children(".textEntityInput").hide();
-                // hide the preview if the entity has no content
-                if (entity.entityContent.length == 0)
-                    contentEditDiv.find("#imageInputPreview").hide();
-                else
+//                // hide the preview if the entity has no content
+//                if (entity.entityContent.length == 0)
+//                    contentEditDiv.find("#imageInputPreview").hide();
+//                else
                     contentEditDiv.find("#imageInputPreview").show().attr("src", entity.entityContent);
                 // set the entityIndex for the imageInput to that of the entity
                 contentEditDiv.find("#imageInput").attr("entityIndex", entities.indexOf(entity));   
                 // show related imageInput elements
-                contentEditDiv.children(".imageInput").show();
+                contentEditDiv.children(".imageEntityInput").show();
                 break;
             default:
                     console.log("bad entity type: " + entity.entityType);
@@ -149,7 +154,11 @@ function displayEntityProperties(entity) {
 function displayEntity(entity) {
     // If an entity was not passed, use the currentEntity by default.
     entity = entity || currentEntity;
-    
+    var index = entities.indexOf(entity);
+    if (index == -1){
+        //alert("fuck");
+        return;
+    }
     // find the div for the entity and create it if it doesn't exist
     var div = $("#previewDiv > #entity" + entities.indexOf(entity));
     if (!div[0]) {
@@ -157,10 +166,8 @@ function displayEntity(entity) {
         div = $("#previewDiv > #entity" + entities.indexOf(entity));
     }
     
-    // get the inner div where the content is inserted and create it if it doesn't exist (which shouldn't happen)
+    // get the inner div where the content is inserted and create it if it doesn't exist
     var contentDiv = $("#entity"+entities.indexOf(entity) + " > div.innerContentDiv");
-    if (!contentDiv[0])
-        contentDiv = $('<div class="innerContentDiv"></div>').appendTo(div);
     // perform the correct changes based on content type
     switch(entity.entityType) {
         case "textbox" :
@@ -178,6 +185,7 @@ function displayEntity(entity) {
             var items = entity.entityContent.split(/\r?\n/gm);
             // add each item to the contentDiv as an entry to an unordered list
             var list = $("<ul></ul>");
+            list[0].style.textAlign = "left";
             for (var i = 0; i < items.length; i++)
                 $("<li></li>").html(items[i]).appendTo(list);
             // add the list to the contentDiv
@@ -188,7 +196,7 @@ function displayEntity(entity) {
             // get the image element for in the preview div or create it if needed
             var image = contentDiv.children("img");
             if (!image[0])
-                image = $('<img width="100%" height="100%" src="">').appendTo(contentDiv);
+                image = $('<img width="100%" height="100%">').appendTo(contentDiv);
             // set the src of the image to the entity's content
             image.attr("src", entity.entityContent);
             break;
@@ -273,7 +281,9 @@ function displayPage(page) {
     img.onselect = (function() {
         // Use a closure to save the page at this iteration.
         var p = page;
-        return function() {
+        console.log("This is a page: ");
+        console.log(page);
+        return function() {          
             // Set the currentSlide.
             currentPage = p;
 
@@ -322,7 +332,7 @@ function removeLecture(lecture) {
         removePages();
     }
     
-    loadLectures();
+    location.href = location.href;
 }
 
 /**
@@ -344,6 +354,10 @@ function removePage(page) {
     }
 }
 
+function removeEntity() {
+    loadEntities();
+}
+
 /**
  * Removes all of the Pages from the webpage.
  */
@@ -356,7 +370,7 @@ function removePages() {
 
 /**
  * Changes the given entity container's appearance and functionality to that of
- * a selected entity container
+ * a selected entity containera
  * 
  * Does nothing if no container is passed or the selection is empty
  * 
@@ -366,9 +380,9 @@ function selectEntityContainer(container) {
     if(!container[0])
         return;
     // enable resizing
-    container.resizable("enable");
+    //container.resizable("enable");
     // show resizing handle
-    container.find(".ui-resizable-handle").show();
+    //container.find(".ui-resizable-handle").show();
     // turn on selection border
     container.addClass("entityContainerSelected");
 }
@@ -385,13 +399,21 @@ function deselectEntityContainer(container) {
     if(!container[0])
         return;
     // disable resizing
-    container.resizable("disable");
-    // hide resizing handle
-    container.find(".ui-resizable-handle").hide();
+    //container.resizable("disable");
     // turn off selection border
+    container.removeClass("shouldDeselect");
     container.removeClass("entityContainerSelected");
+    saveEntity(entities[container.attr("entityID")]);
 }
 
+/**
+ * clear entities from preview div
+ */
+function removeEntities() {
+    $("#previewDiv").empty();
+    entities = [];
+    currentEntity = null;
+}
 /**
  * Sets the current entity and performs the neccessary UI updates to reflect
  * the change.
@@ -408,8 +430,7 @@ function setCurrentEntity(entity) {
     if (!entity)
         return;
     // save and deselect the old currentEntity
-    if (currentEntity){
-        saveEntity();
+    if (currentEntity && currentEntity != entity){
         deselectEntityContainer($("#entity" + entities.indexOf(currentEntity)));
     }
     // set the current entity to the new one and select it
@@ -421,7 +442,7 @@ function setCurrentEntity(entity) {
     // generate/update the preview for the entity
     displayEntity();
     // select the entity's container
-    selectEntityContainer(entity);
+    selectEntityContainer($("#entity"+entities.indexOf(entity)));
 }
 /**
  * Sets the current lecture based on the currently selected lecture in the

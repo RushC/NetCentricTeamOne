@@ -42,7 +42,7 @@
             <div id="outerPageDiv">
                 <fieldset>
                     <legend>Pages</legend>
-                    <div id="pageDiv">TEST</div>
+                    <div id="pageDiv"> </div>
                     <button class="Add Image highlight" onclick="createPage()"></button>
                     <button class="Delete Image highlight" onclick="deletePage()"></button>
                 </fieldset>
@@ -61,10 +61,8 @@
                         <button class="highlight" id="newListEntityButton" onclick="newEntity('bulletlist')">New List Entity</button><br>
                         <button class="highlight" id="newImageEntityButton" onclick="newEntity('image')">New Image Entity</button>
                         <div id="entityPropertiesDiv">
-                            <label>Z-Index</label>
-                            <input id="zInput" type="number" min="0" value="0" onchange="updateZIndex()">
-                            <br><br>
-                            <label>Animation</label>
+                            <br>
+                            <span>Animation</span><br><br>
                             <div class="dropdown" id="animInput" onchange="updateAnimation()">
                                 <h3 value="None">None</h3>
                                 <ul class="highlight" value="None">None</ul>
@@ -78,12 +76,13 @@
                             <div id="contentEditDiv"><br>
                                 <textarea id="textInput" class="textEntityInput" rows="5" cols="20" onchange="updateEntityContent(this)">If you can see this then something went wrong!</textarea>
                                 <label id="imgLabel" class="imageEntityInput">
-                                    <span class="highlight">Click to Upload Image</span><br>
+                                    <span class="highlight">Upload Image</span><br><br>
                                     <img id="imageInputPreview" src="" class="imageEntityInput" height="128" width="128">
                                     <input id="imageInput" class="imageEntityInput" type="file" onchange="updateEntityContent(this)"/>
                                 </label>
                             </div>
                         </div>
+                        <button class="Delete Image highlight" onclick="deletee()"></button>
                     </div>
                 </fieldset>
         </div>

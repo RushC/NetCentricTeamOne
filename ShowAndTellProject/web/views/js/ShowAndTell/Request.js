@@ -15,7 +15,7 @@ var serverURL = "/ShowAndTellProject/Controller";
  */
 function addEntity(entity) {
     // Ensure a page is selected.
-    if (!currentEntity) {
+    if (!currentPage) {
         alert("You must select a page to add an entity to.");
         return;
     }
@@ -79,10 +79,16 @@ function addPage(page) {
     
     page.lectureID = currentLecture.lectureID;
     
+    // Save the window's current scroll position.
+    var scrollY = window.scrollY;
+    
     // Create a canvas element from the previewDiv using the html2canvas library.
     html2canvas($('#previewDiv')[0], {
        onrendered: function(canvas) {
             console.log("Snapshot successful");
+            
+            // Scroll back to the original position.
+            window.scrollTo(0, scrollY);
             
             // Set the page's image property to the data url from the canvas.
             page.pageAudioURL = canvas.toDataURL();
@@ -121,14 +127,13 @@ function deleteEntity() {
     // Send a POST request to the server.
     $.post(serverURL, {
         action: "deleteEntity",
-        entity: JSON.stringify(currentEntity)
+        entity: JSON.stringify(currentEntity),
+        success: function() {
+            loadEntities();
+            $('#entityPropertiesDiv').slideUp();
+        }
         
     // Define the callback function for the POST request.
-    }).done(function(response) {
-        console.log("Deleted current entity");
-        
-        // Remove the current entity.
-        removeEntity();
     });
 }
 
@@ -247,26 +252,32 @@ function loadPages() {
  * Sends a POST request to the server to save the currently selected Entity
  * object.
  */
-function saveEntity() {
+function saveEntity(entity) {
+    entity = entity || currentEntity;
+    var index = entities.indexOf(entity);
     // Ensure there is a selected Entity.
-    if (!currentEntity)
+    if (!entity)
         return;
     
     // Send a POST request to the server.
     $.post(serverURL, {
         action: "updateEntity",
-        entity: JSON.stringify(currentEntity)
+        entity: JSON.stringify(entity)
         
     // Define the callback function for the POST request.
     }).done(function(response) {
-        console.log(response);
+        //  console.log(response);
+        
+        // Save page.
+        savePage();
         
         // Replace the current entity with the updated entity from the server.
-        entities[entities.indexOf(currentEntity)] = response;
-        currentEntity = response;
-        
+        entities[index] = response;
+        entity = response;
+//        console.log("this one");
+//        console.log(entity);
         // Display the current entity.
-        displayEntity();
+        //displayEntity();
     });
 }
 
@@ -304,10 +315,16 @@ function savePage() {
     if (!currentPage)
         return;
     
+    // Save the scroll position.
+    var scrollY = window.scrollY;
+    
     // Create a canvas element from the previewDiv using the html2canvas library.
     html2canvas($('#previewDiv')[0], {
        onrendered: function(canvas) {
             console.log("Snapshot successful");
+            
+            // Scroll back to the original position.
+            window.scrollTo(0, scrollY);
 
             // Set the page's image property to the data url from the canvas.
             currentPage.pageAudioURL = canvas.toDataURL();
@@ -315,21 +332,27 @@ function savePage() {
             // Send a POST request to the server.
             $.post(serverURL, {
                 action: "updatePage",
-                entity: JSON.stringify(currentPage)
+                page: JSON.stringify(currentPage)
 
             // Define the callback function for the POST request.
             }).done(function(response) {
                 console.log(response);
-
+                
+                // Retrieve the index of the page that was changed.
+                var index = pages.indexOf(currentPage);
+                
                 // Replace the current page with the updated entity from the server.
-                pages[pages.indexOf(currentPage)] = response;
+                pages[index] = response;
                 currentPage = response;
 
-                // Display the current page.
-                displayPage();
+                // Replace the image source.
+                $('img#' + currentPage.pageID)[0].src = "/ShowAndTellProject/" 
+                        + currentPage.pageAudioURL;
             });
+            
         }
     });
+    
 }
 
 

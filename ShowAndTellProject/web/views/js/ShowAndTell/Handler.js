@@ -2,6 +2,10 @@
  * This script defines functions for handling events.
  */
 
+
+
+addEventListener("load", function() { $("#entityPropertiesDiv").hide();});
+
 /**
  * Called when the Add Lecture button is clicked.
  */
@@ -13,8 +17,7 @@ function createLecture() {
     
     // Ensure something was entered for each field.
     if (!courseTitle || !lectureTitle || !instructor) {
-        alert("Please enter information for the course title, lecture title,\
-               and instructor.");
+        alert("Please enter information for the course title, lecture title, and instructor.");
         return;
     }
     
@@ -37,6 +40,12 @@ function createPage() {
     
     // Add a new page.
     addPage(new Page());
+}
+
+function deletee() {
+    deleteEntity();
+    deleteEntity();
+    savePage();
 }
 
 /**
@@ -171,9 +180,11 @@ function newEntity(type) {
 function moveEntity(x, y, entity) {
     entity = entity || currentEntity;
     // set the location of the entity
-    currentEntity.entityX = x === undefined ? 50 : x;
-    currentEntity.entityX = y === undefined ? 50 : y;
+    entity.entityX = x;
+    entity.entityY = y;
+    //saveEntity(entity);
 }
+
 
 /**
  * Resizes the specified or currently selected entity to the given
@@ -183,12 +194,13 @@ function moveEntity(x, y, entity) {
  * @param {Number|String} width - new width of entity, defaults to 50
  * @param {Number|String} height - new height of entity, defaults to 50
  */
-function resizeEntity(entity, width, height) {
+function resizeEntity(width, height, entity) {
     // use the current entity if none was given
     entity = entity || currentEntity;
     // set the size of the entity
-    entity.entityWidth = width === undefined ? 50 : width;
-    entity.entityHeight = height === undefined ? 50 : height;
+    entity.entityWidth = width;
+    entity.entityHeight = height;
+    //saveEntity(entity);
 }
 
 
@@ -201,11 +213,10 @@ function resizeEntity(entity, width, height) {
  */
 function updateEntityContent(element) {
     // get the entity this element corresponds to
-    var entity = false;
-    var index = entities.indexOf(entity);
+    var index = $(element).attr("entityIndex");
     if (index == -1)
         throw new Exception("Entity not in list");
-    
+    var entity = entities[index];
 
     
     // get the inner div where the content is inserted and create it if it doesn't exist (which shouldn't happen)
@@ -220,6 +231,7 @@ function updateEntityContent(element) {
         case "list" :
             entity.entityContent = $(element).val();
             displayEntity(entity);
+            //saveEntity(entity);
             break;
         case "image" :
         case "img" :
@@ -234,6 +246,7 @@ function updateEntityContent(element) {
                     image[0].src = reader.result;
                     // update the entity preview
                     displayEntity(entity);
+                    //saveEntity(entity);
                 };
                 reader.readAsDataURL(file);
             }
@@ -242,6 +255,15 @@ function updateEntityContent(element) {
             console.log("bad entity type: " + entity.entityType + " in updateEntityContent for " + element);
             break;
     }
+}
+
+/**
+ * Sets the z-Index for the current entity
+ */
+function updateZIndex() {
+    currentEntity.entityZ = $("#zInput").val();
+    displayEntity(currentEntity);
+    //saveEntity();
 }
 
 //function updateEntityPreviewContent() {

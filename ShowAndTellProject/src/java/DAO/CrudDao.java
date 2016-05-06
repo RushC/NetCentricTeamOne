@@ -49,8 +49,8 @@ public class CrudDao {
         String query = String.format(
                 "insert into ENTITY (PAGEID, LECTUREID, ENTITYTYPE, ENTITYX, "
                         + "ENTITYY, ENTITYZ, ENTITYCONTENT, ENTITYANIMATION, "
-                        + "ENTITYWIDTH, ENTITYHEIGHT) values (%s, %s, '%s', %s "
-                        + "%s, %s, '%s', '%s')",
+                        + "ENTITYWIDTH, ENTITYHEIGHT) values (%s, %s, '%s', %s, "
+                        + "%s, %s, '%s', '%s', %s, %s)",
                 entity.getPageID(),
                 entity.getLectureID(),
                 entity.getEntityType(),
@@ -550,11 +550,11 @@ public class CrudDao {
                         + "ENTITYY=%s,"
                         + "ENTITYZ=%s,"
                         + "ENTITYCONTENT='%s',"
-                        + "ENTITYANIMATION='%s'"
+                        + "ENTITYANIMATION='%s',"
                         + "ENTITYWIDTH=%s,"
-                        + "ENTITYHEIGHT=%s"
-                        + "where ENTITYID=%s"
-                        + "and PAGEID=%s"
+                        + "ENTITYHEIGHT=%s "
+                        + "where ENTITYID=%s "
+                        + "and PAGEID=%s "
                         + "and LECTUREID=%s",
                 entity.getEntityType(),
                 entity.getEntityX(),

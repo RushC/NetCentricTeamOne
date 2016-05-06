@@ -359,23 +359,24 @@ public class Controller extends HttpServlet {
         
         // Ensure a folder exists to store the image.
         String directoryPath = String.format(
-                "%sLecture%s/Page%s/",
-                imagePath,
+                "Lecture%s/Page%s/",
                 entity.getLectureID(),
                 entity.getPageID()
         );
-        File directory = new File(directoryPath);
+        System.out.println(imagePath + directoryPath);
+        File directory = new File(imagePath + directoryPath);
         if (!directory.exists())
             directory.mkdir();
         
         // Create a path for the image.
-        String imagePath = directoryPath + (directory.listFiles().length + 1) + ".png";
+        String imagePath = "" + (directory.listFiles().length + 1) + ".png";
         
         // Save the image.
-        saveImage(entity.getEntityContent(), imagePath);
+        saveImage(entity.getEntityContent(), 
+                this.imagePath + directoryPath + imagePath);
         
         // Replace the image with the path to the image.
-        entity.setEntityContent(imagePath);
+        entity.setEntityContent("/ShowAndTellProject/views/images/" + directoryPath + imagePath);
     }
     
     /**
