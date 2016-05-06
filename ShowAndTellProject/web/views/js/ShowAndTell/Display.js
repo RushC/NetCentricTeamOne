@@ -408,14 +408,11 @@ function deselectEntityContainer(container) {
  * @returns {bool} true if successful, false otherwise
  */
 function setCurrentEntity(entity) {
-    // make sure entity is on right page/lecture
-    if (entity.pageID !== currentPage.pageID
-        || entity.lectureID !== currentPage.lectureID
-        || entity.lectureID !== currentLecture.lectureID)
-    return false;
-
+    if (!entity)
+        return;
     // deselect the old currentEntity
-    deselectEntity($("#" + currentEntity.entityID));
+    if (currentEntity)
+        deselectEntityContainer($("#" + currentEntity.entityID));
     // set the current entity to the new one and select it
     currentEntity = entity;
     // generate/update the properties div for the new entity

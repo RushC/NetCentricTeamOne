@@ -68,10 +68,15 @@ function newEntity(type) {
     
     // create a new entitiy:
     var entity = new Entity();
+    entity.entityType = type;
+    enitiy.animation="None";
+    saveEntity(entity);
     // add it to the list
     entities.push(entity);
     // set the new entity to the current and update the ui to reflect the changes
     setCurrentEntity(entity);
+    console.log(entity);
+    console.log(entities);
 }
 
 //// function to create a draggable/resizable preview container for the currentEntity
