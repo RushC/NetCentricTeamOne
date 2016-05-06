@@ -62,7 +62,7 @@ function newEntity(type) {
 //        return;
     // Ensure a page is selected.
     if (!currentPage) {
-        alert("You must select a page before you can add an entity.");
+        alert("You must select a page before you can add an entity. (bitch)");
         return;
     }
     
@@ -70,12 +70,11 @@ function newEntity(type) {
     var entity = new Entity();
     entity.entityType = type;
     entity.animation="None";
-    saveEntity(entity);
+    addEntity(entity);
     // add it to the list
     entities.push(entity);
     // set the new entity to the current and update the ui to reflect the changes
     setCurrentEntity(entity);
-    
     console.log(entity);
     console.log(entities);
 }
@@ -83,7 +82,7 @@ function newEntity(type) {
 //// function to create a draggable/resizable preview container for the currentEntity
 //function createEntityPreview() {
 //    // delete any elements with the id if they exist
-//    $("#" + currentEntity.id).remove();
+//    $("#entity"+ currentEntity.id).remove();
 //    // create the container div
 //    var container = $('<div class="entityContainerSelected" id=' + currentEntity.id + '><div></div></div>');
 //    container.css({
@@ -205,17 +204,14 @@ function resizeEntity(entity, width, height) {
 function updateEntityContent(element) {
     // get the entity this element corresponds to
     var entity = false;
-    for (var i = 0; i < entities.length; i++)
-        if (entities[i].entityID === element.getAttribute("entityID"))
-            entity = entities[i];
-    // handle if there is no such entity
-    if (!entity) {
-        console.log("Cannot find entity with ID=" + element.getAttribute(("entityID")));
-        return;
-    }
+    var index = entities.indexOf(entity);
+    if (index == -1)
+        throw new Exception("Entity not in list");
+    
+
     
     // get the inner div where the content is inserted and create it if it doesn't exist (which shouldn't happen)
-    var contentDiv = $("#"+entity.entityID + " > div.innerContentDiv");
+    var contentDiv = $("#entity"+entities.indexOf(entity) + " > div.innerContentDiv");
     if (!contentDiv[0])
         contentDiv = $('<div class="innerContentDiv"></div>').appendTo(element);
     // perform the correct changes based on content type
@@ -253,7 +249,7 @@ function updateEntityContent(element) {
 //function updateEntityPreviewContent() {
 //    if (currentEntity) {
 //        // first get the contentContainer for the entity's preview
-//        var contentContainer = $("#" + currentEntity.id + " > div");
+//        var contentContainer = $("#entity"+ currentEntity.id + " > div");
 //        // create the contentContainer if it doesn't exist:
 //        if (!contentContainer[0])
 //            contentContainer = createEntityPreview(currentEntity);
@@ -262,7 +258,7 @@ function updateEntityContent(element) {
 //        switch(currentEntity.type) {
 //            case "image" :
 //                // get the image element in the contentContainer
-//                var image = $("#"+currentEntity.id + " > img");
+//                var image = $("#entity"+currentEntity.id + " > img");
 //                //empty the contentContainer and create a new image contentContainer if one doesn't exist"
 //                if(!image[0]) {
 //                    image = $("<img>");
