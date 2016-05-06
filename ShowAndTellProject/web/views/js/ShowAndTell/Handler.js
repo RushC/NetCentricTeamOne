@@ -62,7 +62,7 @@ function newEntity(type) {
 //        return;
     // Ensure a page is selected.
     if (!currentPage) {
-        alert("You must select a page before you can add an entity. (bitch)");
+        alert("You must select a page before you can add an entity.)");
         return;
     }
     

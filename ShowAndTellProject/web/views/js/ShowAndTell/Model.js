@@ -8,17 +8,17 @@
  * Entity class.
  */
 function Entity() {
-    this.lectureID;
-    this.pageID;
-    this.entityID;
-    this.entityType;
-    this.entityX;
-    this.entityY;
-    this.entityZ;
-    this.animation;
-    this.entityContent;
-    this.entityWidth;
-    this.entityHeight;
+    this.lectureID = currentLecture.lectureID;
+    this.pageID = currentPage.pageID;
+    this.entityID  = "hahaNo";
+    this.entityType = "OH SHI-";
+    this.entityX = "50"; // default to a 50x50 offset
+    this.entityY = "50";
+    this.entityZ = "1"; // yeah why not
+    this.animation = "None"; //we can't afford to hire animators!
+    this.entityContent = ""; //null is for errors
+    this.entityWidth = "50";
+    this.entityHeight = "50";
 }
 
 /**
@@ -26,10 +26,10 @@ function Entity() {
  * Page class.
  */
 function Page() {
-    this.lectureID;
-    this.pageID;
-    this.pageSequence;
-    this.pageAudioURL;
+    this.lectureID = currentLecture.lectureID;
+    this.pageID    = "some value";
+    this.pageSequence = "0";
+    this.pageAudioURL = "no audio here";
 }
 
 /**
@@ -37,10 +37,10 @@ function Page() {
  * Lecture class.
  */
 function Lecture() {
-    this.lectureID;
-    this.lectureTitle;
-    this.courseTitle;
-    this.instructor;
+    this.lectureID = "some value";
+    this.lectureTitle = "Lecture Title";
+    this.courseTitle = "Course Title";
+    this.instructor = "Instructor Name";
 }
 
 
